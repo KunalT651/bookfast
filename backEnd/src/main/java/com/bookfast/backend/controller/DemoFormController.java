@@ -17,7 +17,6 @@ public class DemoFormController {
 
     @GetMapping
     public List<DemoForm> getAll() {
-        var formss = repository.findAll();
         return repository.findAll();
     }
 
