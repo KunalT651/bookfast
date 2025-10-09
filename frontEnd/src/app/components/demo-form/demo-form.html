@@ -1,0 +1,11 @@
+<form (ngSubmit)="submit()" #demoForm="ngForm">
+  <input [(ngModel)]="form.field1" name="field1" placeholder="Field 1" required>
+  <input [(ngModel)]="form.field2" name="field2" placeholder="Field 2" required>
+  <button type="submit">Submit</button>
+</form>
+
+<ul>
+  <li *ngFor="let f of forms">
+    {{ f.field1 }} - {{ f.field2 }}
+  </li>
+</ul>

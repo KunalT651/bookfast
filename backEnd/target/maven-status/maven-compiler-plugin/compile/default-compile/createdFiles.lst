@@ -1,0 +1,4 @@
+com\bookfast\backend\repository\DemoFormRepository.class
+com\bookfast\backend\BackendApplication.class
+com\bookfast\backend\controller\DemoFormController.class
+com\bookfast\backend\model\DemoForm.class
