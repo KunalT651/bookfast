@@ -1,0 +1,9 @@
+form {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+input, select, button {
+  padding: 4px;
+  margin-bottom: 4px;
+}

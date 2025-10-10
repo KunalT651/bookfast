@@ -1,0 +1,14 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <input formControlName="firstName" placeholder="First Name" required>
+  <input formControlName="lastName" placeholder="Last Name" required>
+  <input formControlName="email" placeholder="Email" required type="email">
+  <input formControlName="password" placeholder="Password" required type="password">
+  <input formControlName="confirmPassword" placeholder="Confirm Password" required type="password">
+  <select formControlName="serviceCategory" required>
+    <option value="" disabled selected>Select Service Category</option>
+    <option *ngFor="let category of serviceCategories" [value]="category">{{ category }}</option>
+  </select>
+  <input formControlName="organizationName" placeholder="Organization Name" required>
+  <button type="submit">Register</button>
+  <div *ngIf="error">{{ error }}</div>
+</form>
