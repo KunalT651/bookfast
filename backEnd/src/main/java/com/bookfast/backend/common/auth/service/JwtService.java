@@ -2,6 +2,8 @@ package com.bookfast.backend.common.auth.service;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -9,7 +11,8 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private final String jwtSecret = "your-256-bit-secret-your-256-bit-secret"; // Use env/config!
+    @Value("${jwt.secret}")
+    private String jwtSecret;
     private final long jwtExpirationMs = 86400000; // 1 day
 
     private Key getSigningKey() {
@@ -22,8 +25,7 @@ public class JwtService {
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(getSigningKey())
-                .compact();
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)                .compact();
     }
 
     public Jws<Claims> validateToken(String token) {

@@ -8,6 +8,7 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\com
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\controller\ServiceCategoryController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\dto\AuthRequest.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\dto\AuthResponse.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\dto\ErrorResponse.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\dto\RegisterProviderRequest.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\dto\RegisterRequest.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\exception\EmailAlreadyExistsException.java

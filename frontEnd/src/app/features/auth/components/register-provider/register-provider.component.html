@@ -6,9 +6,13 @@
   <input formControlName="confirmPassword" placeholder="Confirm Password" required type="password">
   <select formControlName="serviceCategory" required>
     <option value="" disabled selected>Select Service Category</option>
-    <option *ngFor="let category of serviceCategories" [value]="category">{{ category }}</option>
+    @for (category of serviceCategories; track $index) {
+      <option [value]="category">{{ category }}</option>
+    }
   </select>
   <input formControlName="organizationName" placeholder="Organization Name" required>
   <button type="submit">Register</button>
-  <div *ngIf="error">{{ error }}</div>
+  @if (error) {
+    <div style="color: red;">{{ error }}</div>
+  }
 </form>

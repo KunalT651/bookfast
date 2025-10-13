@@ -5,7 +5,9 @@
 </form>
 
 <ul>
-  <li *ngFor="let f of forms">
-    {{ f.field1 }} - {{ f.field2 }}
-  </li>
+  @for (f of forms; track $index) {
+    <li>
+      {{ f.field1 }} - {{ f.field2 }}
+    </li>
+  }
 </ul>

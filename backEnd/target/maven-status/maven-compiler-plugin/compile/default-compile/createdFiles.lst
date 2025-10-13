@@ -1,8 +1,11 @@
+com\bookfast\backend\common\dto\ErrorResponse.class
 com\bookfast\backend\common\model\User.class
+com\bookfast\backend\common\config\CorsConfig$1.class
 com\bookfast\backend\common\dto\AuthRequest.class
 com\bookfast\backend\common\notification\EmailService.class
 com\bookfast\backend\common\auth\service\JwtService.class
 com\bookfast\backend\common\auth\controller\AuthController.class
+com\bookfast\backend\common\exception\EmailAlreadyExistsException.class
 com\bookfast\backend\common\auth\service\AuthService.class
 com\bookfast\backend\common\repository\UserRepository.class
 com\bookfast\backend\common\model\ServiceCategory.class
@@ -14,11 +17,13 @@ com\bookfast\backend\common\dto\RegisterProviderRequest.class
 com\bookfast\backend\common\model\Role.class
 com\bookfast\backend\common\dto\AuthResponse.class
 com\bookfast\backend\common\repository\ServiceCategoryRepository.class
+com\bookfast\backend\common\config\CorsConfig.class
 com\bookfast\backend\common\controller\ServiceCategoryController.class
 com\bookfast\backend\common\dto\RegisterRequest.class
 com\bookfast\backend\common\model\ProviderProfile.class
 com\bookfast\backend\common\config\SecurityConfig.class
 com\bookfast\backend\common\exception\GlobalExceptionHandler.class
 com\bookfast\backend\controller\DemoFormController.class
+com\bookfast\backend\common\exception\InvalidCredentialsException.class
 com\bookfast\backend\common\util\PasswordUtil.class
 com\bookfast\backend\model\DemoForm.class

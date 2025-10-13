@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DemoFormService } from '../../services/demo-form.service';
 import { DemoForm } from '../../models/demo-form.model';
@@ -7,7 +6,7 @@ import { DemoForm } from '../../models/demo-form.model';
 @Component({
   selector: 'app-demo-form',
   standalone: true,
-  imports: [NgFor, NgIf, FormsModule],
+  imports: [FormsModule],
   templateUrl: './demo-form.html',
   styleUrls: ['./demo-form.css']
 })

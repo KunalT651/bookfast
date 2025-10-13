@@ -19,4 +19,8 @@ export class AuthService {
 getServiceCategories(): Observable<string[]> {
   return this.http.get<string[]>('http://localhost:8080/api/services/categories');
 }
+
+login(data: any): Observable<any> {
+  return this.http.post(`${this.apiUrl}/login`, data);
+}
 }

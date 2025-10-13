@@ -1,0 +1,12 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <input formControlName="email" placeholder="Email" required type="email">
+  <input formControlName="password" placeholder="Password" required type="password">
+  <button type="submit">Login</button>
+  @if (error) {
+    <div style="color: red;">{{ error }}</div>
+  }
+  @if (success) {
+    <div style="color: green;">{{ success }}</div>
+  }
+</form>
+<a routerLink="/register">Don't have an account? Register</a>

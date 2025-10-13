@@ -5,18 +5,20 @@ import com.bookfast.backend.common.model.*;
 import com.bookfast.backend.common.repository.*;
 import com.bookfast.backend.common.util.PasswordUtil;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
     private final UserRepository userRepo;
     private final ProviderProfileRepository providerRepo;
-private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final JwtService jwtService;
 
-public AuthService(UserRepository userRepo, ProviderProfileRepository providerRepo) {
+public AuthService(UserRepository userRepo, ProviderProfileRepository providerRepo, JwtService jwtService) {
     this.userRepo = userRepo;
     this.providerRepo = providerRepo;
+    this.jwtService = jwtService;
 }
 
 public AuthResponse registerCustomer(RegisterRequest req) {
@@ -30,15 +32,12 @@ public AuthResponse registerCustomer(RegisterRequest req) {
     user.setFirstName(req.firstName);
     user.setLastName(req.lastName);
     user.setEmail(req.email);
-    user.setPassword(req.password); // Store as plain text for now
+    user.setPassword(PasswordUtil.hash(req.password)); // Use hashing!
     user.setRole(Role.CUSTOMER);
     userRepo.save(user);
 
-    AuthResponse res = new AuthResponse();
-    res.email = user.getEmail();
-    res.role = user.getRole().name();
-    res.token = "";
-    return res;
+    String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
+    return new AuthResponse(token, user);
 }
 
 public AuthResponse registerProvider(RegisterProviderRequest req) {
@@ -52,7 +51,7 @@ public AuthResponse registerProvider(RegisterProviderRequest req) {
     user.setFirstName(req.firstName);
     user.setLastName(req.lastName);
     user.setEmail(req.email);
-    user.setPassword(PasswordUtil.hash(req.password)); // Use hashing if set up
+    user.setPassword(PasswordUtil.hash(req.password));
     user.setRole(Role.PROVIDER);
     userRepo.save(user);
 
@@ -62,26 +61,17 @@ public AuthResponse registerProvider(RegisterProviderRequest req) {
     profile.setUser(user);
     providerRepo.save(profile);
 
-    AuthResponse res = new AuthResponse();
-    res.email = user.getEmail();
-    res.role = user.getRole().name();
-    res.token = ""; // Add JWT if needed
-    return res;
+    String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
+    return new AuthResponse(token, user);
 }
 
-// ...do the same for registerProvider and login...
     public AuthResponse login(AuthRequest req) {
         User user = userRepo.findByEmail(req.email)
-            .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-        if (!encoder.matches(req.password, user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+        if (!PasswordUtil.matches(req.password, user.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
         }
-        AuthResponse res = new AuthResponse();
-        res.email = user.getEmail();
-        res.role = user.getRole().name();
-        res.token = ""; // JWT token logic can be added here
-        return res;
+        String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user);
     }
-
-    
 }
