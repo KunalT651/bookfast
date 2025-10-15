@@ -31,21 +31,27 @@ success = '';
       ? null : { mismatch: true };
   }
 
-  onSubmit() {
-    this.submitted = true;
-    if (this.registerForm.invalid) return;
+onSubmit() {
+  this.submitted = true;
+  if (this.registerForm.invalid) return;
 
-    this.authService.registerCustomer(this.registerForm.value).subscribe({
-      next: () => {
-        this.success = 'Registration successful! Please log in.';
-        this.error = '';
-        this.registerForm.reset();
-        this.submitted = false;
-      },
-      error: (err: any) => {
-        this.error = err.error?.message || 'Registration failed';
-        this.success = '';
-      }
-    });
-  }
+  // Add role: 'CUSTOMER' to the payload
+  const payload = {
+    ...this.registerForm.value,
+    role: 'CUSTOMER'
+  };
+
+  this.authService.registerCustomer(payload).subscribe({
+    next: () => {
+      this.success = 'Registration successful! Please log in.';
+      this.error = '';
+      this.registerForm.reset();
+      this.submitted = false;
+    },
+    error: (err: any) => {
+      this.error = err.error?.message || 'Registration failed';
+      this.success = '';
+    }
+  });
+}
 }

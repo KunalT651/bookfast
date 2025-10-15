@@ -1,0 +1,31 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { ServiceResource } from '../models/service-resource.model';
+
+@Injectable({ providedIn: 'root' })
+export class ServiceResourceService {
+  private apiUrl = 'http://localhost:8080/api/provider/resources';
+
+  constructor(private http: HttpClient) {}
+
+  getResourcesByProvider(providerId: number): Observable<ServiceResource[]> {
+    return this.http.get<ServiceResource[]>(`${this.apiUrl}/provider/${providerId}`);
+  }
+
+  getResource(id: number): Observable<ServiceResource> {
+    return this.http.get<ServiceResource>(`${this.apiUrl}/${id}`);
+  }
+
+  createResource(resource: ServiceResource): Observable<ServiceResource> {
+    return this.http.post<ServiceResource>(this.apiUrl, resource);
+  }
+
+  updateResource(id: number, resource: ServiceResource): Observable<ServiceResource> {
+    return this.http.put<ServiceResource>(`${this.apiUrl}/${id}`, resource);
+  }
+
+  deleteResource(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+}

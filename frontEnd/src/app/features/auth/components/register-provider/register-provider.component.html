@@ -6,13 +6,16 @@
   <input formControlName="confirmPassword" placeholder="Confirm Password" required type="password">
   <select formControlName="serviceCategory" required>
     <option value="" disabled selected>Select Service Category</option>
-    @for (category of serviceCategories; track $index) {
-      <option [value]="category">{{ category }}</option>
+    @for (category of serviceCategories; track category.id) {
+      <option [value]="category.name">{{ category.name }}</option>
     }
   </select>
   <input formControlName="organizationName" placeholder="Organization Name" required>
   <button type="submit">Register</button>
   @if (error) {
     <div style="color: red;">{{ error }}</div>
+  }
+  @if (success) {
+    <div style="color: green;">{{ success }}</div>
   }
 </form>

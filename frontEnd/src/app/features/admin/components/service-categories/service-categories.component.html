@@ -1,0 +1,35 @@
+<h2>Service Categories</h2>
+<form [formGroup]="categoryForm" (ngSubmit)="submit()">
+  <input formControlName="name" placeholder="Category Name" required>
+  <input formControlName="description" placeholder="Description">
+  <button type="submit">{{ editingCategory ? 'Update' : 'Add' }}</button>
+  <button type="button" (click)="cancelEdit()" *ngIf="editingCategory">Cancel</button>
+</form>
+@if (error) {
+  <div style="color: red;">{{ error }}</div>
+}
+@if (success) {
+  <div style="color: green;">{{ success }}</div>
+}
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (cat of categories; track cat.id) {
+      <tr>
+        <td>{{ cat.name }}</td>
+        <td>{{ cat.description }}</td>
+        <td>
+          <button (click)="edit(cat)">Edit</button>
+          <button (click)="delete(cat.id)">Delete</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

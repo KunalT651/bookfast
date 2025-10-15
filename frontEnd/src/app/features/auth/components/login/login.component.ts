@@ -31,12 +31,22 @@ export class LoginComponent {
     if (this.loginForm.invalid) return;
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: (res: any) => {
-        this.success = 'Login successful!';
-        this.error = '';
-        // Optionally, redirect after a short delay:
-        // setTimeout(() => this.router.navigate(['/dashboard']), 1000);
-      },
+    next: (res: any) => {
+      this.success = 'Login successful!';
+      this.error = '';
+      localStorage.setItem('token', res.token); // <-- Save the JWT token
+
+      // Redirect based on user role
+      if (res.user.role.name === 'PROVIDER') {
+        this.router.navigate(['/provider/dashboard']); // <-- This opens the provider dashboard
+      } else if (res.user.role.name === 'ADMIN') {
+        this.router.navigate(['/admin/dashboard']);
+      } else if (res.user.role.name === 'CUSTOMER') {
+        this.router.navigate(['/']); // Or your customer dashboard
+      } else {
+        this.router.navigate(['/']); // Default/fallback
+      }
+    },
       error: (err: any) => {
         this.error = err.error?.message || 'Login failed';
         this.success = '';

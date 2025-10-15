@@ -4,66 +4,77 @@ import com.bookfast.backend.common.dto.*;
 import com.bookfast.backend.common.model.*;
 import com.bookfast.backend.common.repository.*;
 import com.bookfast.backend.common.util.PasswordUtil;
-
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
     private final UserRepository userRepo;
     private final ProviderProfileRepository providerRepo;
-//private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final RoleRepository roleRepo;
     private final JwtService jwtService;
 
-public AuthService(UserRepository userRepo, ProviderProfileRepository providerRepo, JwtService jwtService) {
-    this.userRepo = userRepo;
-    this.providerRepo = providerRepo;
-    this.jwtService = jwtService;
-}
-
-public AuthResponse registerCustomer(RegisterRequest req) {
-    if (!req.password.equals(req.confirmPassword)) {
-        throw new RuntimeException("Passwords do not match");
+    public AuthService(UserRepository userRepo, ProviderProfileRepository providerRepo, RoleRepository roleRepo, JwtService jwtService) {
+        this.userRepo = userRepo;
+        this.providerRepo = providerRepo;
+        this.roleRepo = roleRepo;
+        this.jwtService = jwtService;
     }
-    if (userRepo.existsByEmail(req.email)) {
-        throw new RuntimeException("Email already exists");
+
+    @Transactional
+    public AuthResponse registerCustomer(RegisterRequest req) {
+        if (!req.password.equals(req.confirmPassword)) {
+            throw new RuntimeException("Passwords do not match");
+        }
+        if (userRepo.existsByEmail(req.email)) {
+            throw new RuntimeException("Email already exists");
+        }
+        User user = new User();
+        user.setFirstName(req.firstName);
+        user.setLastName(req.lastName);
+        user.setEmail(req.email);
+        user.setPassword(PasswordUtil.hash(req.password));
+
+        // Lookup Role entity by name (e.g., "CUSTOMER")
+Role    role = roleRepo.findByNameIgnoreCase(req.role.toString());        if (role == null) throw new RuntimeException("Invalid role");
+        user.setRole(role);
+
+        userRepo.save(user);
+
+        String token = jwtService.generateToken(user.getEmail(), user.getRole().getName());
+        return new AuthResponse(token, user);
     }
-    User user = new User();
-    user.setFirstName(req.firstName);
-    user.setLastName(req.lastName);
-    user.setEmail(req.email);
-    user.setPassword(PasswordUtil.hash(req.password)); // Use hashing!
-    user.setRole(Role.CUSTOMER);
-    userRepo.save(user);
 
-    String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
-    return new AuthResponse(token, user);
-}
+    @Transactional
+    public AuthResponse registerProvider(RegisterProviderRequest req) {
+        if (!req.password.equals(req.confirmPassword)) {
+            throw new RuntimeException("Passwords do not match");
+        }
+        if (userRepo.existsByEmail(req.email)) {
+            throw new RuntimeException("Email already exists");
+        }
+        User user = new User();
+        user.setFirstName(req.firstName);
+        user.setLastName(req.lastName);
+        user.setEmail(req.email);
+        user.setPassword(PasswordUtil.hash(req.password));
 
-public AuthResponse registerProvider(RegisterProviderRequest req) {
-    if (!req.password.equals(req.confirmPassword)) {
-        throw new RuntimeException("Passwords do not match");
+        // Lookup Role entity by name (e.g., "PROVIDER")
+Role role = roleRepo.findByNameIgnoreCase(req.getRole());
+if (role == null) throw new RuntimeException("Invalid role");
+user.setRole(role);
+
+        userRepo.save(user);
+
+        ProviderProfile profile = new ProviderProfile();
+        profile.setOrganizationName(req.organizationName);
+        profile.setServiceCategory(req.serviceCategory);
+        profile.setUser(user);
+        providerRepo.save(profile);
+
+        String token = jwtService.generateToken(user.getEmail(), user.getRole().getName());
+        return new AuthResponse(token, user);
     }
-    if (userRepo.existsByEmail(req.email)) {
-        throw new RuntimeException("Email already exists");
-    }
-    User user = new User();
-    user.setFirstName(req.firstName);
-    user.setLastName(req.lastName);
-    user.setEmail(req.email);
-    user.setPassword(PasswordUtil.hash(req.password));
-    user.setRole(Role.PROVIDER);
-    userRepo.save(user);
-
-    ProviderProfile profile = new ProviderProfile();
-    profile.setOrganizationName(req.organizationName);
-    profile.setServiceCategory(req.serviceCategory);
-    profile.setUser(user);
-    providerRepo.save(profile);
-
-    String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
-    return new AuthResponse(token, user);
-}
 
     public AuthResponse login(AuthRequest req) {
         User user = userRepo.findByEmail(req.email)
@@ -71,7 +82,7 @@ public AuthResponse registerProvider(RegisterProviderRequest req) {
         if (!PasswordUtil.matches(req.password, user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
-        String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtService.generateToken(user.getEmail(), user.getRole().getName());
         return new AuthResponse(token, user);
     }
 }

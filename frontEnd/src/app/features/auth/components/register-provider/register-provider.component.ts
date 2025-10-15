@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { ServiceCategoryService } from '../../../admin/services/service-category.service';
 
 @Component({
   selector: 'app-register-provider',
@@ -10,19 +11,17 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './register-provider.component.html',
   styleUrls: ['./register-provider.component.css']
 })
-export class RegisterProviderComponent {
+export class RegisterProviderComponent implements OnInit {
   registerForm: FormGroup;
-  submitted = false;
+  serviceCategories: any[] = [];
   error = '';
-  serviceCategories: string[] = [];
+  success = '';
 
-  ngOnInit() {
-    this.authService.getServiceCategories().subscribe({
-      next: (categories) => this.serviceCategories = categories,
-      error: () => this.serviceCategories = []
-    });
-  }
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private categoryService: ServiceCategoryService
+  ) {
     this.registerForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -34,22 +33,37 @@ export class RegisterProviderComponent {
     }, { validators: this.passwordMatchValidator });
   }
 
+  ngOnInit() {
+    this.categoryService.getAll().subscribe({
+      next: (cats) => this.serviceCategories = cats,
+      error: () => this.serviceCategories = []
+    });
+  }
+
   passwordMatchValidator(form: FormGroup) {
     return form.get('password')!.value === form.get('confirmPassword')!.value
       ? null : { mismatch: true };
   }
 
-  onSubmit() {
-    this.submitted = true;
-    if (this.registerForm.invalid) return;
+onSubmit() {
+  this.success = '';
+  this.error = '';
+  if (this.registerForm.invalid) return;
 
-    this.authService.registerProvider(this.registerForm.value).subscribe({
-      next: () => {
-        // Redirect to login or show success
-      },
-      error: (err: any) => {
-        this.error = err.error?.message || 'Registration failed';
-      }
-    });
-  }
+  // Add role: 'PROVIDER' to the payload
+  const payload = {
+    ...this.registerForm.value,
+    role: 'PROVIDER'
+  };
+
+  this.authService.registerProvider(payload).subscribe({
+    next: () => {
+      this.success = 'Registration successful!';
+      this.registerForm.reset();
+    },
+    error: (err: any) => {
+      this.error = err.error?.message || 'Registration failed';
+    }
+  });
+}
 }

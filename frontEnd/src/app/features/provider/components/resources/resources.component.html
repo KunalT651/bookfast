@@ -1,0 +1,13 @@
+<div>
+  <h2>Your Resources</h2>
+  <ul>
+    @for (resource of resources; track resource.id) {
+      <li (click)="selectResource(resource)">
+        {{ resource.name }} - {{ resource.specialization }}
+      </li>
+    }
+  </ul>
+  @if (selectedResource) {
+    <app-resource-availability [resourceId]="selectedResource.id"></app-resource-availability>
+  }
+</div>

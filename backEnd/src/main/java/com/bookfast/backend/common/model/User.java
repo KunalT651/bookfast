@@ -8,7 +8,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName, lastName, email, password;
-    @Enumerated(EnumType.STRING)
+
+    // Use @ManyToOne for Role entity, remove @Enumerated
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 
     // Getters and setters
