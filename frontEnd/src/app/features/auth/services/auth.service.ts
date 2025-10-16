@@ -13,14 +13,19 @@ export class AuthService {
   }
 
   registerProvider(data: any): Observable<any> {
-  return this.http.post(`${this.apiUrl}/register-provider`, data);
-}
+    return this.http.post(`${this.apiUrl}/register-provider`, data);
+  }
 
-getServiceCategories(): Observable<string[]> {
-  return this.http.get<string[]>('http://localhost:8080/api/services/categories');
-}
+  getServiceCategories(): Observable<string[]> {
+    return this.http.get<string[]>('http://localhost:8080/api/services/categories');
+  }
 
-login(data: any): Observable<any> {
-  return this.http.post(`${this.apiUrl}/login`, data);
+  login(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, data);
+  }
+
+getProviderId(): number | null {
+  const profile = JSON.parse(localStorage.getItem('providerProfile') || '{}');
+  return profile?.id ?? null;
 }
 }

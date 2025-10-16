@@ -1,0 +1,21 @@
+.tabs {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #eee;
+}
+.tabs a {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #333;
+  border-radius: 5px 5px 0 0;
+  transition: background 0.2s;
+}
+.tabs a.active, .tabs a:hover {
+  background: #f0f0f0;
+  font-weight: bold;
+  color: #1976d2;
+}
+.dashboard-content {
+  padding: 1.5rem 0;
+}

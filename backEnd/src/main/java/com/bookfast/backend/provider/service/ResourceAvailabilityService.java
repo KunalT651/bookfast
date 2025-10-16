@@ -15,7 +15,7 @@ public class ResourceAvailabilityService {
     }
 
     public List<ResourceAvailability> getByResource(Long resourceId) {
-        return repository.findByResourceId(resourceId);
+        return repository.findByServiceResource_Id(resourceId);
     }
 
     public Optional<ResourceAvailability> getById(Long id) {

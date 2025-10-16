@@ -16,8 +16,8 @@ public class ResourceAvailability {
     private String status; // available/booked
 
     @ManyToOne
-    @JoinColumn(name = "resource_id")
-    private ServiceResource resource;
+    @JoinColumn(name = "service_resource_id")
+    private ServiceResource serviceResource;
 
     // Getters and setters
     public Long getId() { return id; }
@@ -35,6 +35,6 @@ public class ResourceAvailability {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public ServiceResource getResource() { return resource; }
-    public void setResource(ServiceResource resource) { this.resource = resource; }
+    public ServiceResource getServiceResource() { return serviceResource; }
+    public void setServiceResource(ServiceResource serviceResource) { this.serviceResource = serviceResource; }
 }

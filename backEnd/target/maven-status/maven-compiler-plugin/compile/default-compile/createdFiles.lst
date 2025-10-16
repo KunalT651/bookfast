@@ -19,6 +19,7 @@ com\bookfast\backend\repository\DemoFormRepository.class
 com\bookfast\backend\BackendApplication.class
 com\bookfast\backend\common\dto\ServiceCategoryDto.class
 com\bookfast\backend\common\repository\ProviderProfileRepository.class
+com\bookfast\backend\common\auth\service\JwtAuthenticationFilter.class
 com\bookfast\backend\common\config\SendGridConfig.class
 com\bookfast\backend\common\dto\RegisterProviderRequest.class
 com\bookfast\backend\common\model\Role.class
@@ -40,3 +41,4 @@ com\bookfast\backend\admin\model\ServiceCategory.class
 com\bookfast\backend\common\exception\InvalidCredentialsException.class
 com\bookfast\backend\common\util\PasswordUtil.class
 com\bookfast\backend\model\DemoForm.class
+com\bookfast\backend\provider\controller\ProviderProfileController.class

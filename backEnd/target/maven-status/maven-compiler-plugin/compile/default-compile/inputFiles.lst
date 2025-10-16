@@ -5,6 +5,7 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\adm
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\BackendApplication.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\auth\controller\AuthController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\auth\service\AuthService.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\auth\service\JwtAuthenticationFilter.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\auth\service\JwtService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\config\CorsConfig.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\config\SecurityConfig.java
@@ -30,6 +31,7 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\com
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\util\PasswordUtil.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\controller\DemoFormController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\model\DemoForm.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\controller\ProviderProfileController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\controller\ResourceAvailabilityController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\controller\ServiceResourceController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\model\ResourceAvailability.java

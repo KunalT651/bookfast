@@ -1,13 +1,40 @@
-<div>
-  <h2>Your Resources</h2>
-  <ul>
-    @for (resource of resources; track resource.id) {
-      <li (click)="selectResource(resource)">
-        {{ resource.name }} - {{ resource.specialization }}
-      </li>
-    }
-  </ul>
-  @if (selectedResource) {
-    <app-resource-availability [resourceId]="selectedResource.id"></app-resource-availability>
-  }
+<div class="resources-header">
+  <h2>Manage Resources</h2>
+  <button (click)="openForm()">+ Add Resource</button>
+</div>
+
+<div class="resource-form-modal" *ngIf="showForm">
+  <form [formGroup]="resourceForm" (ngSubmit)="addResource()">
+    <h3>Add New Resource</h3>
+    <label>Name: <input formControlName="name" required></label>
+    <label>Address: <input formControlName="address"></label>
+    <label>Description: <textarea formControlName="description"></textarea></label>
+    <label>Tags (comma separated): <input formControlName="tags"></label>
+    <label>Price: <input type="number" formControlName="price"></label>
+    <label>Experience (years): <input type="number" formControlName="experienceYears"></label>
+    <label>Phone: <input formControlName="phone"></label>
+    <label>Email: <input formControlName="email"></label>
+    <label>Specialization: <input formControlName="specialization"></label>
+    <label>Status: <input formControlName="status"></label>
+    <label>Image URL: <input formControlName="imageUrl"></label>
+    <div class="form-actions">
+      <button type="submit">Save</button>
+      <button type="button" (click)="closeForm()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<div class="resource-cards">
+  <div class="resource-card" *ngFor="let resource of resources">
+    <img *ngIf="resource.imageUrl" [src]="resource.imageUrl" alt="{{resource.name}}" />
+    <h3>{{ resource.name }}</h3>
+    <p>{{ resource.description }}</p>
+    <div class="tags">
+      <span *ngFor="let tag of resource.tags" class="tag">{{ tag }}</span>
+    </div>
+    <div><strong>Price:</strong> ₹{{ resource.price }}</div>
+    <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
+    <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
+    <div><strong>Address:</strong> {{ resource.address }}</div>
+  </div>
 </div>

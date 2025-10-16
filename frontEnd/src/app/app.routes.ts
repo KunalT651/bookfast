@@ -12,18 +12,21 @@ import { ProviderDashboardComponent } from './features/provider/components/dashb
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'register/provider', component: RegisterProviderComponent },
-  // ...other routes...
-  { path: '', redirectTo: 'register', pathMatch: 'full' }, // Make register the default page
+  { path: '', redirectTo: 'register', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
 
-    { path: 'admin/dashboard', component: DashboardComponent },
+  { path: 'admin/dashboard', component: DashboardComponent },
   { path: 'admin/services', component: ServiceCategoriesComponent },
   { path: 'admin/providers', component: ProvidersComponent },
-    { path: 'provider/resources', component: ResourcesComponent },
-    { path: 'provider/dashboard', component: ProviderDashboardComponent },
-  
-    // { path: 'admin/bookings', component: BookingsComponent },
-  // { path: 'admin/notifications', component: NotificationsComponent },
-  // { path: 'admin/analytics', component: AnalyticsComponent },
-  // { path: 'admin/settings', component: SettingsComponent },
+
+  {
+    path: 'provider/dashboard',
+    component: ProviderDashboardComponent,
+    children: [
+      { path: '', redirectTo: 'resources', pathMatch: 'full' },
+      { path: 'resources', component: ResourcesComponent },
+      // ...other child routes
+    ]
+  }
+  // ...other routes...
 ];

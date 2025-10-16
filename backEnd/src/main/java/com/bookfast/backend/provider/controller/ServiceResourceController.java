@@ -1,5 +1,6 @@
 package com.bookfast.backend.provider.controller;
 
+import com.bookfast.backend.common.dto.ServiceResourceDto;
 import com.bookfast.backend.provider.model.ServiceResource;
 import com.bookfast.backend.provider.service.ServiceResourceService;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +25,10 @@ public class ServiceResourceController {
         return service.getById(id).orElse(null);
     }
 
-    @PostMapping
-    public ServiceResource createResource(@RequestBody ServiceResource resource) {
-        return service.save(resource);
-    }
+@PostMapping
+public ServiceResource createResource(@RequestBody ServiceResourceDto dto) {
+    return service.createResourceFromDto(dto);
+}
 
     @PutMapping("/{id}")
     public ServiceResource updateResource(@PathVariable Long id, @RequestBody ServiceResource resource) {
