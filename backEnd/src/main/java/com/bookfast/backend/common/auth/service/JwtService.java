@@ -2,10 +2,8 @@ package com.bookfast.backend.common.auth.service;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,30 +14,51 @@ import java.util.List;
 public class JwtService {
     @Value("${jwt.secret}")
     private String jwtSecret;
-    private final long jwtExpirationMs = 86400000; // 1 day
+    private final long jwtExpirationMs = 7 * 24 * 60 * 60 * 1000; // 7 days
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-public String generateToken(String email, String role) {
-    Map<String, Object> claims = new HashMap<>();
-    claims.put("role", role);
-    claims.put("authorities", List.of("ROLE_" + role)); // <-- Add authorities claim
+    public String generateToken(String email, String role) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+        claims.put("authorities", List.of("ROLE_" + role));
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(getSigningKey())
+                .compact();
+    }
 
-    return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(email)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-            .signWith(getSigningKey())
-            .compact();
-}
-
-    public Jws<Claims> validateToken(String token) {
-        return Jwts.parserBuilder()
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public String extractUsername(String token) {
+        Claims claims = Jwts.parserBuilder()
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+        return claims.getSubject();
+    }
+
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
     }
 }

@@ -10,10 +10,10 @@ export class DemoFormService {
   constructor(private http: HttpClient) {}
 
   save(form: DemoForm): Observable<DemoForm> {
-    return this.http.post<DemoForm>(this.apiUrl, form);
+    return this.http.post<DemoForm>(this.apiUrl, form, { withCredentials: true });
   }
 
   getAll(): Observable<DemoForm[]> {
-    return this.http.get<DemoForm[]>(this.apiUrl);
+    return this.http.get<DemoForm[]>(this.apiUrl, { withCredentials: true });
   }
 }

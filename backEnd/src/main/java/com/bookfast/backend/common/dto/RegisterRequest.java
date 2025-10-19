@@ -5,7 +5,7 @@ public class RegisterRequest {
     public String firstName;
     public String lastName;
     public String email;
-    public Role role;
+    public String role;
     public String password;
     public String confirmPassword;
 

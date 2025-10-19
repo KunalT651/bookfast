@@ -3,7 +3,6 @@ package com.bookfast.backend.provider.controller;
 import com.bookfast.backend.provider.model.ResourceAvailability;
 import com.bookfast.backend.provider.service.ResourceAvailabilityService;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/provider/availabilities")
@@ -14,10 +13,6 @@ public class ResourceAvailabilityController {
         this.service = service;
     }
 
-    @GetMapping("/resource/{resourceId}")
-    public List<ResourceAvailability> getAvailabilities(@PathVariable Long resourceId) {
-        return service.getByResource(resourceId);
-    }
 
     @GetMapping("/{id}")
     public ResourceAvailability getAvailability(@PathVariable Long id) {

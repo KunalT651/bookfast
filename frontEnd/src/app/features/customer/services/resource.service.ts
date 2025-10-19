@@ -1,0 +1,15 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Resource } from '../models/resource.model';
+
+@Injectable({ providedIn: 'root' })
+export class ResourceService {
+  private apiUrl = 'http://localhost:8080/api/resources'; // Adjust endpoint as needed
+
+  constructor(private http: HttpClient) {}
+
+  getResources(): Observable<Resource[]> {
+    return this.http.get<Resource[]>(this.apiUrl, { withCredentials: true });
+  }
+}

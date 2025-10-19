@@ -8,7 +8,12 @@ export class ProviderService {
 
   constructor(private http: HttpClient) {}
 
-getProviderProfileByUserId(userId: number): Observable<any> {
-  return this.http.get<any>(`${this.apiUrl}/user/${userId}`);
-}
+  getProviderProfileByUserId(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/user/${userId}`, { withCredentials: true });
+  }
+
+    getProviderProfileForCurrentUser(): Observable<any> {
+    // Assumes backend endpoint /api/provider/profile/me returns the current provider's profile
+    return this.http.get<any>(`${this.apiUrl}/me`, { withCredentials: true });
+  }
 }

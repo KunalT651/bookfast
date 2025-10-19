@@ -1,0 +1,17 @@
+<div class="modal-backdrop" *ngIf="open">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-icon">📅</span>
+  <h2>Book <span class="modal-resource">{{ resource.name }}</span></h2>
+    </div>
+    <div class="modal-details">
+  <div class="modal-row"><strong>Specialization:</strong> <span>{{ resource.specialization }}</span></div>
+  <div class="modal-row"><strong>Price:</strong> <span class="modal-price">₹{{ resource.price }}</span></div>
+  <div class="modal-row"><strong>Contact:</strong> <span>{{ resource.phone }} | {{ resource.email }}</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="confirm-btn" (click)="onConfirm()">Confirm Booking</button>
+      <button class="close-btn" (click)="onClose()">Cancel</button>
+    </div>
+  </div>
+</div>

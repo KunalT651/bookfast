@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ResourceService } from '../../services/resource.service';
-import { AuthService } from '../../../auth/services/auth.service';
+import { ProviderService } from '../../services/provider.service';
 import { Resource } from '../../models/resource.model';
 
 @Component({
@@ -16,15 +16,15 @@ export class ResourcesComponent implements OnInit {
   resources: Resource[] = [];
   showForm = false;
   resourceForm: FormGroup;
+  providerId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private resourceService: ResourceService,
-    private authService: AuthService
+    private providerService: ProviderService
   ) {
     this.resourceForm = this.fb.group({
       name: [''],
-      address: [''],
       description: [''],
       tags: [''],
       price: [''],
@@ -33,18 +33,25 @@ export class ResourcesComponent implements OnInit {
       email: [''],
       imageUrl: [''],
       specialization: [''],
-      status: ['']
+      status: ['active']
     });
   }
 
   ngOnInit() {
-    this.loadResources();
+    this.loadProviderProfile();
+  }
+
+  loadProviderProfile() {
+    // Assumes backend provides /api/provider/profile/me for current provider
+    this.providerService.getProviderProfileForCurrentUser().subscribe(profile => {
+      this.providerId = profile.id;
+      this.loadResources();
+    });
   }
 
   loadResources() {
-    const providerId = this.authService.getProviderId();
-    if (providerId === null) return;
-    this.resourceService.getResources(providerId).subscribe(res => {
+    if (this.providerId === null) return;
+    this.resourceService.getResources(this.providerId).subscribe(res => {
       this.resources = res;
     });
   }
@@ -59,16 +66,14 @@ export class ResourcesComponent implements OnInit {
   }
 
   addResource() {
-    const providerId = this.authService.getProviderId();
-    if (providerId === null) {
+    if (this.providerId === null) {
       alert('Provider ID not found. Please log in again.');
       return;
     }
     const formValue = this.resourceForm.value;
     const resource: Resource = {
-      providerId,
+      providerId: this.providerId,
       name: formValue.name || '',
-      address: formValue.address || '',
       description: formValue.description || '',
       tags: formValue.tags ? formValue.tags.split(',').map((t: string) => t.trim()) : [],
       price: Number(formValue.price) || 0,
@@ -76,9 +81,8 @@ export class ResourcesComponent implements OnInit {
       phone: formValue.phone || '',
       email: formValue.email || '',
       imageUrl: formValue.imageUrl || '',
-      availability: [],
       specialization: formValue.specialization || '',
-      status: formValue.status || ''
+      status: formValue.status || 'active'
     };
     this.resourceService.createResource(resource).subscribe({
       next: (created) => {

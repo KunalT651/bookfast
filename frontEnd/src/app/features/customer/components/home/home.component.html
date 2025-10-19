@@ -1,0 +1,21 @@
+<div class="home-container">
+  <h2 class="home-title">Find and Book Top Service Providers</h2>
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Search by name, specialization, or tag..."
+    />
+  </div>
+  <div class="resource-grid">
+    <app-resource-card *ngFor="let resource of filteredResources" [resource]="resource"></app-resource-card>
+  </div>
+
+  <app-booking-modal
+    *ngIf="showModal && selectedResource"
+    [resource]="selectedResource"
+    [open]="showModal"
+    (close)="onModalClose()"
+    (confirm)="onModalConfirm($event)"
+  ></app-booking-modal>
+</div>

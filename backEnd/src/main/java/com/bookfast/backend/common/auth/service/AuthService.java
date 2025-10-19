@@ -36,7 +36,8 @@ public class AuthService {
         user.setPassword(PasswordUtil.hash(req.password));
 
         // Lookup Role entity by name (e.g., "CUSTOMER")
-Role    role = roleRepo.findByNameIgnoreCase(req.role.toString());        if (role == null) throw new RuntimeException("Invalid role");
+        Role role = roleRepo.findByNameIgnoreCase(req.role);
+        if (role == null) throw new RuntimeException("Invalid role");
         user.setRole(role);
 
         userRepo.save(user);
@@ -60,9 +61,9 @@ Role    role = roleRepo.findByNameIgnoreCase(req.role.toString());        if (ro
         user.setPassword(PasswordUtil.hash(req.password));
 
         // Lookup Role entity by name (e.g., "PROVIDER")
-Role role = roleRepo.findByNameIgnoreCase(req.getRole());
-if (role == null) throw new RuntimeException("Invalid role");
-user.setRole(role);
+        Role role = roleRepo.findByNameIgnoreCase(req.getRole());
+        if (role == null) throw new RuntimeException("Invalid role");
+        user.setRole(role);
 
         userRepo.save(user);
 
@@ -84,5 +85,9 @@ user.setRole(role);
         }
         String token = jwtService.generateToken(user.getEmail(), user.getRole().getName());
         return new AuthResponse(token, user);
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepo.findByEmail(email).orElse(null);
     }
 }

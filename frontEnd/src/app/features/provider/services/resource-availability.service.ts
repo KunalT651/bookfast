@@ -10,22 +10,22 @@ export class ResourceAvailabilityService {
   constructor(private http: HttpClient) {}
 
   getAvailabilitiesByResource(resourceId: number): Observable<ResourceAvailability[]> {
-    return this.http.get<ResourceAvailability[]>(`${this.apiUrl}/resource/${resourceId}`);
+    return this.http.get<ResourceAvailability[]>(`${this.apiUrl}/resource/${resourceId}`, { withCredentials: true });
   }
 
   getAvailability(id: number): Observable<ResourceAvailability> {
-    return this.http.get<ResourceAvailability>(`${this.apiUrl}/${id}`);
+    return this.http.get<ResourceAvailability>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   createAvailability(availability: ResourceAvailability): Observable<ResourceAvailability> {
-    return this.http.post<ResourceAvailability>(this.apiUrl, availability);
+    return this.http.post<ResourceAvailability>(this.apiUrl, availability, { withCredentials: true });
   }
 
   updateAvailability(id: number, availability: ResourceAvailability): Observable<ResourceAvailability> {
-    return this.http.put<ResourceAvailability>(`${this.apiUrl}/${id}`, availability);
+    return this.http.put<ResourceAvailability>(`${this.apiUrl}/${id}`, availability, { withCredentials: true });
   }
 
   deleteAvailability(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }

@@ -35,11 +35,11 @@ onSubmit() {
   this.submitted = true;
   if (this.registerForm.invalid) return;
 
-  // Add role: 'CUSTOMER' to the payload
-  const payload = {
-    ...this.registerForm.value,
-    role: 'CUSTOMER'
-  };
+  // Send role as an object, not a string
+const payload = {
+  ...this.registerForm.value,
+  role: 'CUSTOMER'
+};
 
   this.authService.registerCustomer(payload).subscribe({
     next: () => {

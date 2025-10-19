@@ -1,4 +1,4 @@
-import { AvailabilitySlot, Review } from './resource.model'; // Adjust import if needed
+import { Review } from './resource.model';
 
 export interface ServiceResource {
   id?: number;
@@ -9,6 +9,6 @@ export interface ServiceResource {
   tags: string[];
   rating?: number;
   reviews?: Review[];
-  availability: AvailabilitySlot[];
+  // availability: AvailabilitySlot[]; // Removed, type not defined
   imageUrl?: string;
 }

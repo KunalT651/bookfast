@@ -10,22 +10,22 @@ export class ServiceResourceService {
   constructor(private http: HttpClient) {}
 
   getResourcesByProvider(providerId: number): Observable<ServiceResource[]> {
-    return this.http.get<ServiceResource[]>(`${this.apiUrl}/provider/${providerId}`);
+    return this.http.get<ServiceResource[]>(`${this.apiUrl}/provider/${providerId}`, { withCredentials: true });
   }
 
   getResource(id: number): Observable<ServiceResource> {
-    return this.http.get<ServiceResource>(`${this.apiUrl}/${id}`);
+    return this.http.get<ServiceResource>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   createResource(resource: ServiceResource): Observable<ServiceResource> {
-    return this.http.post<ServiceResource>(this.apiUrl, resource);
+    return this.http.post<ServiceResource>(this.apiUrl, resource, { withCredentials: true });
   }
 
   updateResource(id: number, resource: ServiceResource): Observable<ServiceResource> {
-    return this.http.put<ServiceResource>(`${this.apiUrl}/${id}`, resource);
+    return this.http.put<ServiceResource>(`${this.apiUrl}/${id}`, resource, { withCredentials: true });
   }
 
   deleteResource(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }

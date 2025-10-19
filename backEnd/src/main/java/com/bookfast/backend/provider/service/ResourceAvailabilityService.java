@@ -3,7 +3,6 @@ package com.bookfast.backend.provider.service;
 import com.bookfast.backend.provider.model.ResourceAvailability;
 import com.bookfast.backend.provider.repository.ResourceAvailabilityRepository;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,9 +13,6 @@ public class ResourceAvailabilityService {
         this.repository = repository;
     }
 
-    public List<ResourceAvailability> getByResource(Long resourceId) {
-        return repository.findByServiceResource_Id(resourceId);
-    }
 
     public Optional<ResourceAvailability> getById(Long id) {
         return repository.findById(id);

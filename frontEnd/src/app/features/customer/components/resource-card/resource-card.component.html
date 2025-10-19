@@ -1,0 +1,25 @@
+<div class="resource-card">
+  <img *ngIf="resource.imageUrl" [src]="resource.imageUrl" alt="{{resource.name}}" />
+  <h3>{{ resource.name }}</h3>
+  <p>{{ resource.description }}</p>
+  <div><strong>Specialization:</strong> {{ resource.specialization }}</div>
+  <div><strong>Status:</strong> {{ resource.status }}</div>
+  <div><strong>Price:</strong> ₹{{ resource.price }}</div>
+  <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
+  <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
+  <div class="tags">
+    <span *ngFor="let tag of resource.tags" class="tag">{{ tag }}</span>
+  </div>
+  <div><strong>Rating:</strong> {{ resource.rating || 'No ratings yet' }}</div>
+  <div *ngIf="resource.reviews?.length">
+    <strong>Reviews:</strong>
+    <ul>
+      <li *ngFor="let review of resource.reviews">
+        <span>{{ review.customerName }} ({{ review.rating }}/5):</span>
+        <span>{{ review.comment }}</span>
+        <span style="font-size:0.8em;color:#888;">{{ review.date }}</span>
+      </li>
+    </ul>
+  </div>
+  <button (click)="onBook()">Book</button>
+</div>

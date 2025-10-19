@@ -7,7 +7,6 @@
   <form [formGroup]="resourceForm" (ngSubmit)="addResource()">
     <h3>Add New Resource</h3>
     <label>Name: <input formControlName="name" required></label>
-    <label>Address: <input formControlName="address"></label>
     <label>Description: <textarea formControlName="description"></textarea></label>
     <label>Tags (comma separated): <input formControlName="tags"></label>
     <label>Price: <input type="number" formControlName="price"></label>
@@ -35,6 +34,7 @@
     <div><strong>Price:</strong> ₹{{ resource.price }}</div>
     <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
     <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
-    <div><strong>Address:</strong> {{ resource.address }}</div>
+    <div><strong>Specialization:</strong> {{ resource.specialization }}</div>
+    <div><strong>Status:</strong> {{ resource.status }}</div>
   </div>
 </div>

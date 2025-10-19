@@ -9,10 +9,9 @@ public class User {
     private Long id;
     private String firstName, lastName, email, password;
 
-    // Use @ManyToOne for Role entity, remove @Enumerated
     @ManyToOne
     @JoinColumn(name = "role_id")
-    private Role role;
+    private Role role; // <-- Use Role entity, not String
 
     // Getters and setters
     public Long getId() { return id; }
