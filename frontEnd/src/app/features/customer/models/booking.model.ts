@@ -8,4 +8,9 @@ export interface Booking {
 	status: 'pending' | 'confirmed' | 'cancelled';
 	paymentStatus: 'unpaid' | 'paid';
 	amount?: number;
+	resourceName?: string;
+	providerName?: string;
+	date?: string;
+	startTime?: string;
+	endTime?: string;
 }

@@ -38,7 +38,8 @@ export const routes: Routes = [
       // ...other child routes
     ]
   },
-   { path: 'customer/home', component: HomeComponent },
+  { path: 'customer/home', component: HomeComponent },
+  { path: 'customer/bookings', loadComponent: () => import('./features/customer/components/customer-bookings/customer-bookings.component').then(m => m.CustomerBookingsComponent) },
    { path: 'test-data', component: TestDataComponent },
    { path: 'test-resource', component: TestResourceComponent },
 

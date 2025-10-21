@@ -49,7 +49,16 @@ public class AuthController {
             cookie.setSecure(false); // Set true in production
             cookie.setPath("/");
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-            response.addCookie(cookie);
+            // Standards-compliant SameSite attribute (Servlet 4.0+/Tomcat 9+)
+            StringBuilder cookieHeader = new StringBuilder();
+            cookieHeader.append("jwt=").append(jwt)
+                .append("; Max-Age=").append(7 * 24 * 60 * 60)
+                .append("; Path=/")
+                .append("; HttpOnly")
+                .append("; SameSite=Lax");
+            // Uncomment the next line for production
+            // cookieHeader.append("; Secure");
+            response.setHeader("Set-Cookie", cookieHeader.toString());
             return ResponseEntity.ok(authResponse);
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest().body(new ErrorResponse(ex.getMessage()));

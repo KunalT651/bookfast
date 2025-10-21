@@ -40,7 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 Claims claims = jwtService.parseClaims(token);
                 String username = claims.getSubject();
-                List<String> authorities = claims.get("authorities", List.class);
+        List<?> rawAuthorities = claims.get("authorities", List.class);
+        List<String> authorities = rawAuthorities != null
+            ? rawAuthorities.stream().map(Object::toString).collect(Collectors.toList())
+            : null;
 
                 if (username != null && authorities != null) {
                     var grantedAuthorities = authorities.stream()

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { UserStateService } from '@app/shared/services/user-state.service';
 import { ProviderService } from '../../../provider/services/provider.service';
 import { Router } from '@angular/router';
 import { ServiceCategoryService } from '../../../admin/services/service-category.service';
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private providerService: ProviderService,
-    private router: Router
+    private router: Router,
+    private userState: UserStateService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -47,22 +49,16 @@ export class LoginComponent implements OnInit {
       next: (res: any) => {
         this.success = 'Login successful!';
         this.error = '';
-
-        // Do NOT use localStorage for token/user/profile
-        // Instead, navigate based on role, and fetch user/profile info from backend if needed
+        // Set user state for navbar
+        this.userState.setUser(res.user);
 
         if (res.user.role.name === 'PROVIDER') {
-          // Optionally, fetch provider profile from backend if needed for UI
-          // this.providerService.getProviderProfileByUserId(res.user.id).subscribe(profile => {
-          //   // Use profile in UI as needed
-          //   this.router.navigate(['/provider/dashboard']);
-          // });
           this.router.navigate(['/provider/dashboard']);
         } else if (res.user.role.name === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
         } else if (res.user.role.name === 'CUSTOMER') {
-  this.router.navigate(['/customer/home']); // or your actual customer home route
-} else {
+          this.router.navigate(['/customer/home']);
+        } else {
           this.router.navigate(['/']);
         }
       },

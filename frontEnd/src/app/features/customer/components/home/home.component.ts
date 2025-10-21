@@ -1,5 +1,6 @@
 // ...existing code...
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ResourceCardComponent } from '../resource-card/resource-card.component';
@@ -38,7 +39,7 @@ export class HomeComponent implements OnInit {
   showModal: boolean = false;
   selectedResource: Resource | null = null;
 
-  constructor(private resourceService: ResourceService) {
+  constructor(private resourceService: ResourceService, private router: Router) {
     // Listen for booking event from resource card
     window.addEventListener('book', (e: any) => {
       this.onBookResource(e.detail);
@@ -84,11 +85,10 @@ export class HomeComponent implements OnInit {
     this.selectedResource = event.resource;
     this.bookingSlots = event.slots;
     this.showModal = false;
-    // Open booking page in new tab with slot and resource info as query params
-    const slotIds = event.slots.map(s => s.id).join(',');
-    const url = `/booking?resourceId=${event.resource.id}&slotIds=${slotIds}`;
-    window.open(url, '_blank');
-    this.showBookingForm = false;
+  // Use Angular Router navigation to preserve session
+  const slotIds = event.slots.map(s => s.id).join(',');
+  this.router.navigate(['/booking'], { queryParams: { resourceId: event.resource.id, slotIds } });
+  this.showBookingForm = false;
   }
 
   // Watch for searchTerm changes

@@ -1,0 +1,36 @@
+
+.navbar {
+  display: flex;
+  align-items: center;
+  background: #e0f7fa;
+  padding: 0.7rem 1.5rem;
+  border-bottom: 2px solid #b2dfdb;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+}
+.nav-btn {
+  margin-right: 1.2rem;
+  text-decoration: none;
+  color: #00695c;
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: none;
+}
+.nav-btn.active, .nav-btn:focus, .nav-btn:hover {
+  background: #26a69a;
+  color: #fff;
+}
+.logout {
+  background: #ff7043;
+  color: #fff;
+  font-weight: 700;
+}
+.logout:hover {
+  background: #d84315;
+}

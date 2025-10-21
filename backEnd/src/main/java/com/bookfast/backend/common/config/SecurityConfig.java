@@ -2,6 +2,7 @@
 package com.bookfast.backend.common.config;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import com.bookfast.backend.common.auth.service.JwtAuthenticationFilter;
 import com.bookfast.backend.common.auth.service.JwtService;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtService jwtService) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(
+                    "/api/auth/login",
+                    "/api/auth/register",
+                    "/api/auth/register-provider"
+                )
+            )
             .cors(withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/api/categories", "/api/resources", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test/**", "/api/database/**", "/api/test-resource/**", "/api/cleanup/**").permitAll()

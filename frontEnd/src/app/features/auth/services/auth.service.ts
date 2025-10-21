@@ -26,8 +26,18 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    // Call backend to clear cookie
-    return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true });
+    // Send CSRF token from cookie in header
+    const csrfToken = this.getCsrfTokenFromCookie();
+    let options: any = { withCredentials: true };
+    if (csrfToken) {
+      options.headers = { 'X-XSRF-TOKEN': csrfToken };
+    }
+    return this.http.post(`${this.apiUrl}/logout`, {}, options);
+  }
+
+  private getCsrfTokenFromCookie(): string | null {
+    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
   }
 
   getCurrentUser(): Observable<any> {

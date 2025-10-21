@@ -3,7 +3,6 @@ package com.bookfast.backend.common.auth.controller;
 import com.bookfast.backend.common.dto.AuthResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -12,12 +11,16 @@ public class LogoutController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("jwt", "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // Set true in production
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Delete cookie
-        response.addCookie(cookie);
+        // Standards-compliant cookie removal (Servlet 4.0+/Tomcat 9+)
+        StringBuilder cookieHeader = new StringBuilder();
+        cookieHeader.append("jwt=;")
+            .append(" Max-Age=0;")
+            .append(" Path=/;")
+            .append(" HttpOnly;")
+            .append(" SameSite=Lax");
+        // Uncomment the next line for production
+        // cookieHeader.append(" Secure;");
+        response.setHeader("Set-Cookie", cookieHeader.toString());
         return ResponseEntity.ok(new AuthResponse("Logged out"));
     }
 }

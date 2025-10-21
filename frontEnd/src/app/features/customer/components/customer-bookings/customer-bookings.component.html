@@ -1,0 +1,29 @@
+<div class="bookings-container">
+  <h2>My Bookings</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Provider</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Payment</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let booking of bookings" [class.past-booking]="isPastBooking(booking)">
+        <td>{{ booking.resourceName }}</td>
+        <td>{{ booking.providerName }}</td>
+        <td>{{ booking.date }}</td>
+        <td>{{ booking.startTime }} - {{ booking.endTime }}</td>
+        <td>{{ booking.status }}</td>
+        <td>{{ booking.paymentStatus }}</td>
+        <td>
+          <button (click)="deleteBooking(booking.id)" [disabled]="isPastBooking(booking)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

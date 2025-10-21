@@ -1,0 +1,26 @@
+
+body {
+	font-family: 'Segoe UI', Arial, sans-serif;
+	background: #e0f2f1;
+	margin: 0;
+	color: #263238;
+}
+
+h1, h2, h3, h4, h5 {
+	color: #00695c;
+	font-weight: 700;
+	margin-bottom: 0.7em;
+}
+
+a {
+	color: #00897b;
+	text-decoration: none;
+	transition: color 0.2s;
+}
+a:hover {
+	color: #004d40;
+}
+
+button {
+	font-family: inherit;
+}
