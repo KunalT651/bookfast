@@ -6,6 +6,7 @@ com\bookfast\backend\common\auth\controller\AuthController.class
 com\bookfast\backend\common\exception\EmailAlreadyExistsException.class
 com\bookfast\backend\common\auth\service\AuthService.class
 com\bookfast\backend\common\repository\UserRepository.class
+com\bookfast\backend\resource\model\AvailabilitySlot.class
 com\bookfast\backend\provider\controller\ResourceAvailabilityController.class
 com\bookfast\backend\BackendApplication.class
 com\bookfast\backend\common\dto\ServiceCategoryDto.class
@@ -30,6 +31,8 @@ com\bookfast\backend\resource\controller\DatabaseController.class
 com\bookfast\backend\common\config\CorsConfig$1.class
 com\bookfast\backend\common\dto\AuthRequest.class
 com\bookfast\backend\provider\model\ResourceAvailability.class
+com\bookfast\backend\resource\controller\AvailabilitySlotController.class
+com\bookfast\backend\resource\repository\AvailabilitySlotRepository.class
 com\bookfast\backend\common\repository\RoleRepository.class
 com\bookfast\backend\provider\service\ResourceAvailabilityService.class
 com\bookfast\backend\common\auth\service\JwtService.class

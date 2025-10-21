@@ -32,4 +32,9 @@ public class ResourceController {
     public Resource createResource(@RequestBody Resource resource) {
         return service.createResource(resource);
     }
+        // Provider-facing endpoint: returns all resources for a specific provider
+        @GetMapping("/provider/{providerId}")
+        public List<Resource> getResourcesByProvider(@PathVariable Long providerId) {
+            return service.getResourcesByProvider(providerId);
+        }
 }

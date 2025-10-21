@@ -9,8 +9,13 @@
   <div class="modal-row"><strong>Price:</strong> <span class="modal-price">₹{{ resource.price }}</span></div>
   <div class="modal-row"><strong>Contact:</strong> <span>{{ resource.phone }} | {{ resource.email }}</span></div>
     </div>
+    <app-resource-slot-list
+      [resourceId]="resource.id"
+      [showBookButton]="true"
+      [onBookSlot]="onSelectSlot.bind(this)">
+    </app-resource-slot-list>
     <div class="modal-actions">
-      <button class="confirm-btn" (click)="onConfirm()">Confirm Booking</button>
+      <button class="confirm-btn" [disabled]="!selectedSlots.length" (click)="onConfirm()">Book Selected Slots</button>
       <button class="close-btn" (click)="onClose()">Cancel</button>
     </div>
   </div>

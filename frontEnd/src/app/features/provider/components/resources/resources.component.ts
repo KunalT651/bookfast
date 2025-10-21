@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ResourceAvailabilityComponent } from '../resource-availability/resource-availability.component';
+import { ResourceAvailabilityModalComponent } from '../resource-availability-modal/resource-availability-modal.component';
 import { ResourceService } from '../../services/resource.service';
 import { ProviderService } from '../../services/provider.service';
 import { Resource } from '../../models/resource.model';
@@ -8,11 +10,23 @@ import { Resource } from '../../models/resource.model';
 @Component({
   selector: 'app-provider-resources',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ResourceAvailabilityComponent, ResourceAvailabilityModalComponent],
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.component.css']
 })
 export class ResourcesComponent implements OnInit {
+  showAvailabilityModal = false;
+  selectedResource: Resource | null = null;
+
+  openAvailability(resource: Resource) {
+    this.selectedResource = resource;
+    this.showAvailabilityModal = true;
+  }
+
+  closeAvailability() {
+    this.showAvailabilityModal = false;
+    this.selectedResource = null;
+  }
   resources: Resource[] = [];
   showForm = false;
   resourceForm: FormGroup;

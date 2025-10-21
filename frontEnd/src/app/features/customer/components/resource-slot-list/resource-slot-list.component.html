@@ -1,0 +1,16 @@
+<div class="slot-list">
+  <h4>Available Slots</h4>
+  <div *ngIf="loading">Loading slots...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <ul *ngIf="!loading && slots.length">
+    <li *ngFor="let slot of slots">
+      <input type="checkbox"
+             [checked]="selectedSlotIds.includes(slot.id ?? -1)"
+             (change)="toggleSlotSelection(slot, $event.target.checked)" />
+      <span [ngClass]="{ 'selected-slot': selectedSlotIds.includes(slot.id ?? -1) }">
+        {{ slot.dayOfWeek }}: {{ slot.startTime }} - {{ slot.endTime }}
+      </span>
+    </li>
+  </ul>
+  <div *ngIf="!loading && !slots.length && !error">No slots available.</div>
+</div>

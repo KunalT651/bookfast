@@ -10,7 +10,11 @@ public class Booking {
     private Long id;
 
     private Long customerId;
+    private String customerName;
+    private String customerEmail;
+    private String customerPhone;
     private String status; // e.g. pending, confirmed, cancelled
+    private String paymentStatus; // unpaid, paid
 
     @ManyToOne
     @JoinColumn(name = "resource_id")
@@ -25,6 +29,18 @@ public class Booking {
 
     public Long getCustomerId() { return customerId; }
     public void setCustomerId(Long customerId) { this.customerId = customerId; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getCustomerEmail() { return customerEmail; }
+    public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+
+    public String getCustomerPhone() { return customerPhone; }
+    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
+
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
 
     public Resource getResource() { return resource; }
     public void setResource(Resource resource) { this.resource = resource; }

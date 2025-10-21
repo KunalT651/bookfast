@@ -5,7 +5,7 @@ import { Resource } from '../models/resource.model';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceService {
-  private apiUrl = 'http://localhost:8080/api/provider/resources';
+  private apiUrl = 'http://localhost:8080/api/resources';
 
   constructor(private http: HttpClient) {}
 

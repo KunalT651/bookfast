@@ -1,8 +1,8 @@
 export interface ResourceAvailability {
   id?: number;
-  date: string; // ISO date string
-  startTime: string; // "HH:mm:ss"
-  endTime: string;   // "HH:mm:ss"
-  status: string;    // e.g., 'available', 'booked'
   resourceId: number;
+  date: string; // 'YYYY-MM-DD'
+  dayOfWeek: string; // e.g., 'MONDAY', 'TUESDAY', etc.
+  startTime: string; // '09:00'
+  endTime: string;   // '10:00'
 }

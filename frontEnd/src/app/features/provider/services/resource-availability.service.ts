@@ -5,7 +5,7 @@ import { ResourceAvailability } from '../models/resource-availability.model';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceAvailabilityService {
-  private apiUrl = 'http://localhost:8080/api/provider/availabilities';
+  private apiUrl = 'http://localhost:8080/api/availability-slots';
 
   constructor(private http: HttpClient) {}
 
@@ -18,10 +18,12 @@ export class ResourceAvailabilityService {
   }
 
   createAvailability(availability: ResourceAvailability): Observable<ResourceAvailability> {
-    return this.http.post<ResourceAvailability>(this.apiUrl, availability, { withCredentials: true });
+    // Must provide resourceId for slot creation
+    return this.http.post<ResourceAvailability>(`${this.apiUrl}/resource/${availability.resourceId}`, availability, { withCredentials: true });
   }
 
   updateAvailability(id: number, availability: ResourceAvailability): Observable<ResourceAvailability> {
+    // If you want to support slot update, use this endpoint (not implemented in backend yet)
     return this.http.put<ResourceAvailability>(`${this.apiUrl}/${id}`, availability, { withCredentials: true });
   }
 

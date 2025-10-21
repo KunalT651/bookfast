@@ -1,16 +1,13 @@
+
 package com.bookfast.backend.common.auth.controller;
 
-import com.bookfast.backend.common.dto.AuthResponse;
-import com.bookfast.backend.common.dto.RegisterRequest;
-import com.bookfast.backend.common.model.Role;
 import com.bookfast.backend.common.model.User;
+import com.bookfast.backend.common.model.Role;
 import com.bookfast.backend.common.repository.RoleRepository;
 import com.bookfast.backend.common.repository.UserRepository;
 import com.bookfast.backend.common.util.PasswordUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController

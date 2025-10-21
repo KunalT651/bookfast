@@ -1,3 +1,8 @@
+  <app-payment
+    *ngIf="showPaymentForm && paymentBooking"
+    [booking]="paymentBooking"
+    (paymentSuccess)="onPaymentSuccess()"
+  ></app-payment>
 <div class="home-container">
   <h2 class="home-title">Find and Book Top Service Providers</h2>
   <div class="search-bar">
@@ -18,4 +23,11 @@
     (close)="onModalClose()"
     (confirm)="onModalConfirm($event)"
   ></app-booking-modal>
+
+  <app-booking
+    *ngIf="showBookingForm && selectedResource && bookingSlots && bookingSlots.length"
+    [resourceId]="selectedResource.id"
+    [slots]="bookingSlots"
+    (payment)="onPayment($event)"
+  ></app-booking>
 </div>

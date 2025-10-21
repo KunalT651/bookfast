@@ -1,0 +1,8 @@
+<div class="payment-form">
+  <h2>Payment</h2>
+  <p>Amount: ₹{{ booking?.amount || 'N/A' }}</p>
+  <button (click)="pay()">Pay Now</button>
+  <div *ngIf="booking?.paymentStatus === 'paid'">
+    <p>Payment successful!</p>
+  </div>
+</div>

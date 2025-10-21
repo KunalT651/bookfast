@@ -15,6 +15,22 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
   availabilities: ResourceAvailability[] = [];
   selectedAvailability?: ResourceAvailability;
   form: Partial<ResourceAvailability> = {};
+  slotDate: string = '';
+  onDateChange(dateStr: string) {
+    this.slotDate = dateStr;
+    this.form.date = dateStr;
+    if (dateStr) {
+      const date = new Date(dateStr);
+      const day = date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+      this.form.dayOfWeek = day;
+    } else {
+      this.form.dayOfWeek = '';
+      this.form.date = '';
+    }
+  }
+  daysOfWeek = [
+    'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'
+  ];
   error = '';
   success = '';
 
@@ -53,7 +69,7 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
   submit() {
     this.error = '';
     this.success = '';
-    if (!this.form.date || !this.form.startTime || !this.form.endTime || !this.form.status) {
+    if (!this.form.date || !this.form.dayOfWeek || !this.form.startTime || !this.form.endTime) {
       this.error = 'All fields are required';
       return;
     }
@@ -69,7 +85,7 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
     if (this.selectedAvailability && this.selectedAvailability.id) {
       this.availabilityService.updateAvailability(this.selectedAvailability.id, payload).subscribe({
         next: () => {
-          this.success = 'Availability updated!';
+          this.success = 'Slot updated!';
           this.clearForm();
           this.loadAvailabilities();
         },
@@ -78,7 +94,7 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
     } else {
       this.availabilityService.createAvailability(payload).subscribe({
         next: () => {
-          this.success = 'Availability added!';
+          this.success = 'Slot added!';
           this.clearForm();
           this.loadAvailabilities();
         },

@@ -23,18 +23,24 @@
   </form>
 </div>
 
-<div class="resource-cards">
-  <div class="resource-card" *ngFor="let resource of resources">
-    <img *ngIf="resource.imageUrl" [src]="resource.imageUrl" alt="{{resource.name}}" />
-    <h3>{{ resource.name }}</h3>
-    <p>{{ resource.description }}</p>
-    <div class="tags">
-      <span *ngFor="let tag of resource.tags" class="tag">{{ tag }}</span>
+  <div class="resource-cards">
+    <div class="resource-card" *ngFor="let resource of resources">
+      <img *ngIf="resource.imageUrl" [src]="resource.imageUrl" alt="{{resource.name}}" />
+      <h3>{{ resource.name }}</h3>
+      <p>{{ resource.description }}</p>
+      <div class="tags">
+        <span *ngFor="let tag of resource.tags" class="tag">{{ tag }}</span>
+      </div>
+      <div><strong>Price:</strong> ₹{{ resource.price }}</div>
+      <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
+      <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
+      <div><strong>Specialization:</strong> {{ resource.specialization }}</div>
+      <div><strong>Status:</strong> {{ resource.status }}</div>
+      <button class="availability-btn" (click)="openAvailability(resource)">Availability</button>
     </div>
-    <div><strong>Price:</strong> ₹{{ resource.price }}</div>
-    <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
-    <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
-    <div><strong>Specialization:</strong> {{ resource.specialization }}</div>
-    <div><strong>Status:</strong> {{ resource.status }}</div>
   </div>
-</div>
+
+  <app-resource-availability-modal
+    *ngIf="showAvailabilityModal && selectedResource && selectedResource.id !== undefined"
+  [resourceId]="selectedResource.id || 0"
+  ></app-resource-availability-modal>

@@ -12,6 +12,7 @@ import { PermanentCleanupComponent } from './features/admin/components/permanent
 import { ResourcesComponent } from './features/provider/components/resources/resources.component';
 import { ProviderDashboardComponent } from './features/provider/components/dashboard/dashboard.component';
 import { HomeComponent } from './features/customer/components/home/home.component';
+import { BookingComponent } from './features/customer/components/booking/booking.component';
 import { TestDataComponent } from './features/customer/components/test-data/test-data.component';
 import { TestResourceComponent } from './features/customer/components/test-resource/test-resource.component';
 
@@ -40,6 +41,8 @@ export const routes: Routes = [
    { path: 'customer/home', component: HomeComponent },
    { path: 'test-data', component: TestDataComponent },
    { path: 'test-resource', component: TestResourceComponent },
+
+  { path: 'booking', component: BookingComponent },
 
   // ...other routes...
 ];
