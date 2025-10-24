@@ -33,3 +33,52 @@ button {
   padding: 0.5rem 1rem;
   cursor: pointer;
 }
+
+/* Modal Backdrop and Modal Styles for Reviews */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  width: 400px;
+  max-width: 90vw;
+  padding: 1.5rem;
+  position: relative;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #888;
+}
+.modal-content {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+.review-comment {
+  margin-bottom: 0.5rem;
+}

@@ -4,22 +4,57 @@
   <p>{{ resource.description }}</p>
   <div><strong>Specialization:</strong> {{ resource.specialization }}</div>
   <div><strong>Status:</strong> {{ resource.status }}</div>
-  <div><strong>Price:</strong> ₹{{ resource.price }}</div>
+  <div><strong>Price:</strong> ${{ resource.price }}</div>
   <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
   <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
   <div class="tags">
     <span *ngFor="let tag of resource.tags" class="tag">{{ tag }}</span>
   </div>
-  <div><strong>Rating:</strong> {{ resource.rating || 'No ratings yet' }}</div>
-  <div *ngIf="resource.reviews?.length">
-    <strong>Reviews:</strong>
-    <ul>
-      <li *ngFor="let review of resource.reviews">
-        <span>{{ review.customerName }} ({{ review.rating }}/5):</span>
-        <span>{{ review.comment }}</span>
-        <span style="font-size:0.8em;color:#888;">{{ review.date }}</span>
-      </li>
-    </ul>
+  <div class="stars">
+    <ng-container *ngFor="let star of [1,2,3,4,5]">
+      <span [class.filled]="star <= averageRating">&#9733;</span>
+      <span [class.empty]="star > averageRating">&#9734;</span>
+    </ng-container>
+    <span class="rating-value">({{ averageRating | number:'1.1-1' }})</span>
+    <button (click)="openReviews()">Check Reviews</button>
   </div>
+  <!-- Reviews are only shown in the modal popup -->
   <button (click)="onBook()">Book</button>
+
+
+<!-- Reviews Modal with dedicated backdrop/overlay -->
+@if (showReviewsModal) {
+  <div class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Reviews for {{ resource.name }}</h3>
+        <button class="close-btn" (click)="closeReviewsModal()">&times;</button>
+      </div>
+      <div class="modal-content">
+        @if (reviews.length === 0) {
+          <div>No reviews yet.</div>
+        }
+        @for (review of reviews; track review.id) {
+          <div class="review-header">
+            <span class="review-customer">{{ review.customerName }}</span>
+            <span class="review-rating">{{ review.rating }} &#9733;</span>
+            <span class="review-date">{{ review.date | date:'short' }}</span>
+          </div>
+          <div class="review-comment">{{ review.comment }}</div>
+        }
+        <hr>
+        <h4>Add Your Review</h4>
+        <form #reviewForm="ngForm" (ngSubmit)="submitReview()">
+          <input type="text" name="customerName" [(ngModel)]="newReview.customerName" placeholder="Your Name" required>
+          <select name="rating" [(ngModel)]="newReview.rating" required>
+            <option value="">Rating</option>
+            <option *ngFor="let r of [1,2,3,4,5]" [value]="r">{{ r }}</option>
+          </select>
+          <textarea name="comment" [(ngModel)]="newReview.comment" placeholder="Your Review" required></textarea>
+          <button type="submit" [disabled]="reviewForm.invalid">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+}
 </div>

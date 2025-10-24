@@ -1,0 +1,15 @@
+<div class="reviews-header">
+  <h2>Manage Reviews</h2>
+  <input type="text" [(ngModel)]="searchTerm" placeholder="Search resource by name..." />
+  <div class="resource-list">
+    <button *ngFor="let resource of searchResources()" (click)="selectResource(resource)">{{ resource.name }}</button>
+  </div>
+</div>
+<div *ngIf="selectedResource">
+  <h3>Reviews for {{ selectedResource.name }}</h3>
+  <ul>
+    <li *ngFor="let review of reviews">
+      Review #{{ review.id }} - {{ review.customerName }} - {{ review.comment }}
+    </li>
+  </ul>
+</div>

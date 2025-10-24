@@ -1,51 +1,84 @@
 
 package com.bookfast.backend.provider.controller;
 
-import com.bookfast.backend.common.auth.service.JwtService;
-
-import com.bookfast.backend.common.model.ProviderProfile;
-import com.bookfast.backend.common.repository.ProviderProfileRepository;
+import com.bookfast.backend.common.auth.service.AuthService;
+import com.bookfast.backend.common.model.User;
+import com.bookfast.backend.common.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/provider")
-public class ProviderProfileController {
-    // Endpoint to get current provider profile using JWT
-    private final JwtService jwtService;
+import java.util.Map;
 
-    public ProviderProfileController(ProviderProfileRepository providerProfileRepository, JwtService jwtService) {
-        this.providerProfileRepository = providerProfileRepository;
-        this.jwtService = jwtService;
+@RestController
+@RequestMapping("/api/provider/profile")
+public class ProviderProfileController {
+
+    private final UserRepository userRepository;
+    private final AuthService authService;
+
+    public ProviderProfileController(UserRepository userRepository, AuthService authService) {
+        this.userRepository = userRepository;
+        this.authService = authService;
     }
 
-    @GetMapping("/profile/me")
-    public ResponseEntity<ProviderProfile> getMyProfile(@CookieValue(value = "jwt", required = false) String jwt) {
-        if (jwt == null || !jwtService.validateToken(jwt)) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        String email = jwtService.extractUsername(jwt);
-        if (email == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        // Find user by email
-        ProviderProfile profile = providerProfileRepository.findAll().stream()
-            .filter(p -> p.getUser() != null && email.equals(p.getUser().getEmail()))
-            .findFirst().orElse(null);
-        if (profile == null) {
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // This is the email
+
+        User currentUser = authService.getUserByEmail(username);
+
+        if (currentUser == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(profile);
+
+        return ResponseEntity.ok(Map.of(
+                "id", currentUser.getId(),
+                "firstName", currentUser.getFirstName(),
+                "lastName", currentUser.getLastName(),
+                "email", currentUser.getEmail(),
+                "organizationName", currentUser.getOrganizationName(),
+                "serviceCategory", currentUser.getServiceCategory()
+        ));
     }
 
-    private final ProviderProfileRepository providerProfileRepository;
+    @PutMapping("/me")
+    public ResponseEntity<?> updateMyProfile(@RequestBody Map<String, String> updates) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // This is the email
 
-    // ...existing code...
+        User currentUser = authService.getUserByEmail(username);
 
-    @GetMapping("/profile/user/{userId}")
-    public ResponseEntity<ProviderProfile> getByUserId(@PathVariable Long userId) {
-        return providerProfileRepository.findByUserId(userId)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        if (currentUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Update fields if provided
+        if (updates.containsKey("firstName")) {
+            currentUser.setFirstName(updates.get("firstName"));
+        }
+        if (updates.containsKey("lastName")) {
+            currentUser.setLastName(updates.get("lastName"));
+        }
+        // Email update might require re-authentication or additional verification logic
+        // For now, let's assume email is not directly updatable via this endpoint easily
+        // or requires more complex logic (e.g., re-verifying new email)
+        // if (updates.containsKey("email")) {
+        //     currentUser.setEmail(updates.get("email"));
+        // }
+
+        userRepository.save(currentUser);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Profile updated successfully",
+                "id", currentUser.getId(),
+                "firstName", currentUser.getFirstName(),
+                "lastName", currentUser.getLastName(),
+                "email", currentUser.getEmail(),
+                "organizationName", currentUser.getOrganizationName(),
+                "serviceCategory", currentUser.getServiceCategory()
+        ));
     }
 }

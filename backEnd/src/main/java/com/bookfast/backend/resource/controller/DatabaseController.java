@@ -21,6 +21,19 @@ public class DatabaseController {
         this.resourceRepository = resourceRepository;
     }
 
+    @PostMapping("/clean-all-resources")
+    public ResponseEntity<?> cleanAllResources() {
+        try {
+            resourceRepository.deleteAll();
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "All resources cleaned successfully",
+                "resources_deleted", "All"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 
     @PostMapping("/clean-customer-resources")
     public ResponseEntity<?> cleanCustomerResources() {
@@ -36,7 +49,6 @@ public class DatabaseController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
-
 
     @PostMapping("/create-fresh-customer-resources")
     public ResponseEntity<?> createFreshCustomerResources() {
@@ -90,7 +102,19 @@ public class DatabaseController {
         }
     }
 
-    // All ServiceResource logic removed. Only Resource and ResourceRepository remain.
+    @GetMapping("/status")
+    public ResponseEntity<?> getDatabaseStatus() {
+        try {
+            long customerResourceCount = resourceRepository.count();
+            
+            return ResponseEntity.ok(Map.of(
+                "customer_resources_count", customerResourceCount,
+                "total_resources", customerResourceCount
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 
     private Resource createSampleResource(Long providerId, String name, String specialization, 
                                         String description, Double price, Integer experienceYears,

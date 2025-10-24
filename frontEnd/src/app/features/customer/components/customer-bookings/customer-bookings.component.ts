@@ -28,7 +28,8 @@ export class CustomerBookingsComponent implements OnInit {
             providerName: b.resource?.providerId ? 'Provider #' + b.resource.providerId : '',
             date: b.startTime ? new Date(b.startTime).toLocaleDateString() : '',
             startTime: b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
-            endTime: b.endTime ? new Date(b.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+            endTime: b.endTime ? new Date(b.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+            finalAmount: b.finalAmount || b.amount || 0
           }));
         });
       }
@@ -40,6 +41,12 @@ export class CustomerBookingsComponent implements OnInit {
       this.bookings = this.bookings.filter(b => b.id !== bookingId);
     });
   }
+
+    cancelBooking(bookingId: number) {
+      this.bookingService.cancelBooking(bookingId).subscribe((updated: Booking) => {
+        this.bookings = this.bookings.map(b => b.id === bookingId ? { ...b, status: updated.status } : b);
+      });
+    }
 
   isPastBooking(booking: Booking): boolean {
   return new Date(booking.endTime || '') < new Date();

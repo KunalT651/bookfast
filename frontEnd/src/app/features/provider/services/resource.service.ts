@@ -13,6 +13,11 @@ export class ResourceService {
     return this.http.get<Resource[]>(`${this.apiUrl}/provider/${providerId}`, { withCredentials: true });
   }
 
+  getResourcesForCurrentProvider(): Observable<Resource[]> {
+    // Assumes backend endpoint /api/resources/me returns resources for logged-in provider
+    return this.http.get<Resource[]>(`${this.apiUrl}/me`, { withCredentials: true });
+  }
+
   getResource(id: number): Observable<Resource> {
     return this.http.get<Resource>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }

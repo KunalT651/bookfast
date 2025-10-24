@@ -1,0 +1,56 @@
+<div class="my-reviews-container">
+  <h2>My Reviews</h2>
+  @if (loading) {
+    <div>Loading reviews...</div>
+  }
+  @if (!loading && reviews.length === 0) {
+    <div>No reviews found.</div>
+  }
+  @if (!loading && reviews.length) {
+    <table class="reviews-table">
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Rating</th>
+          <th>Review</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (review of reviews; track review.id) {
+          <tr>
+            <td>{{ review.resourceName }}</td>
+            <td>★ {{ review.rating }}</td>
+            <td>{{ review.comment }}</td>
+            <td>{{ review.date | date:'mediumDate' }}</td>
+            <td>
+              <button (click)="onUpdate(review)">Update</button>
+              <button (click)="onDelete(review)">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  <!-- Update Review Modal -->
+  @if (showUpdateModal && editingReview) {
+    <div class="modal-backdrop">
+      <div class="modal">
+        <h3>Edit Review for {{ editingReview.resourceName }}</h3>
+        <form (submit)="submitUpdate(); $event.preventDefault();">
+          <label>Rating:</label>
+          <select [(ngModel)]="updateRating" name="rating">
+            <option *ngFor="let r of [1,2,3,4,5]" [value]="r">{{ r }}</option>
+          </select>
+          <br>
+          <label>Comment:</label>
+          <textarea [(ngModel)]="updateComment" name="comment" rows="3"></textarea>
+          <br>
+          <button type="submit">Save</button>
+          <button type="button" (click)="closeUpdateModal()">Cancel</button>
+        </form>
+      </div>
+    </div>
+  }
+</div>

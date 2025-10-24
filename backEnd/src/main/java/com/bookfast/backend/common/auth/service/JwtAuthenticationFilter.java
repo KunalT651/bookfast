@@ -28,35 +28,52 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String token = null;
-        if (request.getCookies() != null) {
+        // 1. Try Authorization header
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            System.out.println("[JWT] Found token in Authorization header: " + token);
+        }
+        // 2. Fallback to cookie
+        if (token == null && request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {
                     token = cookie.getValue();
+                    System.out.println("[JWT] Found token in cookie: " + token);
                     break;
                 }
             }
         }
-        if (token != null && jwtService.validateToken(token)) {
+        if (token == null) {
+            System.out.println("[JWT] No JWT found in header or cookie. Treating request as unauthenticated.");
+        } else if (!jwtService.validateToken(token)) {
+            System.out.println("[JWT] Invalid or expired JWT token. Treating request as unauthenticated.");
+        } else {
             try {
                 Claims claims = jwtService.parseClaims(token);
                 String username = claims.getSubject();
-        List<?> rawAuthorities = claims.get("authorities", List.class);
-        List<String> authorities = rawAuthorities != null
-            ? rawAuthorities.stream().map(Object::toString).collect(Collectors.toList())
-            : null;
-
+                List<?> rawAuthorities = claims.get("authorities", List.class);
+                List<String> authorities = rawAuthorities != null
+                        ? rawAuthorities.stream().map(Object::toString).collect(Collectors.toList())
+                        : null;
+                System.out.println("[JWT] Parsed claims: username=" + username + ", authorities=" + authorities);
                 if (username != null && authorities != null) {
                     var grantedAuthorities = authorities.stream()
+                            .map(auth -> auth.startsWith("ROLE_") ? auth : "ROLE_" + auth)
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            username, null, grantedAuthorities);
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    System.out.println("[JWT] Authenticated user: " + username + ", roles: " + authorities);
+                } else {
+                    System.out.println(
+                            "[JWT] JWT claims missing username or authorities. Treating request as unauthenticated.");
                 }
             } catch (Exception e) {
-                // Optionally log or handle invalid token
+                System.out.println("[JWT] Exception parsing JWT: " + e.getMessage());
             }
         }
         filterChain.doFilter(request, response);

@@ -1,0 +1,14 @@
+<div class="admin-dashboard">
+  <h2>System Reports</h2>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <table *ngIf="reports">
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Total Bookings</td><td>{{ reports.totalBookings }}</td></tr>
+    <tr><td>Total Revenue (CAD)</td><td>{{ reports.totalRevenue | number:'1.2-2' }}</td></tr>
+    <tr><td>Total Users</td><td>{{ reports.totalUsers }}</td></tr>
+    <tr><td>Total Providers</td><td>{{ reports.totalProviders }}</td></tr>
+    <tr><td>Total Customers</td><td>{{ reports.totalCustomers }}</td></tr>
+    <tr><td>Total Reviews</td><td>{{ reports.totalReviews }}</td></tr>
+    <tr><td>Total Cancellations</td><td>{{ reports.totalCancellations }}</td></tr>
+  </table>
+</div>

@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Booking } from '../../models/booking.model';
 import { BookingService } from '../../services/booking.service';
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.css']
 })

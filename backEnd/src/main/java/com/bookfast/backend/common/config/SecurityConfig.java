@@ -11,34 +11,63 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
+        configuration.setAllowCredentials(true);
+        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtService jwtService) throws Exception {
         http
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers(
-                    "/api/auth/login",
-                    "/api/auth/register",
-                    "/api/auth/register-provider"
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/register-provider",
+                                "/api/auth/logout",
+                                "/api/reviews/**",
+                                "/api/payments/create-intent",
+                                "/api/bookings", // Allow POST for bookings without CSRF
+                                "/api/resources/**", // Allow POST/PUT/DELETE for resources without CSRF
+                                "/api/admin/create-admin",
+                                "/api/admin/check-admin-exists",
+                                "/api/test/**",
+                                "/api/database/**",
+                                "/api/test-resource/**",
+                                "/api/cleanup/**"
+                        )
                 )
-            )
-            .cors(withDefaults())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/categories", "/api/resources", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test/**", "/api/database/**", "/api/test-resource/**", "/api/cleanup/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/provider/**").hasRole("PROVIDER")
-                .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+                .cors(withDefaults())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/resources/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/auth/logout", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test/**", "/api/database/**", "/api/test-resource/**", "/api/cleanup/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/bookings").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/**").authenticated() // Authenticated users can view bookings
+                        .requestMatchers("/api/admin/categories").hasRole("ADMIN") // Ensure admin categories are protected
+                        .requestMatchers(HttpMethod.POST, "/api/resources/**").hasRole("PROVIDER") // Providers can create/update resources
+                        .requestMatchers(HttpMethod.PUT, "/api/resources/**").hasRole("PROVIDER") // Providers can update resources
+                        .requestMatchers(HttpMethod.DELETE, "/api/resources/**").hasRole("PROVIDER") // Providers can delete resources
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/provider/**").hasRole("PROVIDER")
+                        .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/reviews/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/payments/create-intent").hasRole("CUSTOMER")
+                        .requestMatchers("/api/payments/**").authenticated()
+                        .anyRequest().authenticated())
+                .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

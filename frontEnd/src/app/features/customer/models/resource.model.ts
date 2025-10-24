@@ -13,6 +13,7 @@ export interface Resource {
   tags?: string[];
   rating?: number;
   reviews?: Review[];
+  providerName?: string;
 }
 export interface Review {
   customerName: string;

@@ -12,9 +12,11 @@
       placeholder="Search by name, specialization, or tag..."
     />
   </div>
+
   <div class="resource-grid">
     <app-resource-card *ngFor="let resource of filteredResources" [resource]="resource"></app-resource-card>
   </div>
+
 
   <app-booking-modal
     *ngIf="showModal && selectedResource"

@@ -5,19 +5,19 @@ import { AvailabilitySlot } from '../models/availability-slot.model';
 
 @Injectable({ providedIn: 'root' })
 export class AvailabilitySlotService {
-  private apiUrl = 'http://localhost:8080/api/availability-slots';
+  private apiUrl = 'http://localhost:8080/api/resources';
 
   constructor(private http: HttpClient) {}
 
   getSlotsForResource(resourceId: number): Observable<AvailabilitySlot[]> {
-    return this.http.get<AvailabilitySlot[]>(`${this.apiUrl}/resource/${resourceId}`);
+    return this.http.get<AvailabilitySlot[]>(`${this.apiUrl}/${resourceId}/availability`);
   }
 
   addSlot(resourceId: number, slot: AvailabilitySlot): Observable<AvailabilitySlot> {
-    return this.http.post<AvailabilitySlot>(`${this.apiUrl}/resource/${resourceId}`, slot);
+    return this.http.post<AvailabilitySlot>(`${this.apiUrl}/${resourceId}/availability`, slot);
   }
 
   deleteSlot(slotId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${slotId}`);
+    return this.http.delete<void>(`${this.apiUrl}/availability/${slotId}`);
   }
 }

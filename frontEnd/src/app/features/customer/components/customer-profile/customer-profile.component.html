@@ -1,0 +1,22 @@
+<div class="profile-container">
+  <h2>Edit Profile</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+    <label>Name:</label>
+    <input formControlName="name" type="text" />
+    <div *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched" class="error">Name is required.</div>
+
+    <label>Email:</label>
+    <input formControlName="email" type="email" />
+    <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="error">Valid email required.</div>
+
+    <label>Phone:</label>
+    <input formControlName="phone" type="text" />
+    <div *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched" class="error">Phone is required.</div>
+
+    <label>Zip:</label>
+    <input formControlName="zip" type="text" />
+
+    <button type="submit" [disabled]="profileForm.invalid || loading">Save</button>
+    <span *ngIf="success" class="success">Profile updated!</span>
+  </form>
+</div>

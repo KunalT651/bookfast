@@ -1,0 +1,62 @@
+
+.admin-providers {
+  padding: 2rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  border: 1px solid #b2dfdb;
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+}
+th {
+  background: #b2dfdb;
+  color: #00695c;
+  font-weight: 600;
+}
+input, select {
+  width: 90%;
+  padding: 0.5rem 0.7rem;
+  margin: 0.1rem 0;
+  border: 1px solid #b2dfdb;
+  border-radius: 6px;
+  background: #f5f5f5;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus {
+  border-color: #00897b;
+  outline: none;
+}
+button {
+  margin-right: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  background: #00897b;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+}
+button:last-child {
+  background: #d32f2f;
+}
+button:hover, button:focus {
+  background: #004d40;
+}
+.error {
+  color: #d32f2f;
+  margin-top: 1rem;
+}
+.success {
+  color: #388e3c;
+  margin-top: 1rem;
+}

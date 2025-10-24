@@ -1,3 +1,5 @@
+import { AvailabilitySlot } from './availability-slot.model';
+
 export interface Resource {
   id?: number;
   providerId: number;
@@ -13,6 +15,7 @@ export interface Resource {
   tags?: string[];
   rating?: number;
   reviews?: Review[];
+  availabilitySlots?: AvailabilitySlot[];
 }
 
 export interface Review {

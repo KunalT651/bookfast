@@ -1,0 +1,37 @@
+<div class="admin-providers">
+  <h2>Manage Providers</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let provider of providers">
+        <td>{{ provider.id }}</td>
+        <td>
+          <input [(ngModel)]="provider.name" />
+        </td>
+        <td>
+          <input [(ngModel)]="provider.email" />
+        </td>
+        <td>
+          <select [(ngModel)]="provider.status">
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
+        </td>
+        <td>
+          <button (click)="updateProvider(provider)">Save</button>
+          <button (click)="deleteProvider(provider.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
+</div>

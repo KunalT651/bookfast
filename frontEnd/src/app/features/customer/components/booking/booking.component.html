@@ -1,5 +1,6 @@
+
 <div class="booking-form">
-  <h2>Booking Details</h2>
+  <h2>Booking & Payment</h2>
   <div *ngIf="resource">
     <p><strong>Service:</strong> {{ resource.name }}</p>
     <p><strong>Description:</strong> {{ resource.description }}</p>
@@ -15,22 +16,37 @@
       </li>
     </ul>
   </div>
+
+  <div *ngIf="paymentError" class="error-message">
+    {{ paymentError }}
+  </div>
+  <!-- Payment breakdown -->
+  <div class="payment-breakdown" *ngIf="totalAmount !== null">
+    <h3>Payment Details</h3>
+  <p><strong>Base Amount:</strong> ${{ totalAmount }}</p>
+  <p><strong>Taxes (GST/HST 13%):</strong> ${{ (totalAmount * 0.13) | number:'1.2-2' }}</p>
+  <p><strong>Service Charges (2%):</strong> ${{ (totalAmount * 0.02) | number:'1.2-2' }}</p>
+  <p class="final-amount"><strong>Final Amount:</strong> ${{ (totalAmount * 1.15) | number:'1.2-2' }}</p>
+  </div>
+
+  <!-- Stripe payment form placeholder -->
   <form (ngSubmit)="confirmBooking()">
     <label>Name:</label>
     <input [(ngModel)]="customerName" name="name" required />
     <label>Email:</label>
     <input [(ngModel)]="customerEmail" name="email" required />
-    <label>Phone:</label>
-    <input [(ngModel)]="customerPhone" name="phone" required />
-    <label>Instructions/Needs:</label>
-    <textarea [(ngModel)]="description" name="description" rows="3" placeholder="Describe your needs or instructions..."></textarea>
-    <div *ngIf="totalAmount !== null">
-      <p><strong>Total Amount (before taxes):</strong> ₹{{ totalAmount }}</p>
-    </div>
-    <button type="submit">Book</button>
+  <label>Phone:</label>
+  <input [(ngModel)]="customerPhone" name="phone" required />
+  <label>ZIP/Postal Code:</label>
+  <input [(ngModel)]="customerZip" name="zip" required />
+  <label>Instructions/Needs:</label>
+  <textarea [(ngModel)]="description" name="description" rows="3" placeholder="Describe your needs or instructions..."></textarea>
+
+    <h3>Card Details</h3>
+    <!-- Stripe Elements will render card input fields here -->
+    <div id="card-element" style="margin-bottom: 16px;"></div>
+    <div id="card-errors" role="alert" style="color: red;"></div>
+
+  <button type="submit">Pay & Book</button>
   </form>
-  <div *ngIf="booking">
-    <p>Booking created! Proceed to payment.</p>
-    <button (click)="proceedToPayment()">Go to Payment</button>
-  </div>
 </div>

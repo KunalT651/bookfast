@@ -54,6 +54,7 @@ public class AuthController {
             cookieHeader.append("jwt=").append(jwt)
                 .append("; Max-Age=").append(7 * 24 * 60 * 60)
                 .append("; Path=/")
+                .append("; Domain=localhost")
                 .append("; HttpOnly")
                 .append("; SameSite=Lax");
             // Uncomment the next line for production

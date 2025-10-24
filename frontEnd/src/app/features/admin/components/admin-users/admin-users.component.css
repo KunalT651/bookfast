@@ -1,0 +1,86 @@
+.admin-users {
+	/* ...existing styles... */
+}
+@media (max-width: 900px) {
+	.admin-users {
+		padding: 1rem;
+	}
+	table {
+		font-size: 0.95em;
+		overflow-x: auto;
+		display: block;
+	}
+	th, td {
+		padding: 0.5rem 0.7rem;
+	}
+	button {
+		width: 100%;
+		margin: 0.3rem 0;
+		text-align: left;
+	}
+}
+@media (max-width: 600px) {
+	.admin-users {
+		padding: 0.2rem;
+	}
+	table {
+		font-size: 0.9em;
+		overflow-x: auto;
+		display: block;
+	}
+	th, td {
+		padding: 0.3rem 0.5rem;
+	}
+	button {
+		width: 100%;
+		margin: 0.2rem 0;
+		text-align: left;
+	}
+}
+
+.admin-users {
+	max-width: 900px;
+	margin: 2rem auto;
+	background: #fff;
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+	padding: 2rem;
+	border: 1px solid #b2dfdb;
+}
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 1.5rem;
+	background: #ffffff;
+	box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+	border-radius: 8px;
+	overflow: hidden;
+}
+th, td {
+	border: 1px solid #b2dfdb;
+	padding: 0.7rem 0.9rem;
+	text-align: left;
+}
+th {
+	background: #b2dfdb;
+	color: #00695c;
+	font-weight: 600;
+}
+button {
+	margin-right: 0.5rem;
+	padding: 0.5rem 1.2rem;
+	border: none;
+	background: #00897b;
+	color: #fff;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: background 0.2s, box-shadow 0.2s;
+	box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+}
+button:last-child {
+	background: #d32f2f;
+}
+button:hover, button:focus {
+	background: #004d40;
+}

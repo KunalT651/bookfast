@@ -1,0 +1,60 @@
+<div class="provider-bookings">
+  <h2>My Bookings</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Service</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let b of bookings">
+        <td>{{ b.customerName }}</td>
+        <td>{{ b.resource?.name }}</td>
+        <td>{{ b.startTime | date:'shortDate' }}</td>
+        <td>{{ b.startTime | date:'shortTime' }} - {{ b.endTime | date:'shortTime' }}</td>
+        <td>{{ b.status }}</td>
+        <td>
+          <button (click)="editBooking(b)">Edit</button>
+          <button (click)="cancelBooking(b.id)">Cancel</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Edit Booking Modal -->
+  <div *ngIf="showEditModal" class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Edit Booking</h3>
+      <form (ngSubmit)="submitEdit()">
+        <div class="form-group">
+          <label for="status">Status:</label>
+          <select id="status" [(ngModel)]="editForm.status" name="status" required>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="startTime">Start Time:</label>
+          <input type="datetime-local" id="startTime" [(ngModel)]="editForm.startTime" name="startTime" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="endTime">End Time:</label>
+          <input type="datetime-local" id="endTime" [(ngModel)]="editForm.endTime" name="endTime" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" (click)="closeEditModal()">Cancel</button>
+          <button type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

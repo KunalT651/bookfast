@@ -1,116 +1,154 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ResourceAvailabilityService } from '../../services/resource-availability.service';
-import { ResourceAvailability } from '../../models/resource-availability.model';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AvailabilitySlotService } from '../../services/availability-slot.service';
+import { AvailabilitySlot } from '../../models/availability-slot.model';
+
 @Component({
   selector: 'app-resource-availability',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './resource-availability.component.html',
-  //styleUrls: ['./resource-availability.component.css']
+  styleUrls: []
 })
 export class ResourceAvailabilityComponent implements OnInit, OnChanges {
   @Input() resourceId?: number;
-  availabilities: ResourceAvailability[] = [];
-  selectedAvailability?: ResourceAvailability;
-  form: Partial<ResourceAvailability> = {};
-  slotDate: string = '';
-  onDateChange(dateStr: string) {
-    this.slotDate = dateStr;
-    this.form.date = dateStr;
-    if (dateStr) {
-      const date = new Date(dateStr);
-      const day = date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
-      this.form.dayOfWeek = day;
-    } else {
-      this.form.dayOfWeek = '';
-      this.form.date = '';
-    }
-  }
-  daysOfWeek = [
-    'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'
-  ];
+  availabilitySlots: AvailabilitySlot[] = [];
+  selectedAvailabilitySlot: AvailabilitySlot | null = null;
+  
+  slotForm: FormGroup; 
   error = '';
   success = '';
 
-  constructor(private availabilityService: ResourceAvailabilityService) {}
+  constructor(
+    private availabilitySlotService: AvailabilitySlotService,
+    private fb: FormBuilder 
+  ) {
+    this.slotForm = this.fb.group({
+      date: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      status: ['available', Validators.required],
+    });
+  }
 
   ngOnInit() {
     if (this.resourceId) {
-      this.loadAvailabilities();
+      this.loadAvailabilitySlots();
     }
   }
 
   ngOnChanges() {
     if (this.resourceId) {
-      this.loadAvailabilities();
+      this.loadAvailabilitySlots();
     }
   }
 
-  loadAvailabilities() {
+  loadAvailabilitySlots() {
     if (!this.resourceId) return;
-    this.availabilityService.getAvailabilitiesByResource(this.resourceId).subscribe({
-      next: (data) => this.availabilities = data,
-      error: () => this.availabilities = []
+    this.availabilitySlotService.getAvailabilitySlotsForResource(this.resourceId).subscribe({
+      next: (data) => this.availabilitySlots = data,
+      error: (err) => {
+        this.error = 'Failed to load slots';
+        console.error('Error loading availability slots', err);
+      }
     });
   }
 
-  selectAvailability(avail: ResourceAvailability) {
-    this.selectedAvailability = avail;
-    this.form = { ...avail };
+  getSlotDay(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+  }
+
+  selectAvailabilitySlot(slot: AvailabilitySlot) {
+    this.selectedAvailabilitySlot = slot;
+    this.slotForm.patchValue({
+      date: slot.date,
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      status: slot.status
+    });
   }
 
   clearForm() {
-    this.selectedAvailability = undefined;
-    this.form = {};
-  }
-
-  submit() {
+    this.selectedAvailabilitySlot = null;
+    this.slotForm.reset({ status: 'available' });
     this.error = '';
     this.success = '';
-    if (!this.form.date || !this.form.dayOfWeek || !this.form.startTime || !this.form.endTime) {
-      this.error = 'All fields are required';
+  }
+
+  submitSlot() {
+    this.error = '';
+    this.success = '';
+    if (this.slotForm.invalid || !this.resourceId) {
+      this.error = 'Please fill all required fields and ensure a resource is selected.';
+      return;
+    }
+
+    const formValue = this.slotForm.value;
+
+    if (this.selectedAvailabilitySlot && this.selectedAvailabilitySlot.id) {
+      // Update existing slot
+      this.availabilitySlotService.updateAvailabilitySlot(
+        this.resourceId,
+        this.selectedAvailabilitySlot.id,
+        formValue.date,
+        formValue.startTime,
+        formValue.endTime,
+        formValue.status
+      ).subscribe({
+        next: () => {
+          this.success = 'Slot updated successfully!';
+          this.loadAvailabilitySlots();
+          this.clearForm();
+        },
+        error: (err) => {
+          this.error = 'Update failed';
+          console.error('Error updating availability slot', err);
+        }
+      });
+    } else {
+      // Add new slot
+      this.availabilitySlotService.createAvailabilitySlot(
+        this.resourceId,
+        formValue.date,
+        formValue.startTime,
+        formValue.endTime,
+        formValue.status
+      ).subscribe({
+        next: () => {
+          this.success = 'Slot added successfully!';
+          this.loadAvailabilitySlots();
+          this.clearForm();
+        },
+        error: (err) => {
+          this.error = 'Add failed';
+          console.error('Error adding availability slot', err);
+        }
+      });
+    }
+  }
+
+  deleteSlot(id: number) {
+    if (!confirm('Are you sure you want to delete this availability slot?')) {
       return;
     }
     if (!this.resourceId) {
-      this.error = 'No resource selected';
+      this.error = 'Resource ID is missing. Cannot delete slot.';
       return;
     }
-    const payload: ResourceAvailability = {
-      ...this.form,
-      resourceId: this.resourceId
-    } as ResourceAvailability;
 
-    if (this.selectedAvailability && this.selectedAvailability.id) {
-      this.availabilityService.updateAvailability(this.selectedAvailability.id, payload).subscribe({
-        next: () => {
-          this.success = 'Slot updated!';
-          this.clearForm();
-          this.loadAvailabilities();
-        },
-        error: () => this.error = 'Update failed'
-      });
-    } else {
-      this.availabilityService.createAvailability(payload).subscribe({
-        next: () => {
-          this.success = 'Slot added!';
-          this.clearForm();
-          this.loadAvailabilities();
-        },
-        error: () => this.error = 'Add failed'
-      });
-    }
-  }
-
-  deleteAvailability(id: number) {
-    this.availabilityService.deleteAvailability(id).subscribe({
+    this.availabilitySlotService.deleteAvailabilitySlot(this.resourceId, id).subscribe({
       next: () => {
-        this.success = 'Deleted!';
+        this.success = 'Slot deleted successfully!';
+        this.loadAvailabilitySlots();
         this.clearForm();
-        this.loadAvailabilities();
       },
-      error: () => this.error = 'Delete failed'
+      error: (err) => {
+        this.error = 'Delete failed';
+        console.error('Error deleting availability slot', err);
+      }
     });
   }
 }

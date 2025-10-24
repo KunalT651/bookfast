@@ -1,0 +1,79 @@
+<div class="stars">
+  <ng-container *ngFor="let star of [1,2,3,4,5]">
+    <span [class.filled]="star <= averageRating">&#9733;</span>
+    <span [class.empty]="star > averageRating">&#9734;</span>
+  </ng-container>
+  <span class="rating-value">({{ averageRating | number:'1.1-1' }})</span>
+  <button (click)="openReviews()">Check Reviews</button>
+
+<div class="resource-card">
+  <div class="card-header">
+    <img [src]="resource.imageUrl" alt="{{ resource.name }}" class="resource-img" />
+    <div class="card-title">
+      <h2>{{ resource.name }}</h2>
+      <span class="specialization">{{ resource.specialization }}</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="description">{{ resource.description }}</div>
+    <div class="info-row">
+      <span><b>Status:</b> <span class="status">{{ resource.status }}</span></span>
+  <span><b>Price:</b> <span class="price">${{ resource.price }}</span></span>
+      <span><b>Experience:</b> <span class="exp">{{ resource.experienceYears }} years</span></span>
+    </div>
+    <div class="info-row">
+      <span><b>Contact:</b> <span class="contact">{{ resource.phone }} | {{ resource.email }}</span></span>
+    </div>
+    <div class="tags-row">
+      <ng-container *ngFor="let tag of resource.tags">
+        <span class="tag">{{ tag }}</span>
+      </ng-container>
+    </div>
+    <div class="rating-row">
+      <span class="stars">
+        <ng-container *ngFor="let star of [1,2,3,4,5]">
+          <span [class.filled]="star <= averageRating">★</span>
+        </ng-container>
+      </span>
+      <span class="avg-rating">({{ averageRating }})</span>
+      <button class="btn reviews-btn" (click)="openReviews()">Check Reviews</button>
+    </div>
+    <div class="reviews-preview">
+      <b>Reviews:</b>
+      <ul>
+        <li *ngFor="let review of reviews">
+          <span class="reviewer">{{ review.customerName }}</span>
+          <span class="review-rating">({{ review.rating }}/5)</span>:
+          <span class="review-comment">{{ review.comment }}</span>
+          <span class="review-date">{{ review.date }}</span>
+        </li>
+      </ul>
+    </div>
+    <button class="btn book-btn" (click)="onBook()">Book</button>
+  </div>
+
+  <div *ngIf="showReviewsModal" class="modal-overlay">
+    <div class="modal">
+      <button class="close-btn" (click)="closeReviewsModal()">×</button>
+      <h3>Reviews for {{ resource.name }}</h3>
+      <div *ngFor="let review of reviews" class="review-item">
+        <div class="review-header">
+          <span class="review-name">{{ review.customerName }}</span>
+          <span class="review-rating">★{{ review.rating }}</span>
+          <span class="review-date">{{ review.date | date:'short' }}</span>
+        </div>
+        <div class="review-comment">{{ review.comment }}</div>
+      </div>
+      <hr />
+      <h4>Add Your Review</h4>
+      <form (ngSubmit)="submitReview()" class="review-form">
+        <input [(ngModel)]="newReview.customerName" name="customerName" placeholder="Your Name" required />
+        <select [(ngModel)]="newReview.rating" name="rating" required>
+          <option *ngFor="let r of [1,2,3,4,5]" [value]="r">{{ r }}</option>
+        </select>
+        <input [(ngModel)]="newReview.comment" name="comment" placeholder="Your Review" required />
+        <button class="btn submit-btn" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>

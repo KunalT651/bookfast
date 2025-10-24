@@ -44,4 +44,8 @@ export class AuthService {
     // Fetch current user info from backend using cookie
     return this.http.get(`${this.apiUrl}/me`, { withCredentials: true });
   }
+
+    requestPasswordReset(email: string): Observable<any> {
+      return this.http.post(`${this.apiUrl}/password-reset`, { email }, { withCredentials: true });
+    }
 }

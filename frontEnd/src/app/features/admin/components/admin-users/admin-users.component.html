@@ -1,0 +1,38 @@
+<div class="admin-users">
+  <h2>Manage Users</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Enabled</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <ng-container *ngIf="editingUser?.id !== user.id; else editRow">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>{{ user.enabled ? 'Yes' : 'No' }}</td>
+          <td>
+            <button (click)="startEdit(user)">Edit</button>
+            <button (click)="deleteUser(user.id)">Delete</button>
+          </td>
+        </ng-container>
+        <ng-template #editRow>
+          <td><input [(ngModel)]="editForm.name" /></td>
+          <td><input [(ngModel)]="editForm.email" /></td>
+          <td><input [(ngModel)]="editForm.role" /></td>
+          <td><input type="checkbox" [(ngModel)]="editForm.enabled" /></td>
+          <td>
+            <button (click)="saveEdit()">Save</button>
+            <button (click)="cancelEdit()">Cancel</button>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,31 @@
+
+.admin-dashboard {
+  padding: 2rem;
+}
+h2 {
+  margin-bottom: 1rem;
+  color: #00897b;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  border: 1px solid #b2dfdb;
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+}
+th {
+  background: #b2dfdb;
+  color: #00695c;
+  font-weight: 600;
+}
+.error {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}

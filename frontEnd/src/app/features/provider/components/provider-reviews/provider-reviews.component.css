@@ -1,0 +1,5 @@
+.reviews-header { margin-bottom: 1rem; }
+.resource-list { margin-bottom: 1rem; }
+.resource-list button { margin-right: 0.5rem; }
+ul { list-style: none; padding: 0; }
+li { background: #f9f9f9; margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 4px; }

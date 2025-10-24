@@ -41,10 +41,11 @@ public class Resource {
     private Double rating;
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
-    @com.fasterxml.jackson.annotation.JsonManagedReference
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<AvailabilitySlot> availabilitySlots;
 
     public List<AvailabilitySlot> getAvailabilitySlots() { return availabilitySlots; }

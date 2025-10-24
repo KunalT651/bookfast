@@ -1,0 +1,26 @@
+.my-reviews-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  margin: 24px auto;
+  max-width: 600px;
+  padding: 24px 28px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.reviews-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+.reviews-table th, .reviews-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.reviews-table th {
+  background: #f5f7fa;
+  font-weight: 600;
+}
+.reviews-table td {
+  font-size: 15px;
+}

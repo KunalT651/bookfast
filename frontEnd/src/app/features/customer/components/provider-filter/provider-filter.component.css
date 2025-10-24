@@ -1,0 +1,31 @@
+
+.provider-filter {
+	margin-bottom: 1.2rem;
+}
+.provider-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.2rem;
+}
+.provider-card {
+	background: #ffffff;
+	border: 1px solid #26a69a;
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+	padding: 1.2rem;
+	width: 270px;
+	transition: box-shadow 0.2s;
+	color: #263238;
+}
+.provider-card:hover {
+	box-shadow: 0 4px 16px rgba(44, 62, 80, 0.12);
+	border-color: #00897b;
+}
+.provider-card h3 {
+	color: #00897b;
+	margin-bottom: 0.5rem;
+}
+.provider-card p {
+	margin: 0.2rem 0;
+	font-size: 1rem;
+}

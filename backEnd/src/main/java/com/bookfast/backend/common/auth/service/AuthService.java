@@ -10,34 +10,37 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthService {
     private final UserRepository userRepo;
-    private final ProviderProfileRepository providerRepo;
     private final RoleRepository roleRepo;
     private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepo, ProviderProfileRepository providerRepo, RoleRepository roleRepo, JwtService jwtService) {
+    public AuthService(UserRepository userRepo, RoleRepository roleRepo, JwtService jwtService) {
         this.userRepo = userRepo;
-        this.providerRepo = providerRepo;
         this.roleRepo = roleRepo;
         this.jwtService = jwtService;
     }
 
     @Transactional
     public AuthResponse registerCustomer(RegisterRequest req) {
-        if (!req.password.equals(req.confirmPassword)) {
+        if (!req.getPassword().equals(req.getConfirmPassword())) {
             throw new RuntimeException("Passwords do not match");
         }
-        if (userRepo.existsByEmail(req.email)) {
+        if (userRepo.existsByEmail(req.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
         User user = new User();
-        user.setFirstName(req.firstName);
-        user.setLastName(req.lastName);
-        user.setEmail(req.email);
-        user.setPassword(PasswordUtil.hash(req.password));
+        user.setFirstName(req.getFirstName());
+        user.setLastName(req.getLastName());
+        user.setEmail(req.getEmail());
+        user.setPassword(PasswordUtil.hash(req.getPassword()));
 
         // Lookup Role entity by name (e.g., "CUSTOMER")
-        Role role = roleRepo.findByNameIgnoreCase(req.role);
-        if (role == null) throw new RuntimeException("Invalid role");
+        Role role = roleRepo.findByNameIgnoreCase(req.getRole());
+        if (role == null) {
+            // Create role if it doesn't exist
+            role = new Role();
+            role.setName(req.getRole());
+            role = roleRepo.save(role);
+        }
         user.setRole(role);
 
         userRepo.save(user);
@@ -48,30 +51,35 @@ public class AuthService {
 
     @Transactional
     public AuthResponse registerProvider(RegisterProviderRequest req) {
-        if (!req.password.equals(req.confirmPassword)) {
+        if (!req.getPassword().equals(req.getConfirmPassword())) {
             throw new RuntimeException("Passwords do not match");
         }
-        if (userRepo.existsByEmail(req.email)) {
+        if (userRepo.existsByEmail(req.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
         User user = new User();
-        user.setFirstName(req.firstName);
-        user.setLastName(req.lastName);
-        user.setEmail(req.email);
-        user.setPassword(PasswordUtil.hash(req.password));
+        user.setFirstName(req.getFirstName());
+        user.setLastName(req.getLastName());
+        user.setEmail(req.getEmail());
+        user.setPassword(PasswordUtil.hash(req.getPassword()));
+        
+        // Set provider-specific fields
+        user.setOrganizationName(req.getOrganizationName());
+        user.setServiceCategory(req.getServiceCategory());
 
         // Lookup Role entity by name (e.g., "PROVIDER")
         Role role = roleRepo.findByNameIgnoreCase(req.getRole());
-        if (role == null) throw new RuntimeException("Invalid role");
+        if (role == null) {
+            // Create role if it doesn't exist
+            role = new Role();
+            role.setName(req.getRole());
+            role = roleRepo.save(role);
+        }
         user.setRole(role);
 
         userRepo.save(user);
 
-        ProviderProfile profile = new ProviderProfile();
-        profile.setOrganizationName(req.organizationName);
-        profile.setServiceCategory(req.serviceCategory);
-        profile.setUser(user);
-        providerRepo.save(profile);
+        // No longer creating a separate ProviderProfile, as User entity now handles provider details.
 
         String token = jwtService.generateToken(user.getEmail(), user.getRole().getName());
         return new AuthResponse(token, user);

@@ -7,10 +7,12 @@ export class UserStateService {
   private user$ = new BehaviorSubject<any>(null);
 
   setLoggedIn(loggedIn: boolean) {
+    console.log('[UserStateService] Setting loggedIn:', loggedIn);
     this.loggedIn$.next(loggedIn);
   }
 
   setUser(user: any) {
+    console.log('[UserStateService] Setting user:', user);
     this.user$.next(user);
     this.setLoggedIn(!!user);
   }

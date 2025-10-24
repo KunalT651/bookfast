@@ -6,7 +6,7 @@
     </div>
     <div class="modal-details">
   <div class="modal-row"><strong>Specialization:</strong> <span>{{ resource.specialization }}</span></div>
-  <div class="modal-row"><strong>Price:</strong> <span class="modal-price">₹{{ resource.price }}</span></div>
+  <div class="modal-row"><strong>Price:</strong> <span class="modal-price">${{ resource.price }}</span></div>
   <div class="modal-row"><strong>Contact:</strong> <span>{{ resource.phone }} | {{ resource.email }}</span></div>
     </div>
     <app-resource-slot-list

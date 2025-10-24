@@ -7,6 +7,7 @@
         <th>Provider</th>
         <th>Date</th>
         <th>Time</th>
+        <th>Amount Paid</th>
         <th>Status</th>
         <th>Payment</th>
         <th>Actions</th>
@@ -18,10 +19,12 @@
         <td>{{ booking.providerName }}</td>
         <td>{{ booking.date }}</td>
         <td>{{ booking.startTime }} - {{ booking.endTime }}</td>
+        <td>${{ booking.finalAmount || booking.amount || 0 }}</td>
         <td>{{ booking.status }}</td>
         <td>{{ booking.paymentStatus }}</td>
         <td>
-          <button (click)="deleteBooking(booking.id)" [disabled]="isPastBooking(booking)">Delete</button>
+         <button (click)="deleteBooking(booking.id!)" [disabled]="isPastBooking(booking)">Delete</button>
+         <button (click)="cancelBooking(booking.id!)" [disabled]="booking.status === 'cancelled' || isPastBooking(booking)">Cancel</button>
         </td>
       </tr>
     </tbody>

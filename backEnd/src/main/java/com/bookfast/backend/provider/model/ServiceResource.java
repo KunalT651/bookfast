@@ -1,1 +1,0 @@
-// This entity has been removed to fix Hibernate startup error. All provider resources should use the unified Resource entity.

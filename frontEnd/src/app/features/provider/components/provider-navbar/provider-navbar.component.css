@@ -1,0 +1,30 @@
+.provider-navbar {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: #28706c;
+  padding: 1rem 2rem;
+  color: #fff;
+}
+.provider-navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+.provider-navbar a.active, .provider-navbar a:hover {
+  background: #fff;
+  color: #28706c;
+}
+.logout-btn {
+  margin-left: auto;
+  background: #ff7043;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}

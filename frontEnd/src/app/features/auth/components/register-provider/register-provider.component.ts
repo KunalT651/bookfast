@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { ServiceCategoryService } from '../../../admin/services/service-category.service';
 
 @Component({
   selector: 'app-register-provider',
@@ -20,7 +19,6 @@ export class RegisterProviderComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private categoryService: ServiceCategoryService
   ) {
     this.registerForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -34,7 +32,7 @@ export class RegisterProviderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.categoryService.getAll().subscribe({
+    this.authService.getServiceCategories().subscribe({
       next: (cats) => this.serviceCategories = cats,
       error: () => this.serviceCategories = []
     });

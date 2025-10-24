@@ -1,36 +1,44 @@
 <div class="availability-container">
-  <h3>Manage Weekly Availability Slots</h3>
-  <form class="slot-form" (ngSubmit)="submit()">
+  <h3>Manage Availability Slots</h3>
+  <form class="slot-form" [formGroup]="slotForm" (ngSubmit)="submitSlot()">
     <label>
       Date:
-  <input type="date" [(ngModel)]="slotDate" name="date" (change)="onDateChange($event.target.value)" required />
+      <input type="date" formControlName="date" required />
     </label>
     <label>
       Day of Week:
-      <input type="text" [(ngModel)]="form.dayOfWeek" name="dayOfWeek" readonly required />
+      <input type="text" [value]="getSlotDay(slotForm.get('date')?.value)" readonly />
     </label>
     <label>
       Start Time:
-      <input [(ngModel)]="form.startTime" name="startTime" type="time" required placeholder="Start Time">
+      <input formControlName="startTime" type="time" required placeholder="Start Time">
     </label>
     <label>
       End Time:
-      <input [(ngModel)]="form.endTime" name="endTime" type="time" required placeholder="End Time">
+      <input formControlName="endTime" type="time" required placeholder="End Time">
+    </label>
+    <label>
+      Status:
+      <select formControlName="status" required>
+        <option value="available">Available</option>
+        <option value="booked">Booked</option>
+        <option value="unavailable">Unavailable</option>
+      </select>
     </label>
     <div class="form-actions">
-      <button type="submit">{{ selectedAvailability ? 'Update Slot' : 'Add Slot' }}</button>
-      <button type="button" (click)="clearForm()" *ngIf="selectedAvailability">Cancel</button>
+      <button type="submit">{{ selectedAvailabilitySlot ? 'Update Slot' : 'Add Slot' }}</button>
+      <button type="button" (click)="clearForm()" *ngIf="selectedAvailabilitySlot">Cancel</button>
     </div>
   </form>
-  <div *ngIf="error" style="color: red;">{{ error }}</div>
-  <div *ngIf="success" style="color: green;">{{ success }}</div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div *ngIf="success" class="success-message">{{ success }}</div>
 
   <h4 style="margin-top:2rem;">Current Slots</h4>
-  <ul *ngIf="availabilities.length">
-    <li *ngFor="let avail of availabilities" (click)="selectAvailability(avail)">
-      <span>{{ avail.dayOfWeek }} {{ avail.startTime }}-{{ avail.endTime }}</span>
-      <button (click)="deleteAvailability(avail.id!); $event.stopPropagation()">Delete</button>
+  <ul *ngIf="availabilitySlots.length">
+    <li *ngFor="let slot of availabilitySlots" (click)="selectAvailabilitySlot(slot)">
+      <span>{{ getSlotDay(slot.date) }} {{ slot.startTime }}-{{ slot.endTime }} ({{ slot.status }})</span>
+      <button (click)="deleteSlot(slot.id!); $event.stopPropagation()">Delete</button>
     </li>
   </ul>
-  <div *ngIf="!availabilities.length" style="color:#888;">No slots added yet. Use the form above to add availability.</div>
+  <div *ngIf="!availabilitySlots.length" class="no-slots-message">No slots added yet. Use the form above to add availability.</div>
 </div>

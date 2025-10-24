@@ -4,7 +4,7 @@
 </div>
 
 <div class="resource-form-modal" *ngIf="showForm">
-  <form [formGroup]="resourceForm" (ngSubmit)="addResource()">
+  <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
     <h3>Add New Resource</h3>
     <label>Name: <input formControlName="name" required></label>
     <label>Description: <textarea formControlName="description"></textarea></label>
@@ -31,12 +31,14 @@
       <div class="tags">
         <span *ngFor="let tag of resource.tags" class="tag">{{ tag }}</span>
       </div>
-      <div><strong>Price:</strong> ₹{{ resource.price }}</div>
+  <div><strong>Price:</strong> ${{ resource.price }}</div>
       <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
       <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
       <div><strong>Specialization:</strong> {{ resource.specialization }}</div>
       <div><strong>Status:</strong> {{ resource.status }}</div>
-      <button class="availability-btn" (click)="openAvailability(resource)">Availability</button>
+  <button class="availability-btn" (click)="openAvailability(resource)">Availability</button>
+  <button class="edit-btn" (click)="openEditForm(resource)">Edit</button>
+  <button class="delete-btn" (click)="deleteResource(resource)">Delete</button>
     </div>
   </div>
 

@@ -1,0 +1,19 @@
+<div class="provider-filter">
+  <label>Service/Specialization:</label>
+  <input [(ngModel)]="specialization" placeholder="e.g. Dentist, Therapist" />
+  <label>Status:</label>
+  <select [(ngModel)]="status">
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+  </select>
+  <button (click)="filterProviders()">Filter</button>
+</div>
+<div class="provider-list">
+  <div *ngFor="let resource of resources" class="provider-card">
+    <h3>{{ resource.name }}</h3>
+    <p>{{ resource.specialization }}</p>
+    <p>{{ resource.description }}</p>
+    <p>Status: {{ resource.status }}</p>
+    <p>Contact: {{ resource.phone }} | {{ resource.email }}</p>
+  </div>
+</div>
