@@ -1,15 +1,62 @@
-<div class="reviews-header">
-  <h2>Manage Reviews</h2>
-  <input type="text" [(ngModel)]="searchTerm" placeholder="Search resource by name..." />
-  <div class="resource-list">
-    <button *ngFor="let resource of searchResources()" (click)="selectResource(resource)">{{ resource.name }}</button>
+<div class="provider-reviews">
+  <div class="header">
+    <h2>Manage Reviews</h2>
+    <button class="refresh-btn" (click)="loadReviews()" [disabled]="loading">
+      {{ loading ? 'Loading...' : 'Refresh' }}
+    </button>
   </div>
-</div>
-<div *ngIf="selectedResource">
-  <h3>Reviews for {{ selectedResource.name }}</h3>
-  <ul>
-    <li *ngFor="let review of reviews">
-      Review #{{ review.id }} - {{ review.customerName }} - {{ review.comment }}
-    </li>
-  </ul>
+  
+  <div *ngIf="loading" class="loading">Loading reviews...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+  <div *ngIf="!loading && reviews.length === 0" class="no-reviews">
+    <p>No reviews found for your resources.</p>
+  </div>
+
+  <div *ngIf="!loading && reviews.length > 0" class="reviews-table-container">
+    <table class="reviews-table">
+      <thead>
+        <tr>
+          <th>Review ID</th>
+          <th>Customer</th>
+          <th>Customer Email</th>
+          <th>Resource</th>
+          <th>Rating</th>
+          <th>Comment</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of reviews">
+          <td>{{ r.id }}</td>
+          <td>{{ r.customerName }}</td>
+          <td>{{ r.customerEmail || 'N/A' }}</td>
+          <td>
+            <div class="resource-info">
+              <strong>{{ r.resourceName || 'N/A' }}</strong>
+              <br>
+              <small>{{ r.resourceDescription || 'N/A' }}</small>
+            </div>
+          </td>
+          <td>
+            <div class="rating">
+              <span class="stars">{{ getStars(r.rating).join('') }}</span>
+              <span class="rating-value">({{ r.rating }}/5)</span>
+            </div>
+          </td>
+          <td>
+            <div class="comment">
+              {{ r.comment || 'No comment' }}
+            </div>
+          </td>
+          <td>{{ r.date | date:'shortDate' }}</td>
+          <td class="actions">
+            <button class="delete-btn" (click)="deleteReview(r.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

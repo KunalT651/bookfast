@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,6 @@ import { ResourceService } from '../../services/resource.service';
 import { Resource } from '../../models/resource.model';
 import { AvailabilitySlotService } from '../../services/availability-slot.service';
 import { AuthService } from '../../../auth/services/auth.service';
-import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 
 @Component({
   selector: 'app-booking',
@@ -18,7 +17,7 @@ import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/s
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.css']
 })
-export class BookingComponent implements AfterViewInit {
+export class BookingComponent implements OnInit, AfterViewInit {
   @Input() slots: AvailabilitySlot[] = [];
   @Input() resourceId!: number;
   @Output() payment = new EventEmitter<Booking>();
@@ -35,11 +34,6 @@ export class BookingComponent implements AfterViewInit {
 
   isPaying: boolean = false;
   paymentError: string = '';
-  
-  // Stripe properties
-  stripe: Stripe | null = null;
-  elements: StripeElements | null = null;
-  cardElement: StripeCardElement | null = null;
 
   constructor(
     private bookingService: BookingService,
@@ -72,6 +66,7 @@ export class BookingComponent implements AfterViewInit {
           this.slotDetails = slots.filter(s => slotIds.includes(s.id!));
           this.slots = this.slotDetails;
           console.log('Filtered slots:', this.slots);
+          this.calculateTotalAmount();
         });
       }
       // Fetch resource details
@@ -80,77 +75,53 @@ export class BookingComponent implements AfterViewInit {
           this.resource = resources.find(r => r.id === this.resourceId) || null;
           console.log('Found resource:', this.resource);
           this.amount = this.resource?.price || null;
-          if (this.amount && this.slots) {
-            this.totalAmount = this.amount * this.slots.length;
-          }
+          this.calculateTotalAmount();
         });
       }
     });
   }
 
-  async ngAfterViewInit() {
-    // Initialize Stripe Elements for UI only
-    await this.initializeStripe();
+  ngOnInit() {
+    // Handle case where slots are passed as input
+    if (this.slots && this.slots.length > 0) {
+      this.slotDetails = this.slots;
+      this.calculateTotalAmount();
+    }
   }
 
-  async initializeStripe() {
-    try {
-      // Load Stripe with publishable key (use test key for demo)
-      this.stripe = await loadStripe('pk_test_51H1234567890abcdef'); // Demo test key
-      
-      if (this.stripe) {
-        // Create Elements instance
-        this.elements = this.stripe.elements({
-          appearance: {
-            theme: 'stripe',
-            variables: {
-              colorPrimary: '#0570de',
-              colorBackground: '#ffffff',
-              colorText: '#30313d',
-              colorDanger: '#df1b41',
-              fontFamily: 'Ideal Sans, system-ui, sans-serif',
-              spacingUnit: '2px',
-              borderRadius: '4px',
-            }
-          }
-        });
+  async ngAfterViewInit() {
+    // Initialize local payment form (no Stripe API calls)
+    console.log('Initializing local payment form (demo mode)');
+    
+    // Create local card input elements
+    this.createLocalCardForm();
+  }
 
-        // Create card element
-        this.cardElement = this.elements.create('card', {
-          style: {
-            base: {
-              fontSize: '16px',
-              color: '#424770',
-              '::placeholder': {
-                color: '#aab7c4',
-              },
-            },
-            invalid: {
-              color: '#9e2146',
-            },
-          },
-        });
-
-        // Mount the card element
-        this.cardElement.mount('#card-element');
-
-        // Handle real-time validation errors from the card Element
-        this.cardElement.on('change', ({ error }) => {
-          const displayError = document.getElementById('card-errors');
-          if (displayError) {
-            if (error) {
-              displayError.textContent = error.message;
-            } else {
-              displayError.textContent = '';
-            }
-          }
-        });
-
-        console.log('Stripe Elements initialized successfully');
-      }
-    } catch (error) {
-      console.error('Error initializing Stripe:', error);
-      this.paymentError = 'Payment system initialization failed';
+  private createLocalCardForm() {
+    const cardElement = document.getElementById('card-element');
+    if (cardElement) {
+      cardElement.innerHTML = `
+        <div class="local-stripe-card">
+          <div class="card-input-group">
+            <label>Card Number</label>
+            <input type="text" class="card-input" placeholder="1234 5678 9012 3456" maxlength="19" />
+          </div>
+          <div class="card-row">
+            <div class="card-input-group">
+              <label>Expiry Date</label>
+              <input type="text" class="card-input" placeholder="MM/YY" maxlength="5" />
+            </div>
+            <div class="card-input-group">
+              <label>CVV</label>
+              <input type="text" class="card-input" placeholder="123" maxlength="4" />
+            </div>
+          </div>
+          <div class="card-input-group">
+            <label>Cardholder Name</label>
+            <input type="text" class="card-input" placeholder="John Doe" />
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -171,17 +142,18 @@ async confirmBooking() {
       return;
     }
 
-    // Validate Stripe card element (UI only - no actual payment processing)
-    if (this.cardElement) {
-      const { error } = await this.cardElement.createToken();
-      if (error) {
-        this.paymentError = error.message;
-        this.isPaying = false;
-        return;
-      }
-      // For demo purposes, we'll just show the card is valid and proceed
-      console.log('Card validation passed (demo mode)');
+    // Simulate payment processing (no actual API calls)
+    console.log('Processing payment (demo mode)...');
+    
+    // Simulate payment validation
+    const cardNumber = (document.querySelector('.card-input') as HTMLInputElement)?.value;
+    if (!cardNumber || cardNumber.length < 16) {
+      this.paymentError = 'Please enter a valid card number';
+      this.isPaying = false;
+      return;
     }
+    
+    console.log('Payment validation passed (demo mode)');
     
     // Create booking data that matches backend expectations
     const bookingData: any = {
@@ -232,4 +204,15 @@ async confirmBooking() {
       this.payment.emit(this.booking);
     }
   }
+
+  calculateTotalAmount() {
+    if (this.amount && this.slots && this.slots.length > 0) {
+      this.totalAmount = this.amount * this.slots.length;
+      console.log('Calculated total amount:', this.totalAmount, 'for', this.slots.length, 'slots at', this.amount, 'each');
+    } else {
+      this.totalAmount = 0;
+      console.log('Cannot calculate total amount - missing amount or slots');
+    }
+  }
+
 }

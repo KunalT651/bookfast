@@ -42,10 +42,21 @@
   <label>Instructions/Needs:</label>
   <textarea [(ngModel)]="description" name="description" rows="3" placeholder="Describe your needs or instructions..."></textarea>
 
-    <h3>Card Details</h3>
-    <!-- Stripe Elements will render card input fields here -->
-    <div id="card-element" style="margin-bottom: 16px;"></div>
-    <div id="card-errors" role="alert" style="color: red;"></div>
+    <h3>Payment Details</h3>
+    <div class="stripe-payment-section">
+      <div id="card-element" class="stripe-card-element">
+        <!-- Stripe Elements will create form elements here -->
+      </div>
+      <div id="card-errors" role="alert" class="stripe-error"></div>
+      <div class="stripe-branding">
+        <div class="card-logo visa">Visa</div>
+        <div class="card-logo mastercard">Mastercard</div>
+        <div class="card-logo amex">Amex</div>
+      </div>
+      <div style="color: #666; font-size: 12px; margin-bottom: 16px; text-align: center;">
+        Secured by Stripe • Demo Mode
+      </div>
+    </div>
 
   <button type="submit">Pay & Book</button>
   </form>

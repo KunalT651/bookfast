@@ -68,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     System.out.println("[JWT] Authenticated user: " + username + ", roles: " + authorities);
+                    System.out.println("[JWT] Granted authorities: " + grantedAuthorities);
                 } else {
                     System.out.println(
                             "[JWT] JWT claims missing username or authorities. Treating request as unauthenticated.");

@@ -5,10 +5,16 @@ import com.bookfast.backend.resource.model.Resource;
 import com.bookfast.backend.resource.model.Review;
 import com.bookfast.backend.resource.repository.ResourceRepository;
 import com.bookfast.backend.resource.service.ReviewService;
+import com.bookfast.backend.common.model.User;
+import com.bookfast.backend.common.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.ArrayList;
 import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -22,18 +28,56 @@ public class ReviewController {
         }
     }
 
+    @DeleteMapping("/provider/{reviewId}")
+    public void deleteReviewByProvider(@PathVariable Long reviewId) {
+        System.out.println("[ReviewController] DELETE request received for review: " + reviewId);
+        
+        // Check authentication context
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            System.out.println("[ReviewController] Authentication: " + auth.getName());
+            System.out.println("[ReviewController] Authorities: " + auth.getAuthorities());
+        } else {
+            System.out.println("[ReviewController] No authentication found!");
+        }
+        
+        System.out.println("[ReviewController] Deleting review: " + reviewId);
+        reviewService.deleteReviewById(reviewId);
+        System.out.println("[ReviewController] Review deleted successfully: " + reviewId);
+    }
+
     private final ReviewService reviewService;
     private final ResourceRepository resourceRepository;
+    private final UserRepository userRepository;
 
-    public ReviewController(ReviewService reviewService, ResourceRepository resourceRepository) {
+    public ReviewController(ReviewService reviewService, ResourceRepository resourceRepository, UserRepository userRepository) {
         this.reviewService = reviewService;
         this.resourceRepository = resourceRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/customer/{customerId}")
     public List<ReviewDTO> getReviewsByCustomer(@PathVariable Long customerId) {
         List<Review> reviews = reviewService.getReviewsByCustomer(customerId);
         return reviews.stream().map(review -> new ReviewDTO(review)).toList();
+    }
+
+    @GetMapping("/provider/me")
+    public List<ReviewService.ReviewDetailsDTO> getReviewsByProvider() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getName() != null) {
+                String username = authentication.getName(); // This is the email
+                User currentUser = userRepository.findByEmail(username).orElse(null);
+                if (currentUser != null) {
+                    return reviewService.getDetailedReviewsByProvider(currentUser.getId());
+                }
+            }
+            return new ArrayList<>();
+        } catch (Exception e) {
+            System.out.println("[ReviewController] Error getting provider reviews: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     static class ReviewDTO {
@@ -57,6 +101,7 @@ public class ReviewController {
                     : "";
         }
     }
+
 
     @GetMapping("/resource/{resourceId}")
     public List<Review> getReviews(@PathVariable Long resourceId) {

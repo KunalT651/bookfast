@@ -19,10 +19,10 @@ export class CustomerProfileComponent implements OnInit {
 
   ngOnInit() {
     this.profileForm = this.fb.group({
-      name: ['', Validators.required],
+      firstname: ['', Validators.required],
+      lastname: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
-      zip: ['']
+      password: ['', [Validators.minLength(6)]]
     });
     this.loading = true;
     this.customerService.getProfile().subscribe(profile => {

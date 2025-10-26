@@ -32,6 +32,8 @@ com\bookfast\backend\controller\DemoFormController.class
 com\bookfast\backend\admin\controller\PublicCategoryController.class
 com\bookfast\backend\common\exception\InvalidCredentialsException.class
 com\bookfast\backend\common\util\PasswordUtil.class
+com\bookfast\backend\resource\dto\BookingDetailsDTO.class
+com\bookfast\backend\resource\service\ReviewService$ReviewDetailsDTO.class
 com\bookfast\backend\model\DemoForm.class
 com\bookfast\backend\resource\controller\DatabaseController.class
 com\bookfast\backend\common\config\CorsConfig$1.class

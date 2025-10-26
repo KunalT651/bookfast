@@ -1,9 +1,5 @@
 <ng-container *ngIf="(loggedIn | async) && showNavbar">
-  <ng-container *ngIf="shouldShowProviderNavbar(); else customerNav">
-    <app-provider-navbar></app-provider-navbar>
-  </ng-container>
-  <ng-template #customerNav>
-    <app-navbar></app-navbar>
-  </ng-template>
+  <app-provider-navbar *ngIf="shouldShowProviderNavbar()"></app-provider-navbar>
+  <app-navbar *ngIf="!shouldShowProviderNavbar()"></app-navbar>
 </ng-container>
 <router-outlet></router-outlet>

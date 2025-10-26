@@ -53,6 +53,7 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\res
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\TestDataController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\TestResourceController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\UnavailableDateController.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\dto\BookingDetailsDTO.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\AvailabilitySlot.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\Booking.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\Customer.java

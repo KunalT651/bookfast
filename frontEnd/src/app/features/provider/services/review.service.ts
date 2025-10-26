@@ -4,11 +4,18 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  private apiUrl = 'http://localhost:8080/api/reviews';
+    private apiUrl = 'http://localhost:8080/api/reviews';
 
-  getReviewsByResourceId(resourceId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/resource/${resourceId}`, { withCredentials: true });
-  }
+    constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) {}
+    // Provider endpoints
+    getReviewsByProvider(): Observable<any[]> {
+        console.log('[ReviewService] Making GET request to:', `${this.apiUrl}/provider/me`);
+        return this.http.get<any[]>(`${this.apiUrl}/provider/me`, { withCredentials: true });
+    }
+
+    deleteReviewByProvider(reviewId: number) {
+        console.log('[ReviewService] Deleting review:', `${this.apiUrl}/provider/${reviewId}`);
+        return this.http.delete(`${this.apiUrl}/provider/${reviewId}`, { withCredentials: true });
+    }
 }

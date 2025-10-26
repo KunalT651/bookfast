@@ -1,12 +1,25 @@
 
 .profile-container {
-	max-width: 400px;
+	max-width: 600px;
 	margin: 2rem auto;
 	background: #fff;
 	border-radius: 10px;
 	box-shadow: 0 2px 12px rgba(44,62,80,0.08);
 	padding: 2rem;
 	border: 1px solid #b2dfdb;
+}
+
+.form-row {
+	display: flex;
+	gap: 1rem;
+}
+
+.form-row .form-group {
+	flex: 1;
+}
+
+.form-group {
+	margin-bottom: 1rem;
 }
 label {
 	display: block;

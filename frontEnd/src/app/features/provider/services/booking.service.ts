@@ -10,15 +10,19 @@ export class BookingService {
 
 	// Provider endpoints
 	getBookingsByProvider(): Observable<any[]> {
+		console.log('[BookingService] Making GET request to:', `${this.apiUrl}/provider/me`);
 		return this.http.get<any[]>(`${this.apiUrl}/provider/me`, { withCredentials: true });
 	}
 
-	providerCancelBooking(providerId: number, bookingId: number) {
-		return this.http.put<any>(`${this.apiUrl}/provider/${providerId}/cancel/${bookingId}`, {}, { withCredentials: true });
-	}
 
 	providerEditBooking(providerId: number, bookingId: number, payload: any) {
+		console.log('[BookingService] Editing booking:', `${this.apiUrl}/provider/${providerId}/edit/${bookingId}`, payload);
 		return this.http.put<any>(`${this.apiUrl}/provider/${providerId}/edit/${bookingId}`, payload, { withCredentials: true });
+	}
+
+	deleteBooking(bookingId: number) {
+		console.log('[BookingService] Deleting booking:', `${this.apiUrl}/${bookingId}`);
+		return this.http.delete(`${this.apiUrl}/${bookingId}`, { withCredentials: true });
 	}
 }
 

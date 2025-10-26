@@ -30,6 +30,12 @@ export class AppComponent implements OnInit {
       const hiddenRoutes = ['/login', '/registration', '/provider/registration'];
       this.showNavbar = !hiddenRoutes.includes(this.router.url.split('?')[0]);
       this.isProviderRoute = this.isProviderDashboardRoute();
+      console.log('[AppComponent] Route changed:', {
+        url: this.router.url,
+        isProviderRoute: this.isProviderRoute,
+        showNavbar: this.showNavbar,
+        userRole: this.userRole
+      });
     });
   }
 
@@ -74,6 +80,7 @@ export class AppComponent implements OnInit {
     // Subscribe to user state changes
     this.userState.getUser().subscribe(user => {
       this.userRole = user ? user.role?.name || null : null;
+      this.isProviderRoute = this.isProviderDashboardRoute(); // Recalculate on user change
       console.log('User state changed:', user);
       console.log('User role:', this.userRole);
       console.log('Is provider route:', this.isProviderRoute);
@@ -98,14 +105,21 @@ export class AppComponent implements OnInit {
   }
 
   isProviderDashboardRoute(): boolean {
-    // Only show provider navbar for /provider/dashboard and its subroutes
+    // Show provider navbar for any /provider route
     const path = window.location.pathname;
-    return path === '/provider/dashboard' || path.startsWith('/provider/dashboard/');
+    return path.startsWith('/provider/');
   }
 
   shouldShowProviderNavbar(): boolean {
     // Show provider navbar only if we're on a provider route AND user role is PROVIDER
-    return this.isProviderRoute && this.userRole === 'PROVIDER';
+    const result = this.isProviderRoute && this.userRole === 'PROVIDER';
+    console.log('[AppComponent] shouldShowProviderNavbar:', {
+      isProviderRoute: this.isProviderRoute,
+      userRole: this.userRole,
+      result: result,
+      currentPath: window.location.pathname
+    });
+    return result;
   }
   }
 

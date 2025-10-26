@@ -108,3 +108,92 @@
   padding-top: 0.5rem;
   margin-top: 0.5rem;
 }
+
+.stripe-payment-section {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  margin: 1rem 0;
+}
+
+.stripe-branding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 0;
+  padding: 8px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.card-logo {
+  display: inline-block;
+  padding: 4px 8px;
+  margin: 0 4px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-logo.visa {
+  background: #1a1f71;
+  color: white;
+}
+
+.card-logo.mastercard {
+  background: #eb001b;
+  color: white;
+}
+
+.card-logo.amex {
+  background: #006fcf;
+  color: white;
+}
+
+.local-stripe-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.card-input-group {
+  margin-bottom: 16px;
+}
+
+.card-input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #424770;
+  margin-bottom: 6px;
+}
+
+.card-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.card-input:focus {
+  outline: none;
+  border-color: #00897b;
+  box-shadow: 0 0 0 3px rgba(0, 137, 123, 0.1);
+}
+
+.card-row {
+  display: flex;
+  gap: 12px;
+}
+
+.card-row .card-input-group {
+  flex: 1;
+}

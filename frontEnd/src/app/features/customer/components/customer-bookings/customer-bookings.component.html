@@ -1,5 +1,14 @@
 <div class="bookings-container">
   <h2>My Bookings</h2>
+  
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+  
+  <div *ngIf="loading" class="loading-message">
+    Processing your request...
+  </div>
+  
   <table>
     <thead>
       <tr>
@@ -23,8 +32,11 @@
         <td>{{ booking.status }}</td>
         <td>{{ booking.paymentStatus }}</td>
         <td>
-         <button (click)="deleteBooking(booking.id!)" [disabled]="isPastBooking(booking)">Delete</button>
-         <button (click)="cancelBooking(booking.id!)" [disabled]="booking.status === 'cancelled' || isPastBooking(booking)">Cancel</button>
+         <button (click)="cancelBooking(booking.id!)" 
+                 [disabled]="booking.status === 'cancelled' || isPastBooking(booking) || loading"
+                 class="cancel-btn">
+           {{ booking.status === 'cancelled' ? 'Cancelled' : 'Cancel Booking' }}
+         </button>
         </td>
       </tr>
     </tbody>

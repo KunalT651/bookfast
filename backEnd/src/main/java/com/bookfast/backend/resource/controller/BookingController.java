@@ -6,6 +6,7 @@ import com.bookfast.backend.resource.model.Booking;
 import com.bookfast.backend.resource.model.Resource;
 import com.bookfast.backend.resource.repository.ResourceRepository;
 import com.bookfast.backend.resource.service.BookingService;
+import com.bookfast.backend.resource.dto.BookingDetailsDTO;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
 import org.springframework.security.core.Authentication;
@@ -187,39 +188,89 @@ public class BookingController {
         return service.getBookingsByResource(resourceId);
     }
 
+    @GetMapping("/provider/me")
+    public List<BookingDetailsDTO> getBookingsByProvider() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getName() != null) {
+                String username = authentication.getName(); // This is the email
+                User currentUser = userRepository.findByEmail(username).orElse(null);
+                if (currentUser != null) {
+                    return service.getDetailedBookingsByProvider(currentUser.getId());
+                }
+            }
+            return new ArrayList<>();
+        } catch (Exception e) {
+            System.out.println("[BookingController] Error getting provider bookings: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     @DeleteMapping("/{bookingId}")
     public void deleteBooking(@PathVariable Long bookingId) {
+        System.out.println("[BookingController] DELETE request received for booking: " + bookingId);
+        
+        // Check authentication context
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            System.out.println("[BookingController] Authentication: " + auth.getName());
+            System.out.println("[BookingController] Authorities: " + auth.getAuthorities());
+        } else {
+            System.out.println("[BookingController] No authentication found!");
+        }
+        
+        System.out.println("[BookingController] Deleting booking: " + bookingId);
         service.deleteBooking(bookingId);
+        System.out.println("[BookingController] Booking deleted successfully: " + bookingId);
     }
 
     @PutMapping("/{bookingId}/cancel")
-    public Booking cancelBooking(@PathVariable Long bookingId) {
-        return service.cancelBooking(bookingId);
+    public ResponseEntity<?> cancelBooking(@PathVariable Long bookingId) {
+        try {
+            service.cancelBooking(bookingId);
+            return ResponseEntity.ok().body(Map.of("message", "Booking cancelled and deleted successfully"));
+        } catch (Exception e) {
+            System.out.println("[BookingController] Error cancelling booking: " + e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to cancel booking: " + e.getMessage()));
+        }
     }
 
     @PutMapping("/provider/{providerId}/edit/{bookingId}")
     public Booking providerEditBooking(@PathVariable Long providerId, @PathVariable Long bookingId,
             @RequestBody Booking updated) {
+        System.out.println("[BookingController] Provider edit booking - providerId: " + providerId + ", bookingId: " + bookingId);
+        System.out.println("[BookingController] Updated data: " + updated);
+        
         // Only allow status and time changes, not customer info
         Booking booking = service.getBookingById(bookingId);
         if (booking != null && booking.getResource() != null
                 && booking.getResource().getProviderId().equals(providerId)) {
+            System.out.println("[BookingController] Found booking, updating...");
             booking.setStatus(updated.getStatus());
             booking.setStartTime(updated.getStartTime());
             booking.setEndTime(updated.getEndTime());
-            return service.saveBooking(booking);
+            Booking saved = service.saveBooking(booking);
+            System.out.println("[BookingController] Booking updated successfully: " + saved);
+            return saved;
         }
+        System.out.println("[BookingController] Booking not found or provider mismatch");
         return null;
     }
 
     @PutMapping("/provider/{providerId}/cancel/{bookingId}")
     public Booking providerCancelBooking(@PathVariable Long providerId, @PathVariable Long bookingId) {
+        System.out.println("[BookingController] Provider cancel booking - providerId: " + providerId + ", bookingId: " + bookingId);
+        
         Booking booking = service.getBookingById(bookingId);
         if (booking != null && booking.getResource() != null
                 && booking.getResource().getProviderId().equals(providerId)) {
+            System.out.println("[BookingController] Found booking, cancelling...");
             booking.setStatus("cancelled");
-            return service.saveBooking(booking);
+            Booking saved = service.saveBooking(booking);
+            System.out.println("[BookingController] Booking cancelled successfully: " + saved);
+            return saved;
         }
+        System.out.println("[BookingController] Booking not found or provider mismatch");
         return null;
     }
 }

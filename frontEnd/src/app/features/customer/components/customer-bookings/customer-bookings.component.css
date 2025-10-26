@@ -44,3 +44,35 @@ button:disabled {
   background: #bdbdbd;
   cursor: not-allowed;
 }
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #c62828;
+}
+
+.loading-message {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #1976d2;
+}
+
+.cancel-btn {
+  background: #ff9800;
+  min-width: 120px;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #f57c00;
+}
+
+.cancel-btn:disabled {
+  background: #4caf50;
+  color: #fff;
+}

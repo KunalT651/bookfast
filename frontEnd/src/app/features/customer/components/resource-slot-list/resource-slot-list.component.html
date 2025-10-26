@@ -8,7 +8,7 @@
              [checked]="selectedSlotIds.includes(slot.id ?? -1)"
              (change)="toggleSlotSelection(slot, $event.target.checked)" />
       <span [ngClass]="{ 'selected-slot': selectedSlotIds.includes(slot.id ?? -1) }">
-        {{ slot.dayOfWeek }}: {{ slot.startTime }} - {{ slot.endTime }}
+        {{ formatSlotDisplay(slot) }}
       </span>
     </li>
   </ul>

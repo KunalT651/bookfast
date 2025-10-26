@@ -13,9 +13,12 @@ import { PermanentCleanupComponent } from './features/admin/components/permanent
 import { ResourcesComponent } from './features/provider/components/resources/resources.component';
 import { ProviderDashboardComponent } from './features/provider/components/dashboard/dashboard.component';
 import { ProviderProfileComponent } from './features/provider/components/profile/profile.component'; // Import the refactored component
+import { ProviderBookingsComponent } from './features/provider/components/provider-bookings/provider-bookings.component';
+import { ProviderReviewsComponent } from './features/provider/components/provider-reviews/provider-reviews.component';
 import { HomeComponent } from './features/customer/components/home/home.component';
 import { BookingComponent } from './features/customer/components/booking/booking.component';
 import { MyReviewsComponent } from './features/customer/components/my-reviews/my-reviews.component';
+import { CustomerProfileComponent } from './features/customer/components/customer-profile/customer-profile.component';
 import { TestDataComponent } from './features/customer/components/test-data/test-data.component';
 import { TestResourceComponent } from './features/customer/components/test-resource/test-resource.component';
 
@@ -40,14 +43,15 @@ export const routes: Routes = [
       { path: '', redirectTo: 'resources', pathMatch: 'full' },
       { path: 'resources', component: ResourcesComponent, canActivate: [authGuard] },
       { path: 'profile', component: ProviderProfileComponent, canActivate: [authGuard] },
-      { path: 'bookings', component: ProviderDashboardComponent, canActivate: [authGuard] }, // Placeholder for bookings
-      { path: 'reviews', component: ProviderDashboardComponent, canActivate: [authGuard] }, // Placeholder for reviews
+      { path: 'bookings', component: ProviderBookingsComponent, canActivate: [authGuard] },
+      { path: 'reviews', component: ProviderReviewsComponent, canActivate: [authGuard] },
       // ...other child routes
     ]
   },
   { path: 'customer/home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'customer/reviews', component: MyReviewsComponent, canActivate: [authGuard] },
   { path: 'customer/bookings', loadComponent: () => import('./features/customer/components/customer-bookings/customer-bookings.component').then(m => m.CustomerBookingsComponent), canActivate: [authGuard] },
+  { path: 'customer/profile/edit', component: CustomerProfileComponent, canActivate: [authGuard] },
   { path: 'test-data', component: TestDataComponent, canActivate: [authGuard] },
   { path: 'test-resource', component: TestResourceComponent, canActivate: [authGuard] },
 

@@ -63,4 +63,20 @@ export class ResourceSlotListComponent implements OnInit {
       this.onBookSlot(selectedSlots);
     }
   }
+
+  formatSlotDisplay(slot: AvailabilitySlot): string {
+    if (!slot.date) {
+      return `${slot.startTime} - ${slot.endTime}`;
+    }
+    
+    const date = new Date(slot.date);
+    const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
+    const formattedDate = date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+    
+    return `${dayOfWeek}, ${formattedDate}: ${slot.startTime} - ${slot.endTime}`;
+  }
 }
