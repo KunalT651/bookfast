@@ -65,10 +65,10 @@ NODE_ENV=production
 - **Root Directory**: `backEnd`
 - **Runtime**: Docker
 
-**Note**: Since Render doesn't natively support Java, we use Docker. The Dockerfile is already configured in the `backEnd` directory. The backend is configured for MySQL (not PostgreSQL).
+**Note**: Since Render doesn't natively support Java, we use Docker. The Dockerfile is already configured in the `backEnd` directory. The backend is now configured for PostgreSQL (Render's supported database).
 
-### 3.3 Add MySQL Database
-1. In Render dashboard, click "New" → "MySQL"
+### 3.3 Add PostgreSQL Database
+1. In Render dashboard, click "New" → "Postgres"
 2. Name it `bookfast-db`
 3. Note the connection details (host, port, database name, username, password)
 
@@ -77,7 +77,7 @@ Add these environment variables in Render:
 
 **Database:**
 ```
-SPRING_DATASOURCE_URL=jdbc:mysql://your-db-url:3306/your-db-name
+SPRING_DATASOURCE_URL=jdbc:postgresql://your-db-url:5432/your-db-name
 SPRING_DATASOURCE_USERNAME=your-db-username
 SPRING_DATASOURCE_PASSWORD=your-db-password
 ```
