@@ -7,7 +7,9 @@ import { BaseService } from '../../../shared/services/base.service';
 export class AuthService extends BaseService {
   private authUrl = `${this.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    super();
+  }
 
   registerCustomer(data: any): Observable<any> {
     return this.http.post(`${this.authUrl}/register`, data, { withCredentials: true });
