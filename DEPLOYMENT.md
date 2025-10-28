@@ -63,9 +63,9 @@ NODE_ENV=production
 ### 3.2 Configure Render
 - **Name**: `bookfast-backend`
 - **Root Directory**: `backEnd`
-- **Build Command**: `./mvnw clean package -DskipTests`
-- **Start Command**: `java -jar target/backend-0.0.1-SNAPSHOT.jar`
-- **Runtime**: Java 21
+- **Runtime**: Docker
+
+**Note**: Since Render doesn't natively support Java, we use Docker. The Dockerfile is already configured in the `backEnd` directory.
 
 ### 3.3 Add PostgreSQL Database
 1. In Render dashboard, click "New" → "PostgreSQL"
