@@ -1,6 +1,7 @@
 package com.bookfast.backend.common.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class User {
@@ -11,6 +12,8 @@ public class User {
     private String organizationName; // For providers
     private String serviceCategory; // For providers
     private String imageUrl; // For profile picture
+    private LocalDate createdDate; // For tracking user creation
+    private Boolean isActive = true; // For tracking user status (active/inactive)
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -57,5 +60,21 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }

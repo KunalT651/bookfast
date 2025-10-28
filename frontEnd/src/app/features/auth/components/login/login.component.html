@@ -1,12 +1,20 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <input formControlName="email" placeholder="Email" required type="email">
-  <input formControlName="password" placeholder="Password" required type="password">
-  <select formControlName="serviceCategory" required>
-    <option value="" disabled selected>Select Service Category</option>
-    <option *ngFor="let cat of serviceCategories" [value]="cat.name">{{ cat.name }}</option>
-  </select>
-  <button type="submit">Login</button>
-  <div *ngIf="error" style="color: red;">{{ error }}</div>
-  <div *ngIf="success" style="color: green;">{{ success }}</div>
-</form>
-<a routerLink="/register">Don't have an account? Register</a>
+<div class="login-container">
+  <h2>User Login</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <input formControlName="email" placeholder="Email" required type="email">
+    <input formControlName="password" placeholder="Password" required type="password">
+    <select formControlName="serviceCategory" required>
+      <option value="" disabled selected>Select Service Category</option>
+      <option *ngFor="let cat of serviceCategories" [value]="cat.name">{{ cat.name }}</option>
+    </select>
+    <button type="submit">Login</button>
+    <div *ngIf="error" style="color: red;">{{ error }}</div>
+    <div *ngIf="success" style="color: green;">{{ success }}</div>
+  </form>
+  
+  <div class="login-links">
+    <a routerLink="/registration">Don't have an account? Register</a>
+    <br>
+    <a routerLink="/admin/login" class="admin-link">Admin Login</a>
+  </div>
+</div>

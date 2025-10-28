@@ -1,0 +1,121 @@
+<div class="admin-bookings">
+  <div class="header">
+    <h2>Booking Management</h2>
+    <div class="header-actions">
+      <div class="filters">
+        <div class="search-box">
+          <input 
+            type="text" 
+            placeholder="Search bookings..." 
+            [(ngModel)]="searchTerm"
+            (input)="searchBookings()"
+            class="search-input">
+          <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-btn">×</button>
+        </div>
+        <select [(ngModel)]="statusFilter" (change)="onStatusFilterChange()" class="status-filter">
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <button class="refresh-btn" (click)="loadBookings()" [disabled]="loading">
+        {{ loading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading bookings...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+  <div *ngIf="!loading && filteredBookings.length === 0" class="no-data">
+    <p *ngIf="searchTerm || statusFilter !== 'all'">No bookings found matching your criteria.</p>
+    <p *ngIf="!searchTerm && statusFilter === 'all'">No bookings found.</p>
+  </div>
+
+  <div *ngIf="!loading && filteredBookings.length > 0" class="bookings-table-container">
+    <table class="bookings-table">
+      <thead>
+        <tr>
+          <th>Booking ID</th>
+          <th>Customer</th>
+          <th>Customer Email</th>
+          <th>Service</th>
+          <th>Provider</th>
+          <th>Date & Time</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let booking of filteredBookings">
+          <td>{{ booking.id }}</td>
+          <td>{{ booking.customerName }}</td>
+          <td>{{ booking.customerEmail || 'N/A' }}</td>
+          <td>{{ booking.resourceName || 'N/A' }}</td>
+          <td>{{ booking.providerName || 'N/A' }}</td>
+          <td>
+            <div class="datetime-info">
+              <div>{{ booking.startTime | date:'shortDate' }}</div>
+              <div class="time">{{ booking.startTime | date:'shortTime' }} - {{ booking.endTime | date:'shortTime' }}</div>
+            </div>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+              {{ booking.status }}
+            </span>
+          </td>
+          <td>
+            <span class="payment-badge" [ngClass]="getPaymentStatusClass(booking.paymentStatus)">
+              {{ booking.paymentStatus }}
+            </span>
+          </td>
+          <td>${{ booking.finalAmount || 0 | number:'1.2-2' }}</td>
+          <td class="actions">
+            <button class="edit-btn" (click)="startEdit(booking)">Edit</button>
+            <button class="delete-btn" (click)="deleteBooking(booking.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Booking Modal -->
+  <div *ngIf="editingBooking" class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Edit Booking</h3>
+      <form (ngSubmit)="saveEdit()">
+        <div class="form-group">
+          <label for="status">Status:</label>
+          <select id="status" [(ngModel)]="editForm.status" name="status" required>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="paymentStatus">Payment Status:</label>
+          <select id="paymentStatus" [(ngModel)]="editForm.paymentStatus" name="paymentStatus" required>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="finalAmount">Final Amount:</label>
+          <input type="number" id="finalAmount" [(ngModel)]="editForm.finalAmount" name="finalAmount" step="0.01" min="0">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancelEdit()">Cancel</button>
+          <button type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="admin-customers">
+  <div class="header">
+    <h2>Customer Management</h2>
+    <div class="header-actions">
+      <div class="search-box">
+        <input 
+          type="text" 
+          placeholder="Search customers..." 
+          [(ngModel)]="searchTerm"
+          (input)="searchCustomers()"
+          class="search-input">
+        <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-btn">×</button>
+      </div>
+      <button class="refresh-btn" (click)="loadCustomers()" [disabled]="loading">
+        {{ loading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading customers...</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+
+  <div *ngIf="!loading && filteredCustomers.length === 0" class="no-data">
+    <p *ngIf="searchTerm">No customers found matching "{{ searchTerm }}"</p>
+    <p *ngIf="!searchTerm">No customers found.</p>
+  </div>
+
+  <div *ngIf="!loading && filteredCustomers.length > 0" class="customers-table-container">
+    <table class="customers-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Organization</th>
+          <th>Service Category</th>
+          <th>Created Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of filteredCustomers">
+          <td>{{ customer.id }}</td>
+          <td>{{ customer.firstName }} {{ customer.lastName }}</td>
+          <td>{{ customer.email }}</td>
+          <td>{{ customer.organizationName || 'N/A' }}</td>
+          <td>{{ customer.serviceCategory || 'N/A' }}</td>
+          <td>{{ customer.createdDate | date:'shortDate' }}</td>
+          <td class="actions">
+            <button class="edit-btn" (click)="startEdit(customer)">Edit</button>
+            <button class="delete-btn" (click)="deleteCustomer(customer.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Customer Modal -->
+  <div *ngIf="editingCustomer" class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Edit Customer</h3>
+      <form (ngSubmit)="saveEdit()">
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" [(ngModel)]="editForm.firstName" name="firstName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" [(ngModel)]="editForm.lastName" name="lastName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" [(ngModel)]="editForm.email" name="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="organizationName">Organization:</label>
+          <input type="text" id="organizationName" [(ngModel)]="editForm.organizationName" name="organizationName">
+        </div>
+
+        <div class="form-group">
+          <label for="serviceCategory">Service Category:</label>
+          <input type="text" id="serviceCategory" [(ngModel)]="editForm.serviceCategory" name="serviceCategory">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancelEdit()">Cancel</button>
+          <button type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

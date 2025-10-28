@@ -53,3 +53,25 @@
 .login-container button:hover, .login-container button:focus {
 	background: #004d40;
 }
+
+.login-links {
+	margin-top: 1.5rem;
+	text-align: center;
+}
+
+.login-links a {
+	color: #00897b;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.login-links a:hover {
+	text-decoration: underline;
+}
+
+.admin-link {
+	color: #ff6b35 !important;
+	font-weight: 600;
+	margin-top: 8px;
+	display: inline-block;
+}

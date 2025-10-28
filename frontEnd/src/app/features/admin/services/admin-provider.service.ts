@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AdminProviderService {
   private apiUrl = 'http://localhost:8080/api/admin/providers';
 
@@ -12,11 +14,35 @@ export class AdminProviderService {
     return this.http.get<any[]>(this.apiUrl, { withCredentials: true });
   }
 
-  updateProvider(id: number, provider: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, provider, { withCredentials: true });
+  getProviderById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  deleteProvider(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
+  createProvider(providerData: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, providerData, { withCredentials: true });
+  }
+
+  updateProvider(id: number, providerData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, providerData, { withCredentials: true });
+  }
+
+  deleteProvider(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
+  }
+
+  updateProviderStatus(id: number, isActive: boolean): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${id}/status`, { isActive }, { withCredentials: true });
+  }
+
+  getProvidersByCategory(category: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/category/${encodeURIComponent(category)}`, { withCredentials: true });
+  }
+
+  searchProviders(query: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/search?q=${encodeURIComponent(query)}`, { withCredentials: true });
+  }
+
+  getProviderStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats`, { withCredentials: true });
   }
 }

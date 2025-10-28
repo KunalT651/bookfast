@@ -1,0 +1,52 @@
+<div class="admin-login-container">
+  <div class="admin-login-card">
+    <div class="admin-header">
+      <h1>BookFast Admin</h1>
+      <p>Administrator Login Portal</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="admin-login-form">
+      <div class="form-group">
+        <label for="email">Admin Email</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="admin@bookfast.com"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Enter admin password"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="admin-login-btn"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Signing In...' : 'Sign In as Admin' }}
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Not an admin? <a (click)="goToUserLogin()" class="user-login-link">User Login</a></p>
+    </div>
+  </div>
+</div>

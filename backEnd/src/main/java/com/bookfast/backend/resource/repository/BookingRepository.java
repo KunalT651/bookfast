@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import com.bookfast.backend.resource.model.Booking;
 
 import java.util.List;
+import java.time.LocalDate;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByResource_Id(Long resourceId);
@@ -30,4 +31,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @org.springframework.data.repository.query.Param("resourceId") Long resourceId,
             @org.springframework.data.repository.query.Param("startTime") java.time.LocalDateTime startTime,
             @org.springframework.data.repository.query.Param("endTime") java.time.LocalDateTime endTime);
+
+    // Admin statistics methods
+    long countByPaymentStatus(String paymentStatus);
+    
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.date >= :date")
+    long countByDateAfter(@Param("date") java.time.LocalDateTime date);
+    
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.date >= :startDate AND b.date < :endDate")
+    long countByDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    
+    @Query("SELECT COALESCE(SUM(b.finalAmount), 0) FROM Booking b WHERE b.date >= :date")
+    Double sumTotalAmountByDateAfter(@Param("date") LocalDate date);
+    
+    // Find recent bookings for admin dashboard
+    @Query("SELECT b FROM Booking b ORDER BY b.date DESC")
+    List<Booking> findTop10ByOrderByDateDesc();
 }

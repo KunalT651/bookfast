@@ -1,14 +1,182 @@
 <div class="admin-dashboard">
-  <h2>System Reports</h2>
-  <div *ngIf="error" class="error">{{ error }}</div>
-  <table *ngIf="reports">
-    <tr><th>Metric</th><th>Value</th></tr>
-    <tr><td>Total Bookings</td><td>{{ reports.totalBookings }}</td></tr>
-    <tr><td>Total Revenue (CAD)</td><td>{{ reports.totalRevenue | number:'1.2-2' }}</td></tr>
-    <tr><td>Total Users</td><td>{{ reports.totalUsers }}</td></tr>
-    <tr><td>Total Providers</td><td>{{ reports.totalProviders }}</td></tr>
-    <tr><td>Total Customers</td><td>{{ reports.totalCustomers }}</td></tr>
-    <tr><td>Total Reviews</td><td>{{ reports.totalReviews }}</td></tr>
-    <tr><td>Total Cancellations</td><td>{{ reports.totalCancellations }}</td></tr>
-  </table>
+  <div class="dashboard-header">
+    <h1>Admin Dashboard</h1>
+    <div class="header-actions">
+      <button class="refresh-btn" (click)="refreshData()" [disabled]="loading">
+        <span class="refresh-icon">🔄</span>
+        {{ loading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="loading-spinner">Loading dashboard data...</div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-content">
+        <h3>{{ dashboardData.totalUsers }}</h3>
+        <p>Total Users</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🏢</div>
+      <div class="stat-content">
+        <h3>{{ dashboardData.totalProviders }}</h3>
+        <p>Providers</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">👤</div>
+      <div class="stat-content">
+        <h3>{{ dashboardData.totalCustomers }}</h3>
+        <p>Customers</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-content">
+        <h3>{{ dashboardData.totalBookings }}</h3>
+        <p>Total Bookings</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">⭐</div>
+      <div class="stat-content">
+        <h3>{{ dashboardData.totalReviews }}</h3>
+        <p>Reviews</p>
+      </div>
+    </div>
+
+    <div class="stat-card revenue">
+      <div class="stat-icon">💰</div>
+      <div class="stat-content">
+        <h3>{{ formatCurrency(dashboardData.totalRevenue) }}</h3>
+        <p>Total Revenue</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Status -->
+  <div class="system-status">
+    <h2>System Status</h2>
+    <div class="status-grid">
+      <div class="status-item">
+        <span class="status-label">System Status</span>
+        <span class="status-value" [style.color]="getStatusColor(dashboardData.systemStats.status)">
+          {{ dashboardData.systemStats.status }}
+        </span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Uptime</span>
+        <span class="status-value">{{ dashboardData.systemStats.uptime }}</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Last Backup</span>
+        <span class="status-value">{{ dashboardData.systemStats.lastBackup }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="recent-activity">
+    <div class="activity-section">
+      <h2>Recent Bookings</h2>
+      <div class="activity-list">
+        <div *ngFor="let booking of dashboardData.recentBookings" class="activity-item">
+          <div class="activity-icon">📅</div>
+          <div class="activity-content">
+            <p><strong>{{ booking.customerName }}</strong> booked <strong>{{ booking.resourceName }}</strong></p>
+            <small>{{ booking.date | date:'short' }} - {{ booking.status }}</small>
+          </div>
+          <div class="activity-amount">{{ formatCurrency(booking.amount) }}</div>
+        </div>
+        <div *ngIf="dashboardData.recentBookings.length === 0" class="no-activity">
+          No recent bookings
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-section">
+      <h2>Recent Reviews</h2>
+      <div class="activity-list">
+        <div *ngFor="let review of dashboardData.recentReviews" class="activity-item">
+          <div class="activity-icon">⭐</div>
+          <div class="activity-content">
+            <p><strong>{{ review.customerName }}</strong> reviewed <strong>{{ review.resourceName }}</strong></p>
+            <small>{{ review.rating }}/5 stars - {{ review.date | date:'short' }}</small>
+          </div>
+          <div class="activity-rating">{{ review.rating }}/5</div>
+        </div>
+        <div *ngIf="dashboardData.recentReviews.length === 0" class="no-activity">
+          No recent reviews
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <a routerLink="/admin/providers" class="action-card">
+        <div class="action-icon">🏢</div>
+        <h3>Manage Providers</h3>
+        <p>View and manage service providers</p>
+      </a>
+
+      <a routerLink="/admin/users" class="action-card">
+        <div class="action-icon">👤</div>
+        <h3>Manage Users</h3>
+        <p>View and manage all user accounts</p>
+      </a>
+
+      <a routerLink="/admin/customers" class="action-card">
+        <div class="action-icon">👥</div>
+        <h3>Manage Customers</h3>
+        <p>View and manage customer accounts</p>
+      </a>
+
+      <a routerLink="/admin/bookings" class="action-card">
+        <div class="action-icon">📅</div>
+        <h3>Manage Bookings</h3>
+        <p>View and manage all bookings</p>
+      </a>
+
+      <a routerLink="/admin/reports" class="action-card">
+        <div class="action-icon">📊</div>
+        <h3>System Reports</h3>
+        <p>View analytics and system reports</p>
+      </a>
+
+      <a routerLink="/admin/services" class="action-card">
+        <div class="action-icon">🔧</div>
+        <h3>Service Categories</h3>
+        <p>Manage service types and categories</p>
+      </a>
+
+      <a routerLink="/admin/analytics" class="action-card">
+        <div class="action-icon">📊</div>
+        <h3>Analytics</h3>
+        <p>View detailed analytics and reports</p>
+      </a>
+
+      <a routerLink="/admin/settings" class="action-card">
+        <div class="action-icon">⚙️</div>
+        <h3>Settings</h3>
+        <p>System configuration and settings</p>
+      </a>
+    </div>
+  </div>
 </div>

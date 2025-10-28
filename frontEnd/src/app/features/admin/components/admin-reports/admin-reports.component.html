@@ -1,0 +1,204 @@
+<div class="admin-reports-container">
+  <div class="header">
+    <h2>System Reports</h2>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="refreshReports()" [disabled]="loading">
+        <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Time Period:</label>
+      <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()" class="form-control">
+        <option value="7">Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+        <option value="365">Last year</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Report Type:</label>
+      <select [(ngModel)]="selectedReportType" (change)="onReportTypeChange()" class="form-control">
+        <option value="overview">Overview</option>
+        <option value="bookings">Bookings</option>
+        <option value="users">Users</option>
+        <option value="revenue">Revenue</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading reports...</p>
+  </div>
+
+  <!-- Reports Content -->
+  <div *ngIf="!loading && reports" class="reports-content">
+    
+    <!-- Overview Cards -->
+    <div class="overview-cards">
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="card-content">
+          <h3>{{ reports.totalUsers || 0 }}</h3>
+          <p>Total Users</p>
+          <small>{{ reports.newUsers || 0 }} new this period</small>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-building"></i>
+        </div>
+        <div class="card-content">
+          <h3>{{ reports.totalProviders || 0 }}</h3>
+          <p>Service Providers</p>
+          <small>{{ reports.newProviders || 0 }} new this period</small>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="card-content">
+          <h3>{{ reports.totalBookings || 0 }}</h3>
+          <p>Total Bookings</p>
+          <small>{{ reports.newBookings || 0 }} new this period</small>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="card-content">
+          <h3>${{ reports.totalRevenue || 0 | number:'1.2-2' }}</h3>
+          <p>Total Revenue</p>
+          <small>${{ reports.periodRevenue || 0 | number:'1.2-2' }} this period</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Reports -->
+    <div class="detailed-reports">
+      
+      <!-- User Growth Chart -->
+      <div class="report-section">
+        <div class="report-header">
+          <h3>User Growth</h3>
+          <button class="btn btn-sm btn-outline-primary" (click)="exportReport('users')">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+        <div class="chart-container">
+          <div class="chart-placeholder">
+            <i class="fas fa-chart-line"></i>
+            <p>User growth chart would be displayed here</p>
+            <small>Data: {{ reports.userGrowthData?.length || 0 }} data points</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Trends -->
+      <div class="report-section">
+        <div class="report-header">
+          <h3>Booking Trends</h3>
+          <button class="btn btn-sm btn-outline-primary" (click)="exportReport('bookings')">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+        <div class="chart-container">
+          <div class="chart-placeholder">
+            <i class="fas fa-chart-bar"></i>
+            <p>Booking trends chart would be displayed here</p>
+            <small>Data: {{ reports.bookingTrendsData?.length || 0 }} data points</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue Analysis -->
+      <div class="report-section">
+        <div class="report-header">
+          <h3>Revenue Analysis</h3>
+          <button class="btn btn-sm btn-outline-primary" (click)="exportReport('revenue')">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+        <div class="chart-container">
+          <div class="chart-placeholder">
+            <i class="fas fa-chart-pie"></i>
+            <p>Revenue analysis chart would be displayed here</p>
+            <small>Data: {{ reports.revenueData?.length || 0 }} data points</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Providers -->
+      <div class="report-section">
+        <div class="report-header">
+          <h3>Top Performing Providers</h3>
+          <button class="btn btn-sm btn-outline-primary" (click)="exportReport('providers')">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Bookings</th>
+                <th>Revenue</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let provider of reports.topProviders || []">
+                <td>{{ provider.name }}</td>
+                <td>{{ provider.bookings }}</td>
+                <td>${{ provider.revenue | number:'1.2-2' }}</td>
+                <td>{{ provider.rating | number:'1.1-1' }} ⭐</td>
+              </tr>
+            </tbody>
+          </table>
+          <div *ngIf="!reports.topProviders || reports.topProviders.length === 0" class="no-data">
+            <p>No provider data available</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="report-section">
+        <div class="report-header">
+          <h3>Recent Activity</h3>
+        </div>
+        <div class="activity-list">
+          <div *ngFor="let activity of reports.recentActivity || []" class="activity-item">
+            <div class="activity-icon">
+              <i class="fas" [ngClass]="activity.icon"></i>
+            </div>
+            <div class="activity-content">
+              <p>{{ activity.description }}</p>
+              <small>{{ activity.timestamp | date:'short' }}</small>
+            </div>
+          </div>
+          <div *ngIf="!reports.recentActivity || reports.recentActivity.length === 0" class="no-data">
+            <p>No recent activity</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

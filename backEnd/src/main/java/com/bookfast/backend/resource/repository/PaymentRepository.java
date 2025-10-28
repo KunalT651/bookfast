@@ -10,4 +10,8 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT p FROM Payment p WHERE p.booking.id = :bookingId")
     List<Payment> findByBookingId(@Param("bookingId") Long bookingId);
+    
+    // Admin report methods
+    @Query("SELECT p FROM Payment p WHERE p.paymentDate >= :date")
+    List<Payment> findByPaymentDateAfter(@Param("date") java.time.LocalDateTime date);
 }
