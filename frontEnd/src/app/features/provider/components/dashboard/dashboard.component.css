@@ -1,21 +1,243 @@
-.tabs {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #eee;
+.provider-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
-.tabs a {
-  padding: 0.5rem 1rem;
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-header h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 32px;
+}
+
+.dashboard-header p {
+  color: #7f8c8d;
+  font-size: 18px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
   text-decoration: none;
-  color: #333;
-  border-radius: 5px 5px 0 0;
-  transition: background 0.2s;
+  color: inherit;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  display: block;
 }
-.tabs a.active, .tabs a:hover {
-  background: #f0f0f0;
-  font-weight: bold;
-  color: #1976d2;
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+  color: inherit;
 }
+
+.card-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.dashboard-card h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.dashboard-card p {
+  color: #7f8c8d;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+}
+
 .dashboard-content {
-  padding: 1.5rem 0;
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+}
+
+/* Mobile-First Responsive Design */
+@media (max-width: 1200px) {
+  .provider-dashboard {
+    padding: 16px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .provider-dashboard {
+    padding: 12px;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 28px;
+  }
+  
+  .dashboard-header p {
+    font-size: 16px;
+  }
+  
+  .dashboard-card {
+    padding: 24px;
+  }
+  
+  .card-icon {
+    font-size: 42px;
+  }
+  
+  .dashboard-card h3 {
+    font-size: 22px;
+  }
+  
+  .dashboard-card p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .provider-dashboard {
+    padding: 8px;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 30px;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 24px;
+  }
+  
+  .dashboard-header p {
+    font-size: 14px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .dashboard-card {
+    padding: 20px;
+  }
+  
+  .card-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+  
+  .dashboard-card h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  
+  .dashboard-card p {
+    font-size: 14px;
+  }
+  
+  .dashboard-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .provider-dashboard {
+    padding: 4px;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 20px;
+  }
+  
+  .dashboard-header p {
+    font-size: 13px;
+  }
+  
+  .dashboard-grid {
+    gap: 12px;
+  }
+  
+  .dashboard-card {
+    padding: 16px;
+  }
+  
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  
+  .dashboard-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-card p {
+    font-size: 13px;
+  }
+  
+  .dashboard-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .provider-dashboard {
+    padding: 2px;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 18px;
+  }
+  
+  .dashboard-header p {
+    font-size: 12px;
+  }
+  
+  .dashboard-card {
+    padding: 12px;
+  }
+  
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-card h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .dashboard-card p {
+    font-size: 12px;
+  }
+  
+  .dashboard-content {
+    padding: 12px;
+  }
 }

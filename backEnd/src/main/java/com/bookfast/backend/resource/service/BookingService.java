@@ -10,6 +10,7 @@ import com.bookfast.backend.resource.repository.PaymentRepository;
 import com.bookfast.backend.resource.dto.BookingDetailsDTO;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
+import com.bookfast.backend.provider.service.GoogleCalendarService;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -21,23 +22,62 @@ public class BookingService {
     private final BookingRepository repository;
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
+    private final GoogleCalendarService googleCalendarService;
 
-    public BookingService(BookingRepository repository, PaymentRepository paymentRepository, UserRepository userRepository) {
+    public BookingService(BookingRepository repository, PaymentRepository paymentRepository, UserRepository userRepository, GoogleCalendarService googleCalendarService) {
         this.repository = repository;
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
+        this.googleCalendarService = googleCalendarService;
     }
 
     public Booking createBooking(Booking booking) {
+        // Validate required fields
+        if (booking.getResource() == null || booking.getResource().getId() == null) {
+            throw new IllegalArgumentException("Resource is required for booking");
+        }
+        if (booking.getStartTime() == null || booking.getEndTime() == null) {
+            throw new IllegalArgumentException("Start time and end time are required for booking");
+        }
+        if (booking.getStartTime().isAfter(booking.getEndTime())) {
+            throw new IllegalArgumentException("Start time cannot be after end time");
+        }
+        
         // Prevent double booking: check for overlapping bookings
         List<Booking> overlaps = repository.findOverlappingBookings(
                 booking.getResource().getId(),
                 booking.getStartTime(),
                 booking.getEndTime());
+        
         if (!overlaps.isEmpty()) {
-            throw new IllegalStateException("Double booking detected: overlapping appointment exists.");
+            StringBuilder errorMessage = new StringBuilder("Double booking detected! This time slot is already booked. ");
+            errorMessage.append("Conflicting booking(s): ");
+            for (int i = 0; i < overlaps.size(); i++) {
+                Booking conflict = overlaps.get(i);
+                errorMessage.append(String.format("Booking #%d (Customer: %s, Time: %s to %s)", 
+                    conflict.getId(), 
+                    conflict.getCustomerName(),
+                    conflict.getStartTime(),
+                    conflict.getEndTime()));
+                if (i < overlaps.size() - 1) {
+                    errorMessage.append(", ");
+                }
+            }
+            throw new IllegalStateException(errorMessage.toString());
         }
-        return repository.save(booking);
+        
+        // Save the booking first
+        Booking savedBooking = repository.save(booking);
+        
+        // Create Google Calendar event for the provider
+        try {
+            createGoogleCalendarEvent(savedBooking);
+        } catch (Exception e) {
+            // Log the error but don't fail the booking creation
+            System.err.println("Failed to create Google Calendar event: " + e.getMessage());
+        }
+        
+        return savedBooking;
     }
 
     public List<Booking> getBookingsByResource(Long resourceId) {
@@ -48,12 +88,91 @@ public class BookingService {
         return repository.findByCustomerId(customerId);
     }
 
+    public Booking updateBooking(Long bookingId, Booking updatedBooking) {
+        // Find existing booking
+        Booking existingBooking = repository.findById(bookingId)
+            .orElseThrow(() -> new IllegalArgumentException("Booking not found with id: " + bookingId));
+        
+        // Validate required fields
+        if (updatedBooking.getResource() == null || updatedBooking.getResource().getId() == null) {
+            throw new IllegalArgumentException("Resource is required for booking");
+        }
+        if (updatedBooking.getStartTime() == null || updatedBooking.getEndTime() == null) {
+            throw new IllegalArgumentException("Start time and end time are required for booking");
+        }
+        if (updatedBooking.getStartTime().isAfter(updatedBooking.getEndTime())) {
+            throw new IllegalArgumentException("Start time cannot be after end time");
+        }
+        
+        // Prevent double booking: check for overlapping bookings (excluding current booking)
+        List<Booking> overlaps = repository.findOverlappingBookings(
+                updatedBooking.getResource().getId(),
+                updatedBooking.getStartTime(),
+                updatedBooking.getEndTime());
+        
+        // Filter out the current booking from overlaps
+        overlaps = overlaps.stream()
+            .filter(booking -> !booking.getId().equals(bookingId))
+            .collect(java.util.stream.Collectors.toList());
+        
+        if (!overlaps.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder("Double booking detected! This time slot is already booked. ");
+            errorMessage.append("Conflicting booking(s): ");
+            for (int i = 0; i < overlaps.size(); i++) {
+                Booking conflict = overlaps.get(i);
+                errorMessage.append(String.format("Booking #%d (Customer: %s, Time: %s to %s)", 
+                    conflict.getId(), 
+                    conflict.getCustomerName(),
+                    conflict.getStartTime(),
+                    conflict.getEndTime()));
+                if (i < overlaps.size() - 1) {
+                    errorMessage.append(", ");
+                }
+            }
+            throw new IllegalStateException(errorMessage.toString());
+        }
+        
+        // Update the booking fields
+        existingBooking.setCustomerName(updatedBooking.getCustomerName());
+        existingBooking.setCustomerEmail(updatedBooking.getCustomerEmail());
+        existingBooking.setCustomerPhone(updatedBooking.getCustomerPhone());
+        existingBooking.setCustomerZip(updatedBooking.getCustomerZip());
+        existingBooking.setStartTime(updatedBooking.getStartTime());
+        existingBooking.setEndTime(updatedBooking.getEndTime());
+        existingBooking.setDate(updatedBooking.getDate());
+        existingBooking.setStatus(updatedBooking.getStatus());
+        existingBooking.setFinalAmount(updatedBooking.getFinalAmount());
+        
+        Booking savedBooking = repository.save(existingBooking);
+        
+        // Update Google Calendar event
+        try {
+            updateGoogleCalendarEvent(savedBooking);
+        } catch (Exception e) {
+            System.err.println("Failed to update Google Calendar event: " + e.getMessage());
+        }
+        
+        return savedBooking;
+    }
+
     @Transactional
     public void deleteBooking(Long bookingId) {
+        // Get booking details before deletion for Google Calendar cleanup
+        Booking booking = repository.findById(bookingId).orElse(null);
+        
         // First, delete all associated payments
         List<Payment> payments = paymentRepository.findByBookingId(bookingId);
         for (Payment payment : payments) {
             paymentRepository.delete(payment);
+        }
+        
+        // Delete Google Calendar event
+        if (booking != null) {
+            try {
+                deleteGoogleCalendarEvent(booking);
+            } catch (Exception e) {
+                System.err.println("Failed to delete Google Calendar event: " + e.getMessage());
+            }
         }
         
         // Then delete the booking
@@ -155,5 +274,81 @@ public class BookingService {
         }
         
         return detailedBookings;
+    }
+
+    private void createGoogleCalendarEvent(Booking booking) {
+        try {
+            // Get provider information
+            if (booking.getResource() != null && booking.getResource().getProviderId() != null) {
+                User provider = userRepository.findById(booking.getResource().getProviderId()).orElse(null);
+                if (provider != null) {
+                    // Create event title
+                    String eventTitle = String.format("BookFast: %s - %s", 
+                        booking.getResource().getName(), 
+                        booking.getCustomerName());
+                    
+                    // Format times
+                    String startTime = booking.getStartTime().toString();
+                    String endTime = booking.getEndTime().toString();
+                    
+                    // Create the calendar event
+                    googleCalendarService.createCalendarEvent(
+                        "demo_access_token", // In real implementation, get from provider's stored tokens
+                        eventTitle,
+                        startTime,
+                        endTime
+                    );
+                    
+                    System.out.println("Google Calendar event created for booking: " + booking.getId());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error creating Google Calendar event: " + e.getMessage());
+        }
+    }
+
+    private void updateGoogleCalendarEvent(Booking booking) {
+        try {
+            if (booking.getResource() != null && booking.getResource().getProviderId() != null) {
+                User provider = userRepository.findById(booking.getResource().getProviderId()).orElse(null);
+                if (provider != null) {
+                    String eventTitle = String.format("BookFast: %s - %s", 
+                        booking.getResource().getName(), 
+                        booking.getCustomerName());
+                    
+                    String startTime = booking.getStartTime().toString();
+                    String endTime = booking.getEndTime().toString();
+                    
+                    // In a real implementation, you would use the actual event ID from the database
+                    String eventId = "booking_" + booking.getId();
+                    
+                    googleCalendarService.updateCalendarEvent(
+                        eventId,
+                        eventTitle,
+                        startTime,
+                        endTime
+                    );
+                    
+                    System.out.println("Google Calendar event updated for booking: " + booking.getId());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error updating Google Calendar event: " + e.getMessage());
+        }
+    }
+
+    private void deleteGoogleCalendarEvent(Booking booking) {
+        try {
+            if (booking.getResource() != null && booking.getResource().getProviderId() != null) {
+                // In a real implementation, you would use the actual event ID from the database
+                String eventId = "booking_" + booking.getId();
+                
+                googleCalendarService.deleteCalendarEvent(eventId);
+                
+                System.out.println("Google Calendar event deleted for booking: " + booking.getId());
+            }
+        } catch (Exception e) {
+            System.err.println("Error deleting Google Calendar event: " + e.getMessage());
+        }
     }
 }

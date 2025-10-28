@@ -147,11 +147,18 @@ export class ProviderBookingsComponent implements OnInit {
         setTimeout(() => this.successMessage = '', 3000); // Clear after 3 seconds
       },
       error: (error) => {
-        this.errorMessage = 'Failed to update booking. Please try again.';
         console.error('[ProviderBookings] Error updating booking:', error);
         console.error('[ProviderBookings] Error status:', error.status);
         console.error('[ProviderBookings] Error message:', error.message);
         console.error('[ProviderBookings] Error details:', error.error);
+        
+        if (error?.error?.error && error.error.error.includes('Double booking')) {
+          this.errorMessage = error.error.error;
+        } else if (error?.error?.message && error.error.message.includes('Double booking')) {
+          this.errorMessage = error.error.message;
+        } else {
+          this.errorMessage = 'Failed to update booking: ' + (error.error?.error || error.error?.message || 'Please try again.');
+        }
       }
     });
   }

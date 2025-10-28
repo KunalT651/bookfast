@@ -1,0 +1,133 @@
+<div class="unavailable-dates">
+  <div class="header">
+    <h3>📅 Manage Unavailable Dates</h3>
+    <p>Mark periods when you're not available for bookings (vacations, personal time, etc.)</p>
+  </div>
+
+  <div class="actions">
+    <button 
+      type="button" 
+      class="btn btn-primary" 
+      (click)="toggleAddForm()"
+      [disabled]="loading"
+    >
+      <i class="fas fa-plus"></i>
+      {{ showAddForm ? 'Cancel' : 'Add Unavailable Period' }}
+    </button>
+  </div>
+
+  <div class="add-form" *ngIf="showAddForm">
+    <form [formGroup]="addForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="startDate">Start Date *</label>
+          <input 
+            type="date" 
+            id="startDate" 
+            formControlName="startDate"
+            class="form-control"
+            [class.error]="addForm.get('startDate')?.invalid && addForm.get('startDate')?.touched"
+          />
+        </div>
+        <div class="form-group">
+          <label for="endDate">End Date *</label>
+          <input 
+            type="date" 
+            id="endDate" 
+            formControlName="endDate"
+            class="form-control"
+            [class.error]="addForm.get('endDate')?.invalid && addForm.get('endDate')?.touched"
+          />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="reason">Reason *</label>
+        <input 
+          type="text" 
+          id="reason" 
+          formControlName="reason"
+          placeholder="e.g., Vacation, Personal time, Conference"
+          class="form-control"
+          [class.error]="addForm.get('reason')?.invalid && addForm.get('reason')?.touched"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="toggleAddForm()"
+          [disabled]="loading"
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="addForm.invalid || loading"
+        >
+          <span *ngIf="loading" class="spinner"></span>
+          {{ loading ? 'Adding...' : 'Add Period' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="dates-list" *ngIf="!loading && unavailableDates.length > 0">
+    <h4>Your Unavailable Periods</h4>
+    <div class="dates-grid">
+      <div class="date-card" *ngFor="let date of unavailableDates">
+        <div class="date-info">
+          <div class="date-range">
+            <i class="fas fa-calendar-alt"></i>
+            <span>{{ formatDate(date.startDate) }} - {{ formatDate(date.endDate) }}</span>
+          </div>
+          <div class="duration">
+            <i class="fas fa-clock"></i>
+            <span>{{ getDuration(date.startDate, date.endDate) }}</span>
+          </div>
+          <div class="reason">
+            <i class="fas fa-info-circle"></i>
+            <span>{{ date.reason }}</span>
+          </div>
+        </div>
+        <div class="date-actions">
+          <button 
+            type="button" 
+            class="btn btn-danger btn-sm"
+            (click)="removeUnavailableDate(date.id)"
+            [disabled]="loading"
+          >
+            <i class="fas fa-trash"></i>
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && unavailableDates.length === 0">
+    <div class="empty-icon">
+      <i class="fas fa-calendar-check"></i>
+    </div>
+    <h4>No Unavailable Periods</h4>
+    <p>You haven't marked any periods as unavailable yet. Add periods when you won't be available for bookings.</p>
+  </div>
+
+  <div class="loading-state" *ngIf="loading && unavailableDates.length === 0">
+    <div class="spinner-large"></div>
+    <p>Loading unavailable dates...</p>
+  </div>
+
+  <div class="messages">
+    <div class="success-message" *ngIf="successMessage">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </div>
+    <div class="error-message" *ngIf="errorMessage">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>

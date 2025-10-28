@@ -11,7 +11,12 @@ import { UserStateService } from '../../shared/services/user-state.service';
   imports: [CommonModule, RouterModule],
   template: `
     <nav class="navbar">
-      @if (userRole === 'CUSTOMER') {
+      <div class="navbar-brand">
+        <img src="BookFast_logo.jpg" alt="BookFast" class="logo">
+        <span class="brand-text">BookFast</span>
+      </div>
+      <div class="navbar-nav">
+        @if (userRole === 'CUSTOMER') {
         <a routerLink="/customer/home" routerLinkActive="active" class="nav-btn">Home</a>
         <a routerLink="/customer/bookings" routerLinkActive="active" class="nav-btn">My Bookings</a>
         <a routerLink="/customer/reviews" routerLinkActive="active" class="nav-btn">My Reviews</a>
@@ -25,9 +30,10 @@ import { UserStateService } from '../../shared/services/user-state.service';
       } @else if (userRole === 'PROVIDER') {
         <a routerLink="/provider/dashboard" routerLinkActive="active" class="nav-btn">Home</a>
       }
-      @if (loggedIn | async) {
-        <button (click)="logout()" class="nav-btn logout">Logout</button>
-      }
+        @if (loggedIn | async) {
+          <button (click)="logout()" class="nav-btn logout">Logout</button>
+        }
+      </div>
     </nav>
   `,
   styleUrls: ['navbar.component.css']

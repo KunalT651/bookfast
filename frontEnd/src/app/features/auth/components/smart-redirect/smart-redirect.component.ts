@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserStateService } from '../../../shared/services/user-state.service';
+import { UserStateService } from '../../../../shared/services/user-state.service';
 
 @Component({
   selector: 'app-smart-redirect',
@@ -14,9 +14,9 @@ export class SmartRedirectComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.userState.getLoggedIn().subscribe(loggedIn => {
+    this.userState.getLoggedIn().subscribe((loggedIn: boolean) => {
       if (loggedIn) {
-        this.userState.getUser().subscribe(user => {
+        this.userState.getUser().subscribe((user: any) => {
           if (user?.role?.name === 'ADMIN') {
             this.router.navigate(['/admin/dashboard']);
           } else if (user?.role?.name === 'PROVIDER') {

@@ -82,3 +82,112 @@ button {
 .review-comment {
   margin-bottom: 0.5rem;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .resource-card {
+    width: 280px;
+    padding: 0.9rem;
+  }
+  
+  .resource-card img {
+    height: 110px;
+  }
+}
+
+@media (max-width: 768px) {
+  .resource-card {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto 1rem;
+    padding: 0.8rem;
+  }
+  
+  .resource-card img {
+    height: 100px;
+  }
+  
+  .tag {
+    font-size: 0.8em;
+    padding: 1px 6px;
+  }
+  
+  button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .modal {
+    width: 90%;
+    max-width: 350px;
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .resource-card {
+    padding: 0.7rem;
+  }
+  
+  .resource-card img {
+    height: 90px;
+  }
+  
+  .tag {
+    font-size: 0.75em;
+    padding: 1px 5px;
+    margin-right: 3px;
+  }
+  
+  button {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+  }
+  
+  .modal {
+    width: 95%;
+    padding: 1rem;
+  }
+  
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .close-btn {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .resource-card {
+    padding: 0.6rem;
+  }
+  
+  .resource-card img {
+    height: 80px;
+  }
+  
+  .tag {
+    font-size: 0.7em;
+    padding: 1px 4px;
+    margin-right: 2px;
+  }
+  
+  button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .modal {
+    width: 98%;
+    padding: 0.8rem;
+  }
+  
+  .modal-header h3 {
+    font-size: 1rem;
+  }
+  
+  .close-btn {
+    font-size: 1.2rem;
+  }
+}

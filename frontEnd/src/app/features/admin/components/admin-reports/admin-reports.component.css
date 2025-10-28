@@ -283,35 +283,397 @@
   border: 1px solid #f5c6cb;
 }
 
-/* Responsive Design */
+/* Mobile-First Responsive Design */
+@media (max-width: 1200px) {
+  .admin-reports-container {
+    padding: 18px;
+  }
+  
+  .overview-cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+  
+  .card-content h3 {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .admin-reports-container {
+    padding: 16px;
+  }
+  
+  .header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .filters-section {
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .filter-group select {
+    min-width: 120px;
+  }
+  
+  .overview-cards {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  
+  .card {
+    padding: 18px;
+    gap: 16px;
+  }
+  
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .card-content h3 {
+    font-size: 2rem;
+  }
+  
+  .report-section {
+    padding: 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .admin-reports-container {
-    padding: 15px;
+    padding: 12px;
   }
   
   .header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 15px;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .header h2 {
+    font-size: 1.6rem;
   }
   
   .filters-section {
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
+    padding: 12px;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .filter-group select {
+    width: 100%;
+    min-width: auto;
   }
   
   .overview-cards {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
   }
   
   .card {
     flex-direction: column;
     text-align: center;
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .card-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  
+  .card-content h3 {
+    font-size: 1.8rem;
+  }
+  
+  .card-content p {
+    font-size: 0.9rem;
+  }
+  
+  .card-content small {
+    font-size: 0.8rem;
+  }
+  
+  .report-section {
+    padding: 16px;
   }
   
   .report-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .report-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .chart-container {
+    min-height: 250px;
+  }
+  
+  .chart-placeholder {
+    padding: 30px 20px;
+  }
+  
+  .chart-placeholder i {
+    font-size: 3rem;
+  }
+  
+  .chart-placeholder p {
+    font-size: 1rem;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 8px;
+    font-size: 0.9rem;
+  }
+  
+  .activity-item {
+    padding: 12px 0;
+    gap: 12px;
+  }
+  
+  .activity-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .activity-content p {
+    font-size: 0.9rem;
+  }
+  
+  .activity-content small {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-reports-container {
+    padding: 8px;
+  }
+  
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .filters-section {
+    padding: 10px;
     gap: 10px;
+  }
+  
+  .filter-group label {
+    font-size: 13px;
+  }
+  
+  .filter-group select {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  
+  .overview-cards {
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  
+  .card {
+    padding: 14px;
+    gap: 10px;
+  }
+  
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .card-content h3 {
+    font-size: 1.6rem;
+  }
+  
+  .card-content p {
+    font-size: 0.85rem;
+  }
+  
+  .card-content small {
+    font-size: 0.75rem;
+  }
+  
+  .report-section {
+    padding: 12px;
+  }
+  
+  .report-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .chart-container {
+    min-height: 200px;
+  }
+  
+  .chart-placeholder {
+    padding: 20px 15px;
+  }
+  
+  .chart-placeholder i {
+    font-size: 2.5rem;
+  }
+  
+  .chart-placeholder p {
+    font-size: 0.9rem;
+  }
+  
+  .chart-placeholder small {
+    font-size: 0.8rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+  }
+  
+  .activity-item {
+    padding: 10px 0;
+    gap: 10px;
+  }
+  
+  .activity-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+  
+  .activity-content p {
+    font-size: 0.85rem;
+  }
+  
+  .activity-content small {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-reports-container {
+    padding: 4px;
+  }
+  
+  .header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .filters-section {
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .filter-group label {
+    font-size: 12px;
+  }
+  
+  .filter-group select {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+  
+  .card {
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  .card-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  
+  .card-content h3 {
+    font-size: 1.4rem;
+  }
+  
+  .card-content p {
+    font-size: 0.8rem;
+  }
+  
+  .card-content small {
+    font-size: 0.7rem;
+  }
+  
+  .report-section {
+    padding: 10px;
+  }
+  
+  .report-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .chart-container {
+    min-height: 180px;
+  }
+  
+  .chart-placeholder {
+    padding: 15px 10px;
+  }
+  
+  .chart-placeholder i {
+    font-size: 2rem;
+  }
+  
+  .chart-placeholder p {
+    font-size: 0.85rem;
+  }
+  
+  .chart-placeholder small {
+    font-size: 0.75rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px 4px;
+    font-size: 0.8rem;
+  }
+  
+  .activity-item {
+    padding: 8px 0;
+    gap: 8px;
+  }
+  
+  .activity-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+  
+  .activity-content p {
+    font-size: 0.8rem;
+  }
+  
+  .activity-content small {
+    font-size: 0.7rem;
   }
 }

@@ -9,16 +9,36 @@ export class ProviderService {
   constructor(private http: HttpClient) {}
 
   getProviderProfileForCurrentUser(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/profile/me`, { withCredentials: true });
+    return this.http.get<any>(`${this.apiUrl}/profile`, { withCredentials: true });
   }
 
   updateProviderProfile(profileData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/profile/me`, profileData, { withCredentials: true });
+    return this.http.put<any>(`${this.apiUrl}/profile`, profileData, { withCredentials: true });
   }
 
   uploadProfilePicture(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${this.apiUrl}/profile-picture`, formData, { withCredentials: true });
+    return this.http.post(`${this.apiUrl}/profile/picture`, formData, { withCredentials: true });
+  }
+
+  syncWithGoogleCalendar(authCode: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/calendar/sync`, { authCode }, { withCredentials: true });
+  }
+
+  markUnavailableDates(startDate: string, endDate: string, reason: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/unavailable-dates`, {
+      startDate,
+      endDate,
+      reason
+    }, { withCredentials: true });
+  }
+
+  getUnavailableDates(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/unavailable-dates`, { withCredentials: true });
+  }
+
+  removeUnavailableDate(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/unavailable-dates/${id}`, { withCredentials: true });
   }
 }

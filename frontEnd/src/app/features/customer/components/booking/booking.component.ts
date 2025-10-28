@@ -187,10 +187,13 @@ async confirmBooking() {
       error: (err) => {
         console.error('Booking error:', err);
         console.error('Error details:', err.error);
-        if (err?.error?.message && err.error.message.includes('Double booking')) {
-          this.paymentError = 'This slot is already booked. Please choose a different time.';
+        if (err?.error?.error && err.error.error.includes('Double booking')) {
+          // Show the detailed error message from backend
+          this.paymentError = err.error.error;
+        } else if (err?.error?.message && err.error.message.includes('Double booking')) {
+          this.paymentError = err.error.message;
         } else {
-          this.paymentError = 'Booking creation failed: ' + (err.error?.message || 'Unknown error');
+          this.paymentError = 'Booking creation failed: ' + (err.error?.error || err.error?.message || 'Unknown error');
         }
       },
       complete: () => {

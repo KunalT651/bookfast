@@ -7,6 +7,8 @@
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(44,62,80,0.08);
   border: 1px solid #b2dfdb;
+  width: 100%;
+  box-sizing: border-box;
 }
 .booking-form h2 {
   margin-bottom: 1rem;
@@ -196,4 +198,156 @@
 
 .card-row .card-input-group {
   flex: 1;
+}
+
+/* Mobile-First Responsive Design */
+@media (max-width: 768px) {
+  .booking-form {
+    margin: 1rem auto;
+    padding: 1.5rem;
+    max-width: 350px;
+  }
+  
+  .booking-form h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .booking-form label {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .booking-form input, .booking-form select, .booking-form textarea {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.95rem;
+  }
+  
+  .booking-form button {
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+  }
+  
+  .card-input {
+    padding: 10px;
+    font-size: 15px;
+  }
+  
+  .card-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .card-row .card-input-group {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .booking-form {
+    margin: 0.5rem auto;
+    padding: 1.25rem;
+    max-width: 320px;
+  }
+  
+  .booking-form h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .booking-form label {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .booking-form input, .booking-form select, .booking-form textarea {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.9rem;
+  }
+  
+  .booking-form button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+  }
+  
+  .payment-breakdown {
+    padding: 0.8rem;
+  }
+  
+  .payment-breakdown h3 {
+    font-size: 1rem;
+  }
+  
+  .card-input {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .card-input-group label {
+    font-size: 13px;
+  }
+  
+  .stripe-payment-section {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .booking-form {
+    margin: 0.25rem auto;
+    padding: 1rem;
+    max-width: 280px;
+  }
+  
+  .booking-form h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .booking-form label {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .booking-form input, .booking-form select, .booking-form textarea {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .booking-form button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    margin-top: 0.6rem;
+  }
+  
+  .payment-breakdown {
+    padding: 0.6rem;
+  }
+  
+  .payment-breakdown h3 {
+    font-size: 0.9rem;
+  }
+  
+  .payment-breakdown p {
+    font-size: 0.8rem;
+  }
+  
+  .card-input {
+    padding: 6px;
+    font-size: 13px;
+  }
+  
+  .card-input-group label {
+    font-size: 12px;
+  }
+  
+  .stripe-payment-section {
+    padding: 0.6rem;
+  }
+  
+  .local-stripe-card {
+    padding: 12px;
+  }
 }

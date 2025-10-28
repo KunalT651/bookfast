@@ -1,3 +1,48 @@
-<div class="dashboard-content">
-  <router-outlet></router-outlet>
+<div class="provider-dashboard">
+  <div class="dashboard-header">
+    <h2>Provider Dashboard</h2>
+    <p>Manage your services, bookings, and availability</p>
+  </div>
+
+  <div class="dashboard-grid">
+    <a routerLink="/provider/dashboard/resources" class="dashboard-card">
+      <div class="card-icon">🏢</div>
+      <h3>My Resources</h3>
+      <p>Manage your service offerings and availability</p>
+    </a>
+
+    <a routerLink="/provider/dashboard/bookings" class="dashboard-card">
+      <div class="card-icon">📅</div>
+      <h3>Bookings</h3>
+      <p>View and manage customer bookings</p>
+    </a>
+
+    <a routerLink="/provider/dashboard/reviews" class="dashboard-card">
+      <div class="card-icon">⭐</div>
+      <h3>Reviews</h3>
+      <p>View customer reviews and ratings</p>
+    </a>
+
+    <a routerLink="/provider/dashboard/profile" class="dashboard-card">
+      <div class="card-icon">👤</div>
+      <h3>Profile</h3>
+      <p>Update your profile and settings</p>
+    </a>
+
+    <a routerLink="/provider/dashboard/calendar-sync" class="dashboard-card">
+      <div class="card-icon">📱</div>
+      <h3>Google Calendar</h3>
+      <p>Sync with your Google Calendar</p>
+    </a>
+
+    <a routerLink="/provider/dashboard/unavailable-dates" class="dashboard-card">
+      <div class="card-icon">🚫</div>
+      <h3>Unavailable Dates</h3>
+      <p>Mark vacation and unavailable periods</p>
+    </a>
+  </div>
+
+  <div class="dashboard-content">
+    <router-outlet></router-outlet>
+  </div>
 </div>

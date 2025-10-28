@@ -76,3 +76,98 @@ button:disabled {
   background: #4caf50;
   color: #fff;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .bookings-container {
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  th, td {
+    padding: 0.7rem 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .bookings-container {
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  table {
+    font-size: 0.8rem;
+  }
+  
+  th, td {
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .actions {
+    white-space: nowrap;
+  }
+  
+  .actions button {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    margin-right: 0.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .bookings-container {
+    margin: 0.5rem;
+    padding: 0.8rem;
+  }
+  
+  table {
+    font-size: 0.75rem;
+  }
+  
+  th, td {
+    padding: 0.5rem 0.6rem;
+  }
+  
+  /* Stack table content vertically on very small screens */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  
+  .actions button {
+    width: 100%;
+    margin-right: 0;
+    padding: 0.4rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .bookings-container {
+    margin: 0.25rem;
+    padding: 0.6rem;
+  }
+  
+  table {
+    font-size: 0.7rem;
+  }
+  
+  th, td {
+    padding: 0.4rem 0.5rem;
+  }
+  
+  button {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

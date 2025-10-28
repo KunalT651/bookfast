@@ -18,6 +18,8 @@ import { ProviderDashboardComponent } from './features/provider/components/dashb
 import { ProviderProfileComponent } from './features/provider/components/profile/profile.component'; // Import the refactored component
 import { ProviderBookingsComponent } from './features/provider/components/provider-bookings/provider-bookings.component';
 import { ProviderReviewsComponent } from './features/provider/components/provider-reviews/provider-reviews.component';
+import { GoogleCalendarSyncComponent } from './features/provider/components/google-calendar-sync/google-calendar-sync.component';
+import { UnavailableDatesComponent } from './features/provider/components/unavailable-dates/unavailable-dates.component';
 import { AdminCustomersComponent } from './features/admin/components/admin-customers/admin-customers.component';
 import { AdminBookingsComponent } from './features/admin/components/admin-bookings/admin-bookings.component';
 import { AdminUsersComponent } from './features/admin/components/admin-users/admin-users.component';
@@ -58,7 +60,8 @@ export const routes: Routes = [
       { path: 'profile', component: ProviderProfileComponent, canActivate: [authGuard] },
       { path: 'bookings', component: ProviderBookingsComponent, canActivate: [authGuard] },
       { path: 'reviews', component: ProviderReviewsComponent, canActivate: [authGuard] },
-      // ...other child routes
+      { path: 'calendar-sync', component: GoogleCalendarSyncComponent, canActivate: [authGuard] },
+      { path: 'unavailable-dates', component: UnavailableDatesComponent, canActivate: [authGuard] },
     ]
   },
   { path: 'customer/home', component: HomeComponent, canActivate: [authGuard] },

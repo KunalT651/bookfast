@@ -1,0 +1,80 @@
+<div class="google-calendar-sync">
+  <div class="sync-header">
+    <h3>📅 Google Calendar Sync</h3>
+    <p>Sync your Google Calendar with BookFast to automatically manage your availability</p>
+  </div>
+
+  <div class="sync-status" [class.connected]="isConnected">
+    <div class="status-indicator">
+      <span class="status-dot" [class.connected]="isConnected"></span>
+      <span class="status-text">
+        {{ isConnected ? 'Connected to Google Calendar' : 'Not connected' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="sync-content" *ngIf="!isConnected">
+    <div class="auth-instructions">
+      <h4>How to connect your Google Calendar:</h4>
+      <ol>
+        <li>Click the "Connect Google Calendar" button below</li>
+        <li>Sign in to your Google account</li>
+        <li>Grant permission to BookFast to access your calendar</li>
+        <li>Copy the authorization code from the redirect page</li>
+        <li>Paste the code in the field below and click "Sync Calendar"</li>
+      </ol>
+    </div>
+
+    <div class="auth-actions">
+      <button type="button" class="btn btn-google" (click)="openGoogleAuth()">
+        <i class="fab fa-google"></i>
+        Connect Google Calendar
+      </button>
+    </div>
+
+    <div class="auth-code-section">
+      <label for="authCode">Authorization Code:</label>
+      <input 
+        type="text" 
+        id="authCode" 
+        [(ngModel)]="authCode" 
+        placeholder="Paste your authorization code here"
+        class="form-control"
+      />
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        (click)="onSyncClick()" 
+        [disabled]="isSyncing || !authCode.trim()"
+      >
+        <span *ngIf="isSyncing" class="spinner"></span>
+        {{ isSyncing ? 'Syncing...' : 'Sync Calendar' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="sync-content" *ngIf="isConnected">
+    <div class="connected-info">
+      <h4>✅ Calendar Connected Successfully!</h4>
+      <p>Your Google Calendar is now synced with BookFast. Your availability will be automatically updated based on your calendar events.</p>
+      
+      <div class="sync-features">
+        <h5>What's synced:</h5>
+        <ul>
+          <li>Busy times are automatically marked as unavailable</li>
+          <li>New bookings are added to your Google Calendar</li>
+          <li>Booking changes are reflected in both systems</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="messages">
+    <div class="success-message" *ngIf="syncMessage">
+      {{ syncMessage }}
+    </div>
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>

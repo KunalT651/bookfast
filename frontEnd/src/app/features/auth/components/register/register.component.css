@@ -53,3 +53,101 @@
 .register-container button:hover, .register-container button:focus {
 	background: #004d40;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .register-container {
+    max-width: 380px;
+    margin: 1.8rem auto;
+    padding: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .register-container {
+    max-width: 90%;
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+  }
+  
+  .register-container h2 {
+    font-size: 1.5rem;
+  }
+  
+  .register-container input, 
+  .register-container select, 
+  .register-container textarea {
+    font-size: 0.95rem;
+    padding: 0.45rem 0.65rem;
+  }
+  
+  .register-container button {
+    padding: 0.45rem 1.1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .register-container {
+    max-width: 95%;
+    margin: 1rem auto;
+    padding: 1.2rem;
+  }
+  
+  .register-container h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .register-container label {
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+  }
+  
+  .register-container input, 
+  .register-container select, 
+  .register-container textarea {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    margin-top: 0.25rem;
+  }
+  
+  .register-container button {
+    margin-top: 1rem;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .register-container {
+    margin: 0.8rem auto;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .register-container h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .register-container label {
+    font-size: 0.85rem;
+    margin-top: 0.7rem;
+  }
+  
+  .register-container input, 
+  .register-container select, 
+  .register-container textarea {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+    margin-top: 0.2rem;
+  }
+  
+  .register-container button {
+    margin-top: 0.8rem;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+  }
+}

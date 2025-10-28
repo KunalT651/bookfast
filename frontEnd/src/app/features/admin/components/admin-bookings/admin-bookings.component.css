@@ -346,6 +346,21 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-bookings {
+    padding: 0 12px;
+  }
+  
+  .bookings-table th,
+  .bookings-table td {
+    padding: 10px;
+  }
+  
+  .search-input {
+    width: 200px;
+  }
+}
+
 @media (max-width: 768px) {
   .admin-bookings {
     padding: 0 8px;
@@ -390,5 +405,85 @@
   
   .form-actions button {
     width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-bookings {
+    padding: 0 4px;
+  }
+  
+  .bookings-table {
+    font-size: 11px;
+  }
+  
+  .bookings-table th,
+  .bookings-table td {
+    padding: 6px;
+  }
+  
+  .status-badge, .payment-badge {
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+  
+  .actions button {
+    padding: 4px 8px;
+    font-size: 10px;
+    margin: 0 1px;
+  }
+  
+  .modal-content {
+    width: 98%;
+    padding: 12px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-bookings {
+    margin: 16px auto;
+  }
+  
+  .bookings-table {
+    font-size: 10px;
+  }
+  
+  .bookings-table th,
+  .bookings-table td {
+    padding: 4px;
+  }
+  
+  .status-badge, .payment-badge {
+    padding: 1px 4px;
+    font-size: 9px;
+  }
+  
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .actions button {
+    width: 100%;
+    margin: 0;
+    padding: 6px;
+    font-size: 9px;
+  }
+  
+  .modal-content {
+    padding: 8px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    font-size: 12px;
+    padding: 5px 8px;
   }
 }

@@ -44,7 +44,12 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\com
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\util\PasswordUtil.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\controller\DemoFormController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\model\DemoForm.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\controller\ProviderController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\controller\ProviderProfileController.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\model\UnavailableDate.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\repository\UnavailableDateRepository.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\service\GoogleCalendarService.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\service\ProviderService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\repository\DemoFormRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\AvailabilitySlotController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\BookingController.java
@@ -59,7 +64,6 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\res
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\SmsReminderController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\TestDataController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\TestResourceController.java
-C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\UnavailableDateController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\dto\BookingDetailsDTO.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\AvailabilitySlot.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\Booking.java
@@ -67,14 +71,12 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\res
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\Payment.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\Resource.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\Review.java
-C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\model\UnavailableDate.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\repository\AvailabilitySlotRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\repository\BookingRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\repository\CustomerRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\repository\PaymentRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\repository\ResourceRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\repository\ReviewRepository.java
-C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\repository\UnavailableDateRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\AvailabilitySlotService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\BookingService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\CustomerService.java
@@ -82,5 +84,4 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\res
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\ResourceService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\ReviewService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\StripeService.java
-C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\UnavailableDateService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\service\UserService.java

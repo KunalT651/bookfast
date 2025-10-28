@@ -143,6 +143,48 @@ public class BookingController {
         }
     }
 
+    @PutMapping("/{bookingId}")
+    public ResponseEntity<?> updateBooking(@PathVariable Long bookingId, @RequestBody Booking booking) {
+        try {
+            System.out.println("[BookingController] Updating booking with id: " + bookingId);
+            
+            // Set resource from resourceId if needed
+            if (booking.getResource() == null) {
+                try {
+                    java.lang.reflect.Field resourceIdField = booking.getClass().getDeclaredField("resourceId");
+                    resourceIdField.setAccessible(true);
+                    Object resourceIdObj = resourceIdField.get(booking);
+                    if (resourceIdObj != null) {
+                        Long resourceId = Long.valueOf(resourceIdObj.toString());
+                        Resource resource = resourceRepository.findById(resourceId).orElse(null);
+                        if (resource == null) {
+                            throw new IllegalArgumentException("Resource not found for id: " + resourceId);
+                        }
+                        booking.setResource(resource);
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    System.out.println("[BookingController] Error accessing resourceId field: " + e.getMessage());
+                }
+            }
+            
+            // Convert startTime/endTime from string if needed
+            if (booking.getStartTime() == null && booking.getStartTimeStr() != null) {
+                booking.setStartTime(java.time.LocalDateTime.parse(booking.getStartTimeStr()));
+            }
+            if (booking.getEndTime() == null && booking.getEndTimeStr() != null) {
+                booking.setEndTime(java.time.LocalDateTime.parse(booking.getEndTimeStr()));
+            }
+            
+            Booking updated = service.updateBooking(bookingId, booking);
+            System.out.println("[BookingController] Booking updated successfully with id: " + updated.getId());
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            System.out.println("[BookingController] ERROR updating booking: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
     @PostMapping("/multi")
     public List<Booking> createMultiSlotBooking(@RequestBody Map<String, Object> payload) {
         // Demo/academic mode: No authentication or role checks

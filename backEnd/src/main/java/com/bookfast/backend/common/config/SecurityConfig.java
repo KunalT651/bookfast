@@ -62,6 +62,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/categories/**").hasRole("ADMIN") // Admin category management
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // All other admin operations
                         
+                        // Provider endpoints
+                        .requestMatchers("/api/provider/**").hasRole("PROVIDER") // All provider operations
+                        
                         // Provider booking endpoints (specific first)
                         .requestMatchers("/api/bookings/provider/**").hasRole("PROVIDER") // All provider booking operations
                         .requestMatchers(HttpMethod.GET, "/api/bookings/provider/me").hasRole("PROVIDER") // Providers can view their bookings
@@ -87,7 +90,7 @@ public class SecurityConfig {
                         
                         // Other role-based endpoints
                         .requestMatchers("/api/provider").hasRole("PROVIDER")
-                        .requestMatchers("/api/customer").hasRole("CUSTOMER")
+                        .requestMatchers("/api/customer", "/api/customers/**").hasRole("CUSTOMER")
                         .requestMatchers("/api/payments/create-intent").hasRole("CUSTOMER")
                         .requestMatchers("/api/payments").authenticated()
                         .anyRequest().authenticated())

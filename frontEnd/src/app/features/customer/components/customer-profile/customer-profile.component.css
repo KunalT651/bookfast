@@ -72,3 +72,102 @@ button:hover, button:focus {
 	font-size: 1em;
 	margin-left: 12px;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .profile-container {
+    max-width: 580px;
+    margin: 1.8rem auto;
+    padding: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    max-width: 90%;
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.8rem;
+  }
+  
+  label {
+    font-size: 0.95rem;
+  }
+  
+  input, select, textarea {
+    font-size: 0.95rem;
+    padding: 0.45rem 0.65rem;
+  }
+  
+  button {
+    padding: 0.45rem 1.1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-container {
+    max-width: 95%;
+    margin: 1rem auto;
+    padding: 1.2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.7rem;
+  }
+  
+  label {
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+  }
+  
+  input, select, textarea {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    margin-top: 0.25rem;
+  }
+  
+  button {
+    margin-top: 1rem;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .profile-container {
+    margin: 0.8rem auto;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .form-group {
+    margin-bottom: 0.6rem;
+  }
+  
+  label {
+    font-size: 0.85rem;
+    margin-top: 0.7rem;
+  }
+  
+  input, select, textarea {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+    margin-top: 0.2rem;
+  }
+  
+  button {
+    margin-top: 0.8rem;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+  }
+}
