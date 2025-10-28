@@ -121,7 +121,7 @@ public class ProviderController {
             }
 
             String authCode = request.get("authCode");
-            String result = googleCalendarService.syncProviderCalendar(user.getId(), authCode);
+            String result = googleCalendarService.exchangeCodeForTokens(user.getId(), authCode);
             
             return ResponseEntity.ok(Map.of("message", result));
         } catch (Exception e) {

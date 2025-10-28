@@ -31,6 +31,8 @@ import { MyReviewsComponent } from './features/customer/components/my-reviews/my
 import { CustomerProfileComponent } from './features/customer/components/customer-profile/customer-profile.component';
 import { TestDataComponent } from './features/customer/components/test-data/test-data.component';
 import { TestResourceComponent } from './features/customer/components/test-resource/test-resource.component';
+import { CalendarSyncComponent } from './features/customer/components/calendar-sync/calendar-sync.component';
+import { CalendarCallbackComponent } from './features/auth/components/calendar-callback/calendar-callback.component';
 
 export const routes: Routes = [
   { path: 'registration', component: RegisterComponent },
@@ -50,24 +52,20 @@ export const routes: Routes = [
   { path: 'admin/database', component: DatabaseManagerComponent, canActivate: [authGuard] },
   { path: 'admin/cleanup', component: PermanentCleanupComponent, canActivate: [authGuard] },
 
-  {
-    path: 'provider/dashboard',
-    component: ProviderDashboardComponent,
-    canActivate: [authGuard],
-    children: [
-      { path: '', redirectTo: 'resources', pathMatch: 'full' },
-      { path: 'resources', component: ResourcesComponent, canActivate: [authGuard] },
-      { path: 'profile', component: ProviderProfileComponent, canActivate: [authGuard] },
-      { path: 'bookings', component: ProviderBookingsComponent, canActivate: [authGuard] },
-      { path: 'reviews', component: ProviderReviewsComponent, canActivate: [authGuard] },
-      { path: 'calendar-sync', component: GoogleCalendarSyncComponent, canActivate: [authGuard] },
-      { path: 'unavailable-dates', component: UnavailableDatesComponent, canActivate: [authGuard] },
-    ]
-  },
+  { path: 'provider/dashboard', component: ProviderDashboardComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/resources', component: ResourcesComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/profile', component: ProviderProfileComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/bookings', component: ProviderBookingsComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/reviews', component: ProviderReviewsComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/calendar-sync', component: GoogleCalendarSyncComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/unavailable-dates', component: UnavailableDatesComponent, canActivate: [authGuard] },
   { path: 'customer/home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'customer/reviews', component: MyReviewsComponent, canActivate: [authGuard] },
   { path: 'customer/bookings', loadComponent: () => import('./features/customer/components/customer-bookings/customer-bookings.component').then(m => m.CustomerBookingsComponent), canActivate: [authGuard] },
   { path: 'customer/profile/edit', component: CustomerProfileComponent, canActivate: [authGuard] },
+  { path: 'customer/calendar-sync', component: CalendarSyncComponent, canActivate: [authGuard] },
+  { path: 'calendar/callback', component: CalendarCallbackComponent },
+  { path: 'callback', component: CalendarCallbackComponent },
   { path: 'test-data', component: TestDataComponent, canActivate: [authGuard] },
   { path: 'test-resource', component: TestResourceComponent, canActivate: [authGuard] },
 

@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: bookfast-backend
+    env: java
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/backend-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: bookfast-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CALENDAR_CLIENT_ID
+        value: 55660237313-c098vshn8oplkk31ethrihbjro4cq5dh.apps.googleusercontent.com
+      - key: GOOGLE_CALENDAR_CLIENT_SECRET
+        value: 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
+      - key: GOOGLE_CALENDAR_REDIRECT_URI
+        value: https://your-frontend-url.vercel.app/callback
+
+databases:
+  - name: bookfast-db
+    databaseName: bookfast
+    user: bookfast_user

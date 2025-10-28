@@ -278,32 +278,72 @@ public class BookingService {
 
     private void createGoogleCalendarEvent(Booking booking) {
         try {
+            System.out.println("=== CALENDAR EVENT CREATION DEBUG ===");
+            System.out.println("Booking ID: " + booking.getId());
+            System.out.println("Customer ID: " + booking.getCustomerId());
+            System.out.println("Resource ID: " + (booking.getResource() != null ? booking.getResource().getId() : "null"));
+            System.out.println("Provider ID: " + (booking.getResource() != null ? booking.getResource().getProviderId() : "null"));
+            
             // Get provider information
             if (booking.getResource() != null && booking.getResource().getProviderId() != null) {
                 User provider = userRepository.findById(booking.getResource().getProviderId()).orElse(null);
                 if (provider != null) {
-                    // Create event title
-                    String eventTitle = String.format("BookFast: %s - %s", 
-                        booking.getResource().getName(), 
-                        booking.getCustomerName());
+                    System.out.println("Provider found: " + provider.getEmail());
+                    System.out.println("Provider calendar connected: " + googleCalendarService.isCalendarConnected(provider.getId()));
                     
-                    // Format times
-                    String startTime = booking.getStartTime().toString();
-                    String endTime = booking.getEndTime().toString();
-                    
-                    // Create the calendar event
-                    googleCalendarService.createCalendarEvent(
-                        "demo_access_token", // In real implementation, get from provider's stored tokens
-                        eventTitle,
-                        startTime,
-                        endTime
-                    );
-                    
-                    System.out.println("Google Calendar event created for booking: " + booking.getId());
+                    if (googleCalendarService.isCalendarConnected(provider.getId())) {
+                        // Create event title
+                        String eventTitle = String.format("BookFast: %s - %s", 
+                            booking.getResource().getName(), 
+                            booking.getCustomerName());
+                        
+                        // Create the calendar event for provider
+                        String eventId = googleCalendarService.createCalendarEvent(
+                            provider.getId(),
+                            eventTitle,
+                            booking.getStartTime(),
+                            booking.getEndTime()
+                        );
+                        
+                        System.out.println("✅ Google Calendar event created for provider booking: " + booking.getId() + ", Event ID: " + eventId);
+                    } else {
+                        System.out.println("❌ Provider calendar not connected - skipping calendar event creation");
+                    }
+                } else {
+                    System.out.println("❌ Provider not found");
                 }
             }
+
+            // Also create calendar event for customer if they have calendar connected
+            if (booking.getCustomerId() != null) {
+                User customer = userRepository.findById(booking.getCustomerId()).orElse(null);
+                if (customer != null) {
+                    System.out.println("Customer found: " + customer.getEmail());
+                    System.out.println("Customer calendar connected: " + googleCalendarService.isCalendarConnected(customer.getId()));
+                    
+                    if (googleCalendarService.isCalendarConnected(customer.getId())) {
+                        String eventTitle = String.format("BookFast Booking: %s", 
+                            booking.getResource().getName());
+                        
+                        String eventId = googleCalendarService.createCalendarEvent(
+                            customer.getId(),
+                            eventTitle,
+                            booking.getStartTime(),
+                            booking.getEndTime()
+                        );
+                        
+                        System.out.println("✅ Google Calendar event created for customer booking: " + booking.getId() + ", Event ID: " + eventId);
+                    } else {
+                        System.out.println("❌ Customer calendar not connected - skipping calendar event creation");
+                    }
+                } else {
+                    System.out.println("❌ Customer not found");
+                }
+            }
+            System.out.println("=== END CALENDAR EVENT CREATION DEBUG ===");
         } catch (Exception e) {
-            System.err.println("Error creating Google Calendar event: " + e.getMessage());
+            System.err.println("❌ Error creating Google Calendar event: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -311,25 +351,44 @@ public class BookingService {
         try {
             if (booking.getResource() != null && booking.getResource().getProviderId() != null) {
                 User provider = userRepository.findById(booking.getResource().getProviderId()).orElse(null);
-                if (provider != null) {
+                if (provider != null && googleCalendarService.isCalendarConnected(provider.getId())) {
                     String eventTitle = String.format("BookFast: %s - %s", 
                         booking.getResource().getName(), 
                         booking.getCustomerName());
-                    
-                    String startTime = booking.getStartTime().toString();
-                    String endTime = booking.getEndTime().toString();
                     
                     // In a real implementation, you would use the actual event ID from the database
                     String eventId = "booking_" + booking.getId();
                     
                     googleCalendarService.updateCalendarEvent(
+                        provider.getId(),
                         eventId,
                         eventTitle,
-                        startTime,
-                        endTime
+                        booking.getStartTime(),
+                        booking.getEndTime()
                     );
                     
                     System.out.println("Google Calendar event updated for booking: " + booking.getId());
+                }
+            }
+
+            // Also update customer calendar event if connected
+            if (booking.getCustomerId() != null) {
+                User customer = userRepository.findById(booking.getCustomerId()).orElse(null);
+                if (customer != null && googleCalendarService.isCalendarConnected(customer.getId())) {
+                    String eventTitle = String.format("BookFast Booking: %s", 
+                        booking.getResource().getName());
+                    
+                    String eventId = "customer_booking_" + booking.getId();
+                    
+                    googleCalendarService.updateCalendarEvent(
+                        customer.getId(),
+                        eventId,
+                        eventTitle,
+                        booking.getStartTime(),
+                        booking.getEndTime()
+                    );
+                    
+                    System.out.println("Customer Google Calendar event updated for booking: " + booking.getId());
                 }
             }
         } catch (Exception e) {
@@ -340,12 +399,27 @@ public class BookingService {
     private void deleteGoogleCalendarEvent(Booking booking) {
         try {
             if (booking.getResource() != null && booking.getResource().getProviderId() != null) {
-                // In a real implementation, you would use the actual event ID from the database
-                String eventId = "booking_" + booking.getId();
-                
-                googleCalendarService.deleteCalendarEvent(eventId);
-                
-                System.out.println("Google Calendar event deleted for booking: " + booking.getId());
+                User provider = userRepository.findById(booking.getResource().getProviderId()).orElse(null);
+                if (provider != null && googleCalendarService.isCalendarConnected(provider.getId())) {
+                    // In a real implementation, you would use the actual event ID from the database
+                    String eventId = "booking_" + booking.getId();
+                    
+                    googleCalendarService.deleteCalendarEvent(provider.getId(), eventId);
+                    
+                    System.out.println("Google Calendar event deleted for booking: " + booking.getId());
+                }
+            }
+
+            // Also delete customer calendar event if connected
+            if (booking.getCustomerId() != null) {
+                User customer = userRepository.findById(booking.getCustomerId()).orElse(null);
+                if (customer != null && googleCalendarService.isCalendarConnected(customer.getId())) {
+                    String eventId = "customer_booking_" + booking.getId();
+                    
+                    googleCalendarService.deleteCalendarEvent(customer.getId(), eventId);
+                    
+                    System.out.println("Customer Google Calendar event deleted for booking: " + booking.getId());
+                }
             }
         } catch (Exception e) {
             System.err.println("Error deleting Google Calendar event: " + e.getMessage());

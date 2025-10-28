@@ -4,6 +4,28 @@
   padding: 20px;
 }
 
+/* Breadcrumb navigation styles */
+.page-header {
+  margin-bottom: 20px;
+}
+
+.breadcrumb {
+  margin-bottom: 15px;
+}
+
+.breadcrumb a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
 .dashboard-header {
   text-align: center;
   margin-bottom: 40px;

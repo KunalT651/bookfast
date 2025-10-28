@@ -1,5 +1,10 @@
 <div class="profile-container">
-  <h2>Provider Profile</h2>
+  <div class="page-header">
+    <div class="breadcrumb">
+      <a routerLink="/provider/dashboard">← Back to Dashboard</a>
+    </div>
+    <h2>Provider Profile</h2>
+  </div>
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="firstName">First Name:</label>

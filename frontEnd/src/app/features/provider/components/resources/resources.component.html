@@ -1,6 +1,11 @@
-<div class="resources-header">
-  <h2>Manage Resources</h2>
-  <button (click)="openForm()">+ Add Resource</button>
+<div class="page-header">
+  <div class="breadcrumb">
+    <a routerLink="/provider/dashboard">← Back to Dashboard</a>
+  </div>
+  <div class="resources-header">
+    <h2>Manage Resources</h2>
+    <button (click)="openForm()">+ Add Resource</button>
+  </div>
 </div>
 
 <div class="resource-form-modal" *ngIf="showForm">

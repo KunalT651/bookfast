@@ -1,0 +1,271 @@
+.calendar-sync {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sync-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.sync-header h3 {
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+}
+
+.sync-header p {
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+.sync-status {
+  margin-bottom: 32px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.sync-status.connected {
+  background: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #dc3545;
+  display: inline-block;
+}
+
+.status-dot.connected {
+  background: #28a745;
+}
+
+.status-text {
+  font-weight: 500;
+  color: #495057;
+}
+
+.sync-content {
+  margin-bottom: 24px;
+}
+
+.auth-instructions {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.auth-instructions h4 {
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+.auth-instructions p {
+  color: #495057;
+  margin-bottom: 12px;
+}
+
+.auth-instructions ol {
+  color: #495057;
+  padding-left: 20px;
+}
+
+.auth-instructions li {
+  margin-bottom: 8px;
+}
+
+.gmail-warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.gmail-warning h4 {
+  color: #856404;
+  margin-bottom: 12px;
+}
+
+.gmail-warning p {
+  color: #856404;
+  margin-bottom: 8px;
+}
+
+.gmail-warning ul {
+  color: #856404;
+  padding-left: 20px;
+}
+
+.gmail-warning li {
+  margin-bottom: 6px;
+}
+
+.auth-actions {
+  text-align: center;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-google {
+  background: #4285f4;
+  color: white;
+}
+
+.btn-google:hover:not(:disabled) {
+  background: #3367d6;
+  transform: translateY(-1px);
+}
+
+.btn-google i {
+  font-size: 1.1rem;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.connected-info {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.connected-info h4 {
+  color: #155724;
+  margin-bottom: 12px;
+}
+
+.connected-info p {
+  color: #155724;
+  margin-bottom: 16px;
+}
+
+.sync-features {
+  margin: 20px 0;
+}
+
+.sync-features h5 {
+  color: #155724;
+  margin-bottom: 8px;
+}
+
+.sync-features ul {
+  color: #155724;
+  padding-left: 20px;
+}
+
+.sync-features li {
+  margin-bottom: 6px;
+}
+
+.disconnect-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.messages {
+  margin-top: 20px;
+}
+
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid #c3e6cb;
+  margin-bottom: 12px;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .calendar-sync {
+    padding: 16px;
+    margin: 16px;
+  }
+
+  .sync-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .sync-header p {
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .auth-instructions {
+    padding: 16px;
+  }
+
+  .connected-info {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-sync {
+    padding: 12px;
+    margin: 8px;
+  }
+
+  .sync-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .status-indicator {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

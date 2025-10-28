@@ -14,6 +14,11 @@ public class User {
     private String imageUrl; // For profile picture
     private LocalDate createdDate; // For tracking user creation
     private Boolean isActive = true; // For tracking user status (active/inactive)
+    
+    // Google Calendar Integration
+    private Boolean calendarConnected = false; // Whether user has connected Google Calendar
+    private String calendarEmail; // User's Gmail address for calendar integration
+    private String googleCalendarId; // Google Calendar ID (usually "primary")
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -76,5 +81,30 @@ public class User {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    // Google Calendar Integration getters and setters
+    public Boolean getCalendarConnected() {
+        return calendarConnected;
+    }
+
+    public void setCalendarConnected(Boolean calendarConnected) {
+        this.calendarConnected = calendarConnected;
+    }
+
+    public String getCalendarEmail() {
+        return calendarEmail;
+    }
+
+    public void setCalendarEmail(String calendarEmail) {
+        this.calendarEmail = calendarEmail;
+    }
+
+    public String getGoogleCalendarId() {
+        return googleCalendarId;
+    }
+
+    public void setGoogleCalendarId(String googleCalendarId) {
+        this.googleCalendarId = googleCalendarId;
     }
 }

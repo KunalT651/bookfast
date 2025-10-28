@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/categories", "/api/resources").permitAll()
                         .requestMatchers("/api/auth", "/api/auth/login", "/api/auth/register", "/api/auth/register-provider", "/api/auth/logout", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test", "/api/database", "/api/test-resource", "/api/cleanup").permitAll()
+                        .requestMatchers("/api/calendar/**").authenticated() // Calendar endpoints require authentication
                         
                         // Admin endpoints (most specific first)
                         .requestMatchers("/api/admin/categories/**").hasRole("ADMIN") // Admin category management

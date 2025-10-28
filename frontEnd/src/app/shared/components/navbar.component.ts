@@ -16,12 +16,13 @@ import { UserStateService } from '../../shared/services/user-state.service';
         <span class="brand-text">BookFast</span>
       </div>
       <div class="navbar-nav">
-        @if (userRole === 'CUSTOMER') {
-        <a routerLink="/customer/home" routerLinkActive="active" class="nav-btn">Home</a>
-        <a routerLink="/customer/bookings" routerLinkActive="active" class="nav-btn">My Bookings</a>
-        <a routerLink="/customer/reviews" routerLinkActive="active" class="nav-btn">My Reviews</a>
-        <a routerLink="/customer/profile/edit" routerLinkActive="active" class="nav-btn">Edit Profile</a>
-      } @else if (userRole === 'ADMIN') {
+             @if (userRole === 'CUSTOMER') {
+             <a routerLink="/customer/home" routerLinkActive="active" class="nav-btn">Home</a>
+             <a routerLink="/customer/bookings" routerLinkActive="active" class="nav-btn">My Bookings</a>
+             <a routerLink="/customer/reviews" routerLinkActive="active" class="nav-btn">My Reviews</a>
+             <a routerLink="/customer/calendar-sync" routerLinkActive="active" class="nav-btn">📅 Calendar</a>
+             <a routerLink="/customer/profile/edit" routerLinkActive="active" class="nav-btn">Edit Profile</a>
+           } @else if (userRole === 'ADMIN') {
         <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-btn">Home</a>
         <a routerLink="/admin/services" routerLinkActive="active" class="nav-btn">Manage Categories</a>
         <a routerLink="/admin/providers" routerLinkActive="active" class="nav-btn">Manage Providers</a>
@@ -29,6 +30,10 @@ import { UserStateService } from '../../shared/services/user-state.service';
         <a routerLink="/admin/cleanup" routerLinkActive="active" class="nav-btn">Permanent Cleanup</a>
       } @else if (userRole === 'PROVIDER') {
         <a routerLink="/provider/dashboard" routerLinkActive="active" class="nav-btn">Home</a>
+        <a routerLink="/provider/dashboard/resources" routerLinkActive="active" class="nav-btn">My Resources</a>
+        <a routerLink="/provider/dashboard/bookings" routerLinkActive="active" class="nav-btn">Manage Bookings</a>
+        <a routerLink="/provider/dashboard/reviews" routerLinkActive="active" class="nav-btn">Manage Reviews</a>
+        <a routerLink="/provider/dashboard/profile" routerLinkActive="active" class="nav-btn">Edit Profile</a>
       }
         @if (loggedIn | async) {
           <button (click)="logout()" class="nav-btn logout">Logout</button>

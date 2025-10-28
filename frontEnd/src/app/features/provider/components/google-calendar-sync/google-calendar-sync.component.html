@@ -1,7 +1,7 @@
-<div class="google-calendar-sync">
+<div class="calendar-sync">
   <div class="sync-header">
     <h3>📅 Google Calendar Sync</h3>
-    <p>Sync your Google Calendar with BookFast to automatically manage your availability</p>
+    <p>Sync your Google Calendar with BookFast to manage your availability and bookings</p>
   </div>
 
   <div class="sync-status" [class.connected]="isConnected">
@@ -14,41 +14,32 @@
   </div>
 
   <div class="sync-content" *ngIf="!isConnected">
-    <div class="auth-instructions">
+    <div class="auth-instructions" *ngIf="!isGmail">
+      <div class="gmail-warning">
+        <h4>⚠️ Gmail Required</h4>
+        <p>Google Calendar integration requires a Gmail address. Your current email is: <strong>{{ currentEmail }}</strong></p>
+        <p>To enable calendar sync, please:</p>
+        <ul>
+          <li>Log out and register with a Gmail account (e.g., yourname@gmail.com), or</li>
+          <li>Update your profile to use a Gmail address</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="auth-instructions" *ngIf="isGmail">
       <h4>How to connect your Google Calendar:</h4>
       <ol>
         <li>Click the "Connect Google Calendar" button below</li>
         <li>Sign in to your Google account</li>
         <li>Grant permission to BookFast to access your calendar</li>
-        <li>Copy the authorization code from the redirect page</li>
-        <li>Paste the code in the field below and click "Sync Calendar"</li>
+        <li>You'll be redirected back to BookFast automatically</li>
       </ol>
     </div>
 
-    <div class="auth-actions">
-      <button type="button" class="btn btn-google" (click)="openGoogleAuth()">
+    <div class="auth-actions" *ngIf="isGmail">
+      <button type="button" class="btn btn-google" (click)="connectCalendar()" [disabled]="isConnecting">
         <i class="fab fa-google"></i>
-        Connect Google Calendar
-      </button>
-    </div>
-
-    <div class="auth-code-section">
-      <label for="authCode">Authorization Code:</label>
-      <input 
-        type="text" 
-        id="authCode" 
-        [(ngModel)]="authCode" 
-        placeholder="Paste your authorization code here"
-        class="form-control"
-      />
-      <button 
-        type="button" 
-        class="btn btn-primary" 
-        (click)="onSyncClick()" 
-        [disabled]="isSyncing || !authCode.trim()"
-      >
-        <span *ngIf="isSyncing" class="spinner"></span>
-        {{ isSyncing ? 'Syncing...' : 'Sync Calendar' }}
+        {{ isConnecting ? 'Connecting...' : 'Connect Google Calendar' }}
       </button>
     </div>
   </div>
@@ -56,22 +47,29 @@
   <div class="sync-content" *ngIf="isConnected">
     <div class="connected-info">
       <h4>✅ Calendar Connected Successfully!</h4>
-      <p>Your Google Calendar is now synced with BookFast. Your availability will be automatically updated based on your calendar events.</p>
+      <p>Your Google Calendar is now synced with BookFast. Your bookings will be automatically added to your calendar.</p>
       
       <div class="sync-features">
         <h5>What's synced:</h5>
         <ul>
-          <li>Busy times are automatically marked as unavailable</li>
-          <li>New bookings are added to your Google Calendar</li>
+          <li>New bookings are automatically added to your Google Calendar</li>
           <li>Booking changes are reflected in both systems</li>
+          <li>You'll receive calendar notifications for your bookings</li>
+          <li>Your availability can be managed through both BookFast and Google Calendar</li>
         </ul>
+      </div>
+
+      <div class="disconnect-section">
+        <button type="button" class="btn btn-danger" (click)="disconnectCalendar()" [disabled]="isDisconnecting">
+          {{ isDisconnecting ? 'Disconnecting...' : 'Disconnect Calendar' }}
+        </button>
       </div>
     </div>
   </div>
 
   <div class="messages">
-    <div class="success-message" *ngIf="syncMessage">
-      {{ syncMessage }}
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
     </div>
     <div class="error-message" *ngIf="errorMessage">
       {{ errorMessage }}
