@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-calendar-callback',
@@ -130,7 +131,7 @@ export class CalendarCallbackComponent implements OnInit {
   }
 
   exchangeCodeForTokens(code: string, state: string) {
-    this.http.post<any>('http://localhost:8080/api/calendar/callback', {
+    this.http.post<any>(`${environment.apiUrl}/api/calendar/callback`, {
       code: code,
       state: state
     }).subscribe({

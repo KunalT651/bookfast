@@ -1,6 +1,7 @@
 package com.bookfast.backend.admin.service;
 
 import com.bookfast.backend.common.model.User;
+import com.bookfast.backend.common.model.Role;
 import com.bookfast.backend.common.repository.UserRepository;
 import com.bookfast.backend.common.repository.RoleRepository;
 import com.bookfast.backend.common.util.PasswordUtil;
@@ -36,17 +37,50 @@ public class AdminProviderService {
 
     @Transactional
     public User createProvider(User provider) {
-        // Set PROVIDER role
-        provider.setRole(roleRepository.findByNameIgnoreCase("PROVIDER"));
-        
-        // Set default password if not provided
-        if (provider.getPassword() == null || provider.getPassword().isEmpty()) {
-            provider.setPassword(PasswordUtil.hash("defaultPassword123"));
-        } else {
-            provider.setPassword(PasswordUtil.hash(provider.getPassword()));
+        // Find and set PROVIDER role - throw exception if not found
+        Role providerRole = roleRepository.findByNameIgnoreCase("PROVIDER");
+        if (providerRole == null) {
+            throw new RuntimeException("PROVIDER role not found in database. Please ensure roles are initialized.");
         }
+        
+        // Create a new User object to avoid any JSON deserialization issues with role
+        User newProvider = new User();
+        newProvider.setFirstName(provider.getFirstName());
+        newProvider.setLastName(provider.getLastName());
+        newProvider.setEmail(provider.getEmail());
+        newProvider.setOrganizationName(provider.getOrganizationName());
+        newProvider.setServiceCategory(provider.getServiceCategory());
+        newProvider.setIsActive(provider.getIsActive() != null ? provider.getIsActive() : true);
+        
+        // Explicitly set the PROVIDER role (ensure it's a managed entity)
+        // Fetch the role to ensure it's a managed entity in the current persistence context
+        Role managedRole = roleRepository.findById(providerRole.getId())
+            .orElseThrow(() -> new RuntimeException("PROVIDER role not found with ID: " + providerRole.getId()));
+        newProvider.setRole(managedRole);
+        
+        // Require password - throw exception if not provided
+        if (provider.getPassword() == null || provider.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password is required when creating a provider");
+        }
+        
+        // Hash the password
+        newProvider.setPassword(PasswordUtil.hash(provider.getPassword()));
+        
+        // Set created date
+        newProvider.setCreatedDate(java.time.LocalDate.now());
 
-        return userRepository.save(provider);
+        // Save the provider with role
+        User savedProvider = userRepository.save(newProvider);
+        
+        // The role should be persisted with the user due to @ManyToOne relationship
+        // Verify role was set before returning
+        if (savedProvider.getRole() == null || savedProvider.getRole().getId() == null) {
+            // If role is not set, fetch it explicitly
+            savedProvider.setRole(managedRole);
+            savedProvider = userRepository.save(savedProvider);
+        }
+        
+        return savedProvider;
     }
 
     @Transactional

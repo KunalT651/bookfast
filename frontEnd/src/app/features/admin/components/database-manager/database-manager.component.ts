@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-database-manager',
@@ -150,7 +151,7 @@ export class DatabaseManagerComponent implements OnInit {
 
   getStatus() {
     this.loading = true;
-    this.http.get('http://localhost:8080/api/database/status', { withCredentials: true })
+    this.http.get(`${environment.apiUrl}/api/database/status`, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -168,7 +169,7 @@ export class DatabaseManagerComponent implements OnInit {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/database/clean-service-resources', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/api/database/clean-service-resources', {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -188,7 +189,7 @@ export class DatabaseManagerComponent implements OnInit {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/database/clean-customer-resources', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/api/database/clean-customer-resources', {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -208,7 +209,7 @@ export class DatabaseManagerComponent implements OnInit {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/database/clean-all-resources', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/api/database/clean-all-resources', {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -228,7 +229,7 @@ export class DatabaseManagerComponent implements OnInit {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/database/create-fresh-service-resources', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/api/database/create-fresh-service-resources', {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -248,7 +249,7 @@ export class DatabaseManagerComponent implements OnInit {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/database/create-fresh-customer-resources', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/api/database/create-fresh-customer-resources', {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;

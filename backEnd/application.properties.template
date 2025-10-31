@@ -1,0 +1,37 @@
+# Production Configuration Template
+# Copy these to Railway Environment Variables
+
+# Database Configuration (Set from Railway MySQL service)
+spring.datasource.url=${SPRING_DATASOURCE_URL}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.hbm2ddl.auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Server Configuration
+server.port=${SERVER_PORT:8080}
+
+# SendGrid Email API Configuration
+sendgrid.api-key=${SENDGRID_API_KEY}
+sendgrid.sender.email=${SENDGRID_SENDER_EMAIL}
+sendgrid.sender.name=${SENDGRID_SENDER_NAME}
+
+# JWT Configuration
+jwt.secret=${JWT_SECRET}
+
+# Admin Configuration
+admin.default.email=${ADMIN_DEFAULT_EMAIL:admin@bookfast.com}
+admin.default.password=${ADMIN_DEFAULT_PASSWORD:admin123}
+admin.default.firstname=${ADMIN_DEFAULT_FIRSTNAME:System}
+admin.default.lastname=${ADMIN_DEFAULT_LASTNAME:Administrator}
+admin.auto-create=${ADMIN_AUTO_CREATE:true}
+
+# Google Calendar API Configuration
+google.calendar.client.id=${GOOGLE_CALENDAR_CLIENT_ID}
+google.calendar.client.secret=${GOOGLE_CALENDAR_CLIENT_SECRET}
+google.calendar.redirect.uri=${GOOGLE_CALENDAR_REDIRECT_URI}
+google.calendar.scope=${GOOGLE_CALENDAR_SCOPE:https://www.googleapis.com/auth/calendar}
+google.calendar.auth.uri=${GOOGLE_CALENDAR_AUTH_URI:https://accounts.google.com/o/oauth2/auth}
+google.calendar.token.uri=${GOOGLE_CALENDAR_TOKEN_URI:https://oauth2.googleapis.com/token}
+

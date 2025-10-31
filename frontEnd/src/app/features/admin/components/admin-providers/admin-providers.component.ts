@@ -27,6 +27,7 @@ export class AdminProvidersComponent implements OnInit {
     firstName: '',
     lastName: '',
     email: '',
+    password: '',
     organizationName: '',
     serviceCategory: '',
     isActive: true
@@ -92,6 +93,7 @@ export class AdminProvidersComponent implements OnInit {
         firstName: provider.firstName || '',
         lastName: provider.lastName || '',
         email: provider.email || '',
+        password: '', // Password not shown for editing
         organizationName: provider.organizationName || '',
         serviceCategory: provider.serviceCategory || '',
         isActive: provider.isActive !== false
@@ -101,6 +103,7 @@ export class AdminProvidersComponent implements OnInit {
         firstName: '',
         lastName: '',
         email: '',
+        password: '',
         organizationName: '',
         serviceCategory: '',
         isActive: true
@@ -124,6 +127,12 @@ export class AdminProvidersComponent implements OnInit {
       return;
     }
 
+    // Validate password for new providers
+    if (!this.selectedProvider && (!this.providerForm.password || this.providerForm.password.trim().length < 6)) {
+      this.errorMessage = 'Password is required and must be at least 6 characters long';
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = '';
 
@@ -143,16 +152,19 @@ export class AdminProvidersComponent implements OnInit {
         }
       });
     } else {
-      // Create new provider
-      this.adminProviderService.createProvider(this.providerForm).subscribe({
-        next: () => {
+      // Create new provider - only send password for new providers
+      const createData = { ...this.providerForm };
+      this.adminProviderService.createProvider(createData).subscribe({
+        next: (createdProvider) => {
           this.successMessage = 'Provider created successfully';
+          // Refresh the providers list to show the newly created provider
           this.loadProviders();
           this.closeProviderModal();
           this.loading = false;
+          console.log('Provider created:', createdProvider);
         },
         error: (error) => {
-          this.errorMessage = 'Failed to create provider';
+          this.errorMessage = error.error?.error || error.error?.message || 'Failed to create provider';
           this.loading = false;
           console.error('Error creating provider:', error);
         }

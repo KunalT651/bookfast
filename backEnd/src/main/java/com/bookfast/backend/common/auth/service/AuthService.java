@@ -4,6 +4,7 @@ import com.bookfast.backend.common.dto.*;
 import com.bookfast.backend.common.model.*;
 import com.bookfast.backend.common.repository.*;
 import com.bookfast.backend.common.util.PasswordUtil;
+import com.bookfast.backend.common.notification.EmailService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +13,13 @@ public class AuthService {
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
-    public AuthService(UserRepository userRepo, RoleRepository roleRepo, JwtService jwtService) {
+    public AuthService(UserRepository userRepo, RoleRepository roleRepo, JwtService jwtService, EmailService emailService) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -43,10 +46,15 @@ public class AuthService {
         }
         user.setRole(role);
 
-        userRepo.save(user);
+        User savedUser = userRepo.save(user);
 
-        String token = jwtService.generateToken(user.getEmail(), user.getRole().getName());
-        return new AuthResponse(token, user);
+        // Send welcome email to customer (non-blocking - won't fail registration if email fails)
+        if ("CUSTOMER".equalsIgnoreCase(savedUser.getRole().getName())) {
+            emailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getFirstName(), savedUser.getLastName());
+        }
+
+        String token = jwtService.generateToken(savedUser.getEmail(), savedUser.getRole().getName());
+        return new AuthResponse(token, savedUser);
     }
 
     @Transactional
