@@ -29,17 +29,23 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      if (error.status === 401 || error.status === 403) {
-        // Only redirect to login if backend explicitly says session expired
+      if (error.status === 401) {
+        // Unauthorized - redirect to login
         const message = error.error?.message || '';
-  const publicRoutes = ['/login', '/registration', '/provider/registration', '/create-admin'];
-        const currentUrl = router.url;
-        if (message.toLowerCase().includes('expired') || message.toLowerCase().includes('invalid token')) {
+        if (message.toLowerCase().includes('expired') || message.toLowerCase().includes('invalid token') || message.toLowerCase().includes('unauthorized')) {
           router.navigate(['/login']);
-        } else if (!publicRoutes.includes(currentUrl)) {
-          // Only show warning for protected routes
-          console.warn('Access denied:', message || error.statusText);
         }
+      } else if (error.status === 403) {
+        // Forbidden - user is authenticated but doesn't have permission
+        const publicRoutes = ['/login', '/registration', '/provider/registration', '/create-admin'];
+        const currentUrl = router.url;
+        const message = error.error?.message || error.error?.error || '';
+        
+        // Only log meaningful errors (suppress generic "OK" messages)
+        if (message && message !== 'OK' && error.statusText !== 'OK' && !publicRoutes.includes(currentUrl)) {
+          console.warn(`[AuthInterceptor] 403 Forbidden on ${req.method} ${req.url}:`, message);
+        }
+        // Silently handle 403 errors - they're expected for unauthorized access attempts
       }
       return throwError(() => error);
     })

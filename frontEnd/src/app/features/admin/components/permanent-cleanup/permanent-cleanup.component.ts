@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-permanent-cleanup',
@@ -164,7 +165,7 @@ export class PermanentCleanupComponent {
 
   checkStatus() {
     this.loading = true;
-    this.http.get('http://localhost:8080/api/cleanup/check-cleanup', { withCredentials: true })
+    this.http.get(`${environment.apiUrl}/api/cleanup/check-cleanup`, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -186,7 +187,7 @@ export class PermanentCleanupComponent {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/cleanup/permanent-cleanup', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/api/cleanup/permanent-cleanup`, {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -206,7 +207,7 @@ export class PermanentCleanupComponent {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/cleanup/disable-service-resources', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/api/cleanup/disable-service-resources`, {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;

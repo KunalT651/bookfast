@@ -1,0 +1,44 @@
+# Compiled output
+frontEnd/dist/
+backEnd/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Uploads
+backEnd/uploads/
+*.jpg
+*.png
+*.jpeg
+!BookFast_logo.jpg
+

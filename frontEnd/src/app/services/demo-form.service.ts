@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DemoForm } from '../models/demo-form.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DemoFormService {
-  private apiUrl = 'http://localhost:8080/api/demo';
+  private apiUrl = `${environment.apiUrl}/api/demo`;
 
   constructor(private http: HttpClient) {}
 

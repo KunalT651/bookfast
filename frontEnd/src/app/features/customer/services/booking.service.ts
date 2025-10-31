@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, pipe } from 'rxjs';
 import { Booking } from '../models/booking.model';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BookingService {
-	private apiUrl = 'http://localhost:8080/api/bookings';
+	private apiUrl = `${environment.apiUrl}/api/bookings`;
 
 	constructor(private http: HttpClient) {}
 
@@ -31,7 +32,7 @@ export class BookingService {
 	   }
 
 		createPaymentIntent(data: { amount: number }): Observable<{ clientSecret: string }> {
-			return this.http.post<{ clientSecret: string }>('http://localhost:8080/api/payments/create-intent', data, { withCredentials: true })
+			return this.http.post<{ clientSecret: string }>(`${environment.apiUrl}/api/payments/create-intent`, data, { withCredentials: true })
 				.pipe(
 					tap({
 						next: (response) => console.log('PaymentIntent response:', response),

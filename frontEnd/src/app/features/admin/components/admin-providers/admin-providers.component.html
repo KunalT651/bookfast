@@ -114,6 +114,12 @@
             <input type="email" [(ngModel)]="providerForm.email" name="email" required>
           </div>
           
+          <div class="form-group" *ngIf="!selectedProvider">
+            <label>Password *</label>
+            <input type="password" [(ngModel)]="providerForm.password" name="password" required>
+            <small class="form-text">Password is required when creating a new provider</small>
+          </div>
+          
           <div class="form-group">
             <label>Organization Name *</label>
             <input type="text" [(ngModel)]="providerForm.organizationName" name="organizationName" required>
