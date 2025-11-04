@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-calendar-sync',
@@ -104,7 +105,7 @@ export class CalendarSyncComponent implements OnInit {
   }
 
   checkCalendarStatus() {
-    this.http.get<any>('http://localhost:8080/api/calendar/status').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/calendar/status`, { withCredentials: true }).subscribe({
       next: (response) => {
         this.isConnected = response.connected;
         this.isGmail = response.isGmail;
@@ -122,7 +123,7 @@ export class CalendarSyncComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.http.get<any>('http://localhost:8080/api/calendar/auth-url').subscribe({
+    this.http.get<any>(`${environment.apiUrl}/calendar/auth-url`, { withCredentials: true }).subscribe({
       next: (response) => {
         // Open Google OAuth in a popup window
         const popup = window.open(
@@ -171,7 +172,7 @@ export class CalendarSyncComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.http.post<any>('http://localhost:8080/api/calendar/disconnect', {}).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/calendar/disconnect`, {}, { withCredentials: true }).subscribe({
       next: (response) => {
         this.isDisconnecting = false;
         this.successMessage = response.message;

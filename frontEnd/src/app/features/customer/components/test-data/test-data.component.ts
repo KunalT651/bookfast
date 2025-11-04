@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-test-data',
@@ -106,7 +107,7 @@ export class TestDataComponent {
     this.loading = true;
     this.message = '';
 
-    this.http.post('http://localhost:8080/api/test/create-sample-resources', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/test/create-sample-resources`, {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;

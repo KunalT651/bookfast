@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-test-resource',
@@ -115,7 +116,7 @@ export class TestResourceComponent {
     this.loading = true;
     this.message = '';
     
-    this.http.post('http://localhost:8080/api/test-resource/create-test-resource', {}, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/test-resource/create-test-resource`, {}, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -135,7 +136,7 @@ export class TestResourceComponent {
     this.loading = true;
     this.message = '';
     
-    this.http.get('http://localhost:8080/api/test-resource/check-resources', { withCredentials: true })
+    this.http.get(`${environment.apiUrl}/test-resource/check-resources`, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
@@ -155,7 +156,7 @@ export class TestResourceComponent {
     this.loading = true;
     this.message = '';
     
-    this.http.get('http://localhost:8080/api/resources', { withCredentials: true })
+    this.http.get(`${environment.apiUrl}/resources`, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-create-admin',
@@ -127,7 +128,7 @@ export class CreateAdminComponent {
 
     const adminData = this.adminForm.value;
     
-    this.http.post('http://localhost:8080/api/admin/create-admin', adminData, { withCredentials: true })
+    this.http.post(`${environment.apiUrl}/admin/create-admin`, adminData, { withCredentials: true })
       .subscribe({
         next: (response: any) => {
           this.loading = false;
