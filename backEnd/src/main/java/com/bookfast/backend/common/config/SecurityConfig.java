@@ -18,7 +18,14 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+        // Allow both localhost (dev) and production frontend URL
+        String frontendUrl = System.getenv("FRONTEND_URL");
+        java.util.List<String> allowedOrigins = new java.util.ArrayList<>();
+        allowedOrigins.add("http://localhost:4200");
+        if (frontendUrl != null && !frontendUrl.isEmpty()) {
+            allowedOrigins.add(frontendUrl);
+        }
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
         configuration.setAllowCredentials(true);
@@ -47,6 +54,7 @@ public class SecurityConfig {
                                 "/api/resources", // Allow POST/PUT/DELETE for resources without CSRF
                                 "/api/resources/*/availability", // Allow availability operations without CSRF
                                 "/api/admin/**", // Allow all admin operations without CSRF
+                                "/api/customers/**", // Allow customer operations without CSRF (for PUT/PATCH requests)
                                 "/api/test",
                                 "/api/database",
                                 "/api/test-resource",
@@ -55,6 +63,7 @@ public class SecurityConfig {
                 )
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/categories", "/api/resources").permitAll() // Allow OPTIONS for CORS preflight
                         .requestMatchers(HttpMethod.GET, "/api/categories", "/api/resources").permitAll()
                         .requestMatchers("/api/auth", "/api/auth/login", "/api/auth/register", "/api/auth/register-provider", "/api/auth/logout", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test", "/api/database", "/api/test-resource", "/api/cleanup").permitAll()
                         .requestMatchers("/api/calendar/**").authenticated() // Calendar endpoints require authentication
