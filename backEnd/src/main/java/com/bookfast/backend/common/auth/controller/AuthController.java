@@ -44,21 +44,15 @@ public class AuthController {
             AuthResponse authResponse = authService.login(req);
             // authResponse should contain JWT, user info, etc.
             String jwt = authResponse.getToken();
-            Cookie cookie = new Cookie("jwt", jwt);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(false); // Set true in production
-            cookie.setPath("/");
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-            // Standards-compliant SameSite attribute (Servlet 4.0+/Tomcat 9+)
+            // For cross-domain deployment (Vercel frontend + Render backend)
+            // We need SameSite=None and Secure=true
             StringBuilder cookieHeader = new StringBuilder();
             cookieHeader.append("jwt=").append(jwt)
                 .append("; Max-Age=").append(7 * 24 * 60 * 60)
                 .append("; Path=/")
-                .append("; Domain=localhost")
                 .append("; HttpOnly")
-                .append("; SameSite=Lax");
-            // Uncomment the next line for production
-            // cookieHeader.append("; Secure");
+                .append("; SameSite=None")
+                .append("; Secure"); // Required for SameSite=None
             response.setHeader("Set-Cookie", cookieHeader.toString());
             return ResponseEntity.ok(authResponse);
         } catch (RuntimeException ex) {
