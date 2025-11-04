@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/api/auth`;
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) {}
 
@@ -18,7 +18,7 @@ export class AuthService {
   }
 
   getServiceCategories(): Observable<string[]> {
-    return this.http.get<string[]>(`${environment.apiUrl}/api/categories`, { withCredentials: true });
+    return this.http.get<string[]>(`${environment.apiUrl}/categories`, { withCredentials: true });
   }
 
   login(data: any): Observable<any> {

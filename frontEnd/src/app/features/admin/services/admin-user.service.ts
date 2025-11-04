@@ -7,7 +7,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root'
 })
 export class AdminUserService {
-  private apiUrl = `${environment.apiUrl}/api/admin/users`;
+  private apiUrl = `${environment.apiUrl}/admin/users`;
 
   constructor(private http: HttpClient) {}
 

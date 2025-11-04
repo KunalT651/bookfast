@@ -6,7 +6,7 @@ import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AvailabilitySlotService {
-  private baseUrl = `${environment.apiUrl}/api/resources`;
+  private baseUrl = `${environment.apiUrl}/resources`;
 
   constructor(private http: HttpClient) {}
 
