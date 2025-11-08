@@ -1,14 +1,9 @@
 <div class="provider-bookings">
   <div class="page-header">
-    <div class="breadcrumb">
-      <a routerLink="/provider/dashboard">← Back to Dashboard</a>
-    </div>
-    <div class="header">
-      <h2>Manage Bookings</h2>
-      <button class="refresh-btn" (click)="loadBookings()" [disabled]="loading">
-        {{ loading ? 'Loading...' : 'Refresh' }}
-      </button>
-    </div>
+    <h2>Manage Bookings</h2>
+    <button class="refresh-btn" (click)="loadBookings()" [disabled]="loading">
+      {{ loading ? 'Loading...' : 'Refresh' }}
+    </button>
   </div>
   <div *ngIf="loading" class="loading">Loading bookings...</div>
   <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>

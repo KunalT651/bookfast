@@ -3,12 +3,19 @@
   <div *ngIf="loading">Loading slots...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
   <ul *ngIf="!loading && slots.length">
-    <li *ngFor="let slot of slots">
+    <li *ngFor="let slot of slots" [ngClass]="{ 'unavailable-slot': slot.status === 'unavailable', 'booked-slot': slot.status === 'booked' }">
       <input type="checkbox"
              [checked]="selectedSlotIds.includes(slot.id ?? -1)"
+             [disabled]="slot.status === 'unavailable' || slot.status === 'booked'"
              (change)="toggleSlotSelection(slot, $event.target.checked)" />
-      <span [ngClass]="{ 'selected-slot': selectedSlotIds.includes(slot.id ?? -1) }">
+      <span [ngClass]="{ 
+        'selected-slot': selectedSlotIds.includes(slot.id ?? -1),
+        'unavailable-text': slot.status === 'unavailable',
+        'booked-text': slot.status === 'booked'
+      }">
         {{ formatSlotDisplay(slot) }}
+        <span *ngIf="slot.status === 'unavailable'" class="status-badge unavailable-badge">Unavailable</span>
+        <span *ngIf="slot.status === 'booked'" class="status-badge booked-badge">Booked</span>
       </span>
     </li>
   </ul>

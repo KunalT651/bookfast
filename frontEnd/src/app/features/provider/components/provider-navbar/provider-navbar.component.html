@@ -1,7 +1,18 @@
 <nav class="provider-navbar">
-  <a routerLink="/provider/dashboard/resources" routerLinkActive="active">Home</a>
-  <a routerLink="/provider/dashboard/bookings" routerLinkActive="active">Manage Bookings</a>
-  <a routerLink="/provider/dashboard/reviews" routerLinkActive="active">Manage Reviews</a>
-  <a routerLink="/provider/dashboard/profile" routerLinkActive="active">Edit Profile</a>
+  <div class="navbar-left">
+    <div class="profile-logo" *ngIf="profilePictureUrl">
+      <img [src]="'http://localhost:8080' + profilePictureUrl" alt="Profile" class="profile-pic" />
+    </div>
+    <div class="profile-logo-placeholder" *ngIf="!profilePictureUrl">
+      <span>👤</span>
+    </div>
+  </div>
+  <div class="navbar-links">
+    <a routerLink="/provider/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+    <a routerLink="/provider/dashboard/resources" routerLinkActive="active">Manage Resources</a>
+    <a routerLink="/provider/dashboard/bookings" routerLinkActive="active">Manage Bookings</a>
+    <a routerLink="/provider/dashboard/reviews" routerLinkActive="active">Manage Reviews</a>
+    <a routerLink="/provider/dashboard/profile" routerLinkActive="active">Edit Profile</a>
+  </div>
   <button class="logout-btn" (click)="onLogout()">Logout</button>
 </nav>

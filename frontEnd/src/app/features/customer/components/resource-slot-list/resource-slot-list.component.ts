@@ -43,6 +43,11 @@ export class ResourceSlotListComponent implements OnInit {
   }
 
   toggleSlotSelection(slot: AvailabilitySlot, checked: boolean) {
+    // Don't allow selection of unavailable or booked slots
+    if (slot.status === 'unavailable' || slot.status === 'booked') {
+      return;
+    }
+    
     if (checked) {
       if (!this.selectedSlotIds.includes(slot.id!)) {
         this.selectedSlotIds.push(slot.id!);

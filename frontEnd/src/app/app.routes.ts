@@ -6,6 +6,7 @@ import { LoginComponent } from './features/auth/components/login/login.component
 import { AdminLoginComponent } from './features/auth/components/admin-login/admin-login.component';
 import { CreateAdminComponent } from './features/auth/components/create-admin/create-admin.component';
 import { SmartRedirectComponent } from './features/auth/components/smart-redirect/smart-redirect.component';
+import { PasswordResetComponent } from './features/auth/components/password-reset/password-reset.component';
 
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './features/admin/components/admin-dashboard/admin-dashboard.component';
@@ -41,6 +42,7 @@ export const routes: Routes = [
   { path: '', component: SmartRedirectComponent },
   { path: 'login', component: LoginComponent },
   { path: 'admin/login', component: AdminLoginComponent },
+  { path: 'password-reset', component: PasswordResetComponent },
 
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [authGuard] },
   { path: 'admin/services', component: ServiceCategoriesComponent, canActivate: [authGuard] },

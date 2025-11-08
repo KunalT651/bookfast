@@ -1,11 +1,6 @@
-<div class="page-header">
-  <div class="breadcrumb">
-    <a routerLink="/provider/dashboard">← Back to Dashboard</a>
-  </div>
-  <div class="resources-header">
-    <h2>Manage Resources</h2>
-    <button (click)="openForm()">+ Add Resource</button>
-  </div>
+<div class="resources-header">
+  <h2>Manage Resources</h2>
+  <button (click)="openForm()">+ Add Resource</button>
 </div>
 
 <div class="resource-form-modal" *ngIf="showForm">
@@ -50,4 +45,5 @@
   <app-resource-availability-modal
     *ngIf="showAvailabilityModal && selectedResource && selectedResource.id !== undefined"
   [resourceId]="selectedResource.id || 0"
+  (close)="closeAvailability()"
   ></app-resource-availability-modal>

@@ -75,6 +75,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow all OPTIONS requests for CORS preflight
                         .requestMatchers(HttpMethod.GET, "/api/categories", "/api/resources").permitAll()
+                        .requestMatchers("/uploads/**").permitAll() // Allow public access to uploaded images
                         .requestMatchers("/api/auth", "/api/auth/**", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test", "/api/database", "/api/test-resource", "/api/cleanup").permitAll()
                         .requestMatchers("/api/calendar/**").authenticated() // Calendar endpoints require authentication
                         
