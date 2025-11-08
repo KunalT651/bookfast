@@ -29,8 +29,14 @@ public class SecurityConfig {
                 allowedOrigins.add(origin.trim());
             }
         } else {
-            // Fallback to localhost for development
+            // Fallback: Allow localhost for development and Vercel domains for production
             allowedOrigins.add("http://localhost:4200");
+            allowedOrigins.add("http://localhost:3000");
+            // Add Vercel pattern - matches any Vercel deployment
+            String vercelUrl = System.getenv("FRONTEND_URL");
+            if (vercelUrl != null && !vercelUrl.isEmpty()) {
+                allowedOrigins.add(vercelUrl);
+            }
         }
         
         configuration.setAllowedOrigins(allowedOrigins);
