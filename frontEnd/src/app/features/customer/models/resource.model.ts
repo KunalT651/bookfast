@@ -12,6 +12,8 @@ export interface Resource {
   imageUrl?: string;
   tags?: string[];
   rating?: number;
+  averageRating?: number;
+  serviceCategory?: string;
   reviews?: Review[];
   providerName?: string;
 }
