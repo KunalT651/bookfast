@@ -1,7 +1,9 @@
 package com.bookfast.backend.resource.service;
 
 import com.bookfast.backend.resource.model.Resource;
+import com.bookfast.backend.resource.model.AvailabilitySlot;
 import com.bookfast.backend.resource.repository.ResourceRepository;
+import com.bookfast.backend.resource.repository.AvailabilitySlotRepository;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,13 @@ public class ResourceService {
 
     private final ResourceRepository repository;
     private final UserRepository userRepository;
+    private final AvailabilitySlotRepository availabilitySlotRepository;
 
-    public ResourceService(ResourceRepository repository, UserRepository userRepository) {
+    public ResourceService(ResourceRepository repository, UserRepository userRepository, 
+                          AvailabilitySlotRepository availabilitySlotRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.availabilitySlotRepository = availabilitySlotRepository;
     }
 
     // Extract providerId from JWT
@@ -108,8 +113,13 @@ public class ResourceService {
     }
 
     private boolean hasAvailability(Resource resource, String availability) {
-        // Simple check - can be enhanced with actual slot checking
-        // For now, assume all active resources have availability
-        return "available".equalsIgnoreCase(availability);
+        if (!"available".equalsIgnoreCase(availability)) {
+            return true; // If not filtering by availability, include all
+        }
+        
+        // Check if resource has at least one available slot
+        List<AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
+        return slots.stream()
+                .anyMatch(slot -> "available".equalsIgnoreCase(slot.getStatus()));
     }
 }
