@@ -46,7 +46,11 @@ public class AvailabilitySlotService {
             }
         }
         
-        return slots;
+        // Filter out booked and unavailable slots for customer view
+        // Only return available slots to customers
+        return slots.stream()
+                .filter(slot -> "available".equalsIgnoreCase(slot.getStatus()))
+                .toList();
     }
     
     private boolean isDateUnavailable(LocalDate date, List<UnavailableDate> unavailableDates) {

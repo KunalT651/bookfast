@@ -5,8 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bookfast.backend.resource.model.Booking;
 import com.bookfast.backend.resource.model.Payment;
+import com.bookfast.backend.resource.model.AvailabilitySlot;
 import com.bookfast.backend.resource.repository.BookingRepository;
 import com.bookfast.backend.resource.repository.PaymentRepository;
+import com.bookfast.backend.resource.repository.AvailabilitySlotRepository;
 import com.bookfast.backend.resource.dto.BookingDetailsDTO;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
@@ -23,12 +25,16 @@ public class BookingService {
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final GoogleCalendarService googleCalendarService;
+    private final AvailabilitySlotRepository availabilitySlotRepository;
 
-    public BookingService(BookingRepository repository, PaymentRepository paymentRepository, UserRepository userRepository, GoogleCalendarService googleCalendarService) {
+    public BookingService(BookingRepository repository, PaymentRepository paymentRepository, 
+                         UserRepository userRepository, GoogleCalendarService googleCalendarService,
+                         AvailabilitySlotRepository availabilitySlotRepository) {
         this.repository = repository;
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.googleCalendarService = googleCalendarService;
+        this.availabilitySlotRepository = availabilitySlotRepository;
     }
 
     public Booking createBooking(Booking booking) {
@@ -68,6 +74,21 @@ public class BookingService {
         
         // Save the booking first
         Booking savedBooking = repository.save(booking);
+        
+        // Mark the slot as booked
+        if (savedBooking.getSlotId() != null) {
+            try {
+                Optional<AvailabilitySlot> slotOpt = availabilitySlotRepository.findById(Long.valueOf(savedBooking.getSlotId()));
+                if (slotOpt.isPresent()) {
+                    AvailabilitySlot slot = slotOpt.get();
+                    slot.setStatus("booked");
+                    availabilitySlotRepository.save(slot);
+                    System.out.println("[BookingService] Marked slot " + savedBooking.getSlotId() + " as booked");
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to update slot status: " + e.getMessage());
+            }
+        }
         
         // Create Google Calendar event for the provider
         try {
@@ -191,6 +212,9 @@ public class BookingService {
         
         System.out.println("[BookingService] Found booking: " + booking.getId() + ", current status: " + booking.getStatus());
         
+        // Store slotId before deleting booking
+        Integer slotId = booking.getSlotId();
+        
         try {
             // First, delete all associated payments
             System.out.println("[BookingService] Looking for payments for booking ID: " + bookingId);
@@ -205,6 +229,22 @@ public class BookingService {
             // Then delete the booking
             System.out.println("[BookingService] Deleting booking ID: " + bookingId);
             repository.deleteById(bookingId);
+            
+            // Mark the slot as available again
+            if (slotId != null) {
+                try {
+                    Optional<AvailabilitySlot> slotOpt = availabilitySlotRepository.findById(Long.valueOf(slotId));
+                    if (slotOpt.isPresent()) {
+                        AvailabilitySlot slot = slotOpt.get();
+                        slot.setStatus("available");
+                        availabilitySlotRepository.save(slot);
+                        System.out.println("[BookingService] Marked slot " + slotId + " as available again");
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to update slot status: " + e.getMessage());
+                }
+            }
+            
             System.out.println("[BookingService] Successfully cancelled and deleted booking ID: " + bookingId);
         } catch (Exception e) {
             System.out.println("[BookingService] Error cancelling booking: " + e.getMessage());

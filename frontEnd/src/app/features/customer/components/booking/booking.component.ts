@@ -186,15 +186,31 @@ async confirmBooking() {
       },
       error: (err) => {
         console.error('Booking error:', err);
-        console.error('Error details:', err.error);
-        if (err?.error?.error && err.error.error.includes('Double booking')) {
-          // Show the detailed error message from backend
-          this.paymentError = err.error.error;
-        } else if (err?.error?.message && err.error.message.includes('Double booking')) {
-          this.paymentError = err.error.message;
+        console.log('Error details:', err.error);
+        
+        // User-friendly error messages
+        if (err?.error?.error) {
+          const errorMsg = err.error.error;
+          if (errorMsg.includes('Double booking') || errorMsg.includes('already booked')) {
+            this.paymentError = '⚠️ Sorry! This time slot was just booked by another customer. Please go back and select a different time.';
+          } else if (errorMsg.includes('unavailable')) {
+            this.paymentError = '⚠️ This time slot is no longer available. Please select another time.';
+          } else if (errorMsg.includes('Invalid slot')) {
+            this.paymentError = '⚠️ The selected time slot is invalid. Please try selecting again.';
+          } else {
+            this.paymentError = `⚠️ Unable to complete booking: ${errorMsg}`;
+          }
         } else {
-          this.paymentError = 'Booking creation failed: ' + (err.error?.error || err.error?.message || 'Unknown error');
+          this.paymentError = '⚠️ Unable to complete booking. Please try again or contact support.';
         }
+        
+        // Scroll to error message
+        setTimeout(() => {
+          const errorElement = document.querySelector('.error-message');
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
       },
       complete: () => {
         this.isPaying = false;
