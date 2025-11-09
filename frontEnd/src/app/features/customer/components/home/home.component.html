@@ -10,11 +10,14 @@
   <div class="search-section">
     <div class="search-bar">
       <input
+        id="searchTerm"
+        name="searchTerm"
         type="text"
         [(ngModel)]="searchTerm"
         (ngModelChange)="applyFilters()"
         placeholder="Search by name, specialization, or tag..."
         class="search-input"
+        aria-label="Search providers"
       />
       <button class="filter-toggle-btn" (click)="toggleFilters()">
         <span class="filter-icon">🔍</span>
@@ -27,8 +30,13 @@
       <div class="filters-grid">
         <!-- Service Category Filter -->
         <div class="filter-group">
-          <label>🏥 Service Category</label>
-          <select [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()" class="filter-select">
+          <label for="serviceCategory">🏥 Service Category</label>
+          <select 
+            id="serviceCategory" 
+            name="serviceCategory" 
+            [(ngModel)]="selectedCategory" 
+            (ngModelChange)="applyFilters()" 
+            class="filter-select">
             <option value="">All Categories</option>
             <option *ngFor="let cat of serviceCategories" [value]="cat.name">{{ cat.name }}</option>
           </select>
@@ -36,8 +44,10 @@
 
         <!-- Specialization Filter -->
         <div class="filter-group">
-          <label>🎯 Specialization</label>
+          <label for="specialization">🎯 Specialization</label>
           <input 
+            id="specialization"
+            name="specialization"
             type="text" 
             [(ngModel)]="selectedSpecialization" 
             (ngModelChange)="applyFilters()"
@@ -51,29 +61,40 @@
           <label>💰 Price Range</label>
           <div class="price-range">
             <input 
+              id="minPrice"
+              name="minPrice"
               type="number" 
               [(ngModel)]="minPrice" 
               (ngModelChange)="applyFilters()"
               placeholder="Min"
               min="0"
               class="filter-input price-input"
+              aria-label="Minimum price"
             />
             <span class="range-separator">-</span>
             <input 
+              id="maxPrice"
+              name="maxPrice"
               type="number" 
               [(ngModel)]="maxPrice" 
               (ngModelChange)="applyFilters()"
               placeholder="Max"
               min="0"
               class="filter-input price-input"
+              aria-label="Maximum price"
             />
           </div>
         </div>
 
         <!-- Rating Filter -->
         <div class="filter-group">
-          <label>⭐ Minimum Rating</label>
-          <select [(ngModel)]="minRating" (ngModelChange)="applyFilters()" class="filter-select">
+          <label for="minRating">⭐ Minimum Rating</label>
+          <select 
+            id="minRating" 
+            name="minRating" 
+            [(ngModel)]="minRating" 
+            (ngModelChange)="applyFilters()" 
+            class="filter-select">
             <option [ngValue]="null">Any Rating</option>
             <option [ngValue]="4.5">4.5+ Stars</option>
             <option [ngValue]="4.0">4.0+ Stars</option>
@@ -84,8 +105,10 @@
 
         <!-- Availability Filter -->
         <div class="filter-group">
-          <label class="checkbox-label">
+          <label for="onlyAvailable" class="checkbox-label">
             <input 
+              id="onlyAvailable"
+              name="onlyAvailable"
               type="checkbox" 
               [(ngModel)]="onlyAvailable" 
               (ngModelChange)="applyFilters()"
