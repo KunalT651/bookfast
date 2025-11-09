@@ -155,8 +155,8 @@ export class HomeComponent implements OnInit {
   this.showBookingForm = false;
   }
 
-  // Watch for searchTerm changes
+  // Watch for changes
   ngDoCheck() {
-    this.filterResources();
+    // Filters are applied on ngModelChange events
   }
 }
