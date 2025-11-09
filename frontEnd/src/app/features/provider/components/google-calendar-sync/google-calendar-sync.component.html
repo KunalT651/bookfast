@@ -1,78 +1,179 @@
-<div class="calendar-sync">
-  <div class="sync-header">
-    <h3>📅 Google Calendar Sync</h3>
-    <p>Sync your Google Calendar with BookFast to manage your availability and bookings</p>
-  </div>
-
-  <div class="sync-status" [class.connected]="isConnected">
-    <div class="status-indicator">
-      <span class="status-dot" [class.connected]="isConnected"></span>
-      <span class="status-text">
-        {{ isConnected ? 'Connected to Google Calendar' : 'Not connected' }}
-      </span>
+<div class="calendar-container">
+  <!-- Calendar Header -->
+  <div class="calendar-header">
+    <div class="header-left">
+      <h2 class="calendar-title">📅 Booking Calendar</h2>
+      <p class="calendar-subtitle">Manage your bookings in calendar view</p>
+    </div>
+    <div class="header-right">
+      <button class="today-btn" (click)="goToToday()">Today</button>
     </div>
   </div>
 
-  <div class="sync-content" *ngIf="!isConnected">
-    <div class="auth-instructions" *ngIf="!isGmail">
-      <div class="gmail-warning">
-        <h4>⚠️ Gmail Required</h4>
-        <p>Google Calendar integration requires a Gmail address. Your current email is: <strong>{{ currentEmail }}</strong></p>
-        <p>To enable calendar sync, please:</p>
-        <ul>
-          <li>Log out and register with a Gmail account (e.g., yourname@gmail.com), or</li>
-          <li>Update your profile to use a Gmail address</li>
-        </ul>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner">⏳</div>
+    <p>Loading your bookings...</p>
+  </div>
+
+  <!-- Calendar Navigation -->
+  <div *ngIf="!loading" class="calendar-navigation">
+    <button class="nav-btn" (click)="previousMonth()">
+      <span>‹</span>
+    </button>
+    <h3 class="current-month">{{ monthNames[currentMonth] }} {{ currentYear }}</h3>
+    <button class="nav-btn" (click)="nextMonth()">
+      <span>›</span>
+    </button>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div *ngIf="!loading" class="calendar-grid">
+    <!-- Week Day Headers -->
+    <div class="calendar-weekdays">
+      <div class="weekday" *ngFor="let day of weekDays">{{ day }}</div>
+    </div>
+
+    <!-- Calendar Days -->
+    <div class="calendar-days">
+      <div 
+        *ngFor="let day of calendarDays" 
+        class="calendar-day"
+        [class.other-month]="!day.isCurrentMonth"
+        [class.today]="day.isToday"
+        [class.has-bookings]="day.bookingCount > 0"
+        (mouseenter)="onDayHover(day)"
+        (mouseleave)="onDayLeave()"
+        (click)="day.isCurrentMonth && onDayClick(day)">
+        
+        <div class="day-number">{{ day.day }}</div>
+        
+        <!-- Booking Indicators -->
+        <div class="booking-indicators" *ngIf="day.bookingCount > 0">
+          <div class="booking-dots">
+            <span 
+              *ngFor="let booking of day.bookings.slice(0, 3)" 
+              class="booking-dot"
+              [class.confirmed]="booking.status === 'confirmed'"
+              [class.pending]="booking.status === 'pending'"
+              [class.cancelled]="booking.status === 'cancelled'">
+            </span>
+          </div>
+          <div class="booking-count" *ngIf="day.bookingCount > 3">
+            +{{ day.bookingCount - 3 }}
+          </div>
+        </div>
+
+        <!-- Hover Tooltip -->
+        <div class="hover-tooltip" *ngIf="hoveredDay === day && day.bookingCount > 0">
+          <div class="tooltip-header">{{ day.bookingCount }} Booking(s)</div>
+          <div class="tooltip-booking" *ngFor="let booking of day.bookings.slice(0, 3)">
+            <span class="tooltip-time">{{ formatTime(booking.startTime) }}</span>
+            <span class="tooltip-customer">{{ booking.customerName }}</span>
+            <span class="tooltip-status" [class]="getStatusClass(booking.status)">{{ booking.status }}</span>
+          </div>
+          <div class="tooltip-more" *ngIf="day.bookingCount > 3">
+            Click to see all {{ day.bookingCount }} bookings
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-banner">
+    ⚠️ {{ errorMessage }}
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-backdrop" *ngIf="showBookingModal" (click)="closeModal()">
+  <div class="booking-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>📅 Bookings for {{ selectedDate ? formatDate(selectedDate) : '' }}</h3>
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- No Bookings -->
+      <div *ngIf="selectedDayBookings.length === 0" class="no-bookings">
+        <div class="no-bookings-icon">📭</div>
+        <p>No bookings for this day</p>
+      </div>
+
+      <!-- Bookings List -->
+      <div *ngIf="selectedDayBookings.length > 0" class="bookings-list">
+        <div *ngFor="let booking of selectedDayBookings" class="booking-card">
+          <!-- View Mode -->
+          <div *ngIf="editingBooking?.id !== booking.id" class="booking-view">
+            <div class="booking-header">
+              <div class="booking-time">
+                <span class="time-icon">🕐</span>
+                {{ formatTime(booking.startTime) }} - {{ formatTime(booking.endTime) }}
+              </div>
+              <span class="status-badge" [class]="getStatusClass(booking.status)">
+                {{ booking.status }}
+              </span>
+            </div>
+
+            <div class="booking-details">
+              <div class="detail-row">
+                <span class="detail-label">👤 Customer:</span>
+                <span class="detail-value">{{ booking.customerName }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">📧 Email:</span>
+                <span class="detail-value">{{ booking.customerEmail }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">🛠️ Service:</span>
+                <span class="detail-value">{{ booking.resource.name }}</span>
+              </div>
+              <div class="detail-row" *ngIf="booking.finalAmount">
+                <span class="detail-label">💰 Amount:</span>
+                <span class="detail-value">${{ booking.finalAmount }}</span>
+              </div>
+            </div>
+
+            <div class="booking-actions">
+              <button class="btn-edit" (click)="editBooking(booking)" *ngIf="booking.status !== 'cancelled'">
+                ✏️ Edit Status
+              </button>
+              <button class="btn-cancel" (click)="cancelBooking(booking)" *ngIf="booking.status === 'pending' || booking.status === 'confirmed'">
+                ❌ Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- Edit Mode -->
+          <div *ngIf="editingBooking?.id === booking.id" class="booking-edit">
+            <form [formGroup]="bookingForm" (ngSubmit)="saveBooking()">
+              <div class="form-group">
+                <label>Update Status:</label>
+                <select formControlName="status" class="status-select">
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+
+              <div class="edit-actions">
+                <button type="submit" class="btn-save" [disabled]="bookingForm.invalid">
+                  ✅ Save
+                </button>
+                <button type="button" class="btn-cancel-edit" (click)="cancelEdit()">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="auth-instructions" *ngIf="isGmail">
-      <h4>How to connect your Google Calendar:</h4>
-      <ol>
-        <li>Click the "Connect Google Calendar" button below</li>
-        <li>Sign in to your Google account</li>
-        <li>Grant permission to BookFast to access your calendar</li>
-        <li>You'll be redirected back to BookFast automatically</li>
-      </ol>
-    </div>
-
-    <div class="auth-actions" *ngIf="isGmail">
-      <button type="button" class="btn btn-google" (click)="connectCalendar()" [disabled]="isConnecting">
-        <i class="fab fa-google"></i>
-        {{ isConnecting ? 'Connecting...' : 'Connect Google Calendar' }}
-      </button>
-    </div>
-  </div>
-
-  <div class="sync-content" *ngIf="isConnected">
-    <div class="connected-info">
-      <h4>✅ Calendar Connected Successfully!</h4>
-      <p>Your Google Calendar is now synced with BookFast. Your bookings will be automatically added to your calendar.</p>
-      
-      <div class="sync-features">
-        <h5>What's synced:</h5>
-        <ul>
-          <li>New bookings are automatically added to your Google Calendar</li>
-          <li>Booking changes are reflected in both systems</li>
-          <li>You'll receive calendar notifications for your bookings</li>
-          <li>Your availability can be managed through both BookFast and Google Calendar</li>
-        </ul>
-      </div>
-
-      <div class="disconnect-section">
-        <button type="button" class="btn btn-danger" (click)="disconnectCalendar()" [disabled]="isDisconnecting">
-          {{ isDisconnecting ? 'Disconnecting...' : 'Disconnect Calendar' }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="messages">
-    <div class="success-message" *ngIf="successMessage">
-      {{ successMessage }}
-    </div>
-    <div class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
+    <div class="modal-footer">
+      <button class="btn-close" (click)="closeModal()">Close</button>
     </div>
   </div>
 </div>
