@@ -88,4 +88,28 @@ public class ResourceService {
     public Resource createResource(Resource resource) {
         return repository.save(resource);
     }
+
+    // Advanced filter resources by multiple criteria
+    public List<Resource> filterResources(String serviceCategory, String specialization, 
+                                         Double minPrice, Double maxPrice, 
+                                         Double minRating, String availability) {
+        List<Resource> allResources = repository.findByStatus("active");
+        
+        return allResources.stream()
+            .filter(r -> serviceCategory == null || serviceCategory.isEmpty() || 
+                        (r.getServiceCategory() != null && r.getServiceCategory().equalsIgnoreCase(serviceCategory)))
+            .filter(r -> specialization == null || specialization.isEmpty() || 
+                        (r.getSpecialization() != null && r.getSpecialization().toLowerCase().contains(specialization.toLowerCase())))
+            .filter(r -> minPrice == null || (r.getPrice() != null && r.getPrice() >= minPrice))
+            .filter(r -> maxPrice == null || (r.getPrice() != null && r.getPrice() <= maxPrice))
+            .filter(r -> minRating == null || (r.getAverageRating() != null && r.getAverageRating() >= minRating))
+            .filter(r -> availability == null || availability.isEmpty() || hasAvailability(r, availability))
+            .toList();
+    }
+
+    private boolean hasAvailability(Resource resource, String availability) {
+        // Simple check - can be enhanced with actual slot checking
+        // For now, assume all active resources have availability
+        return "available".equalsIgnoreCase(availability);
+    }
 }

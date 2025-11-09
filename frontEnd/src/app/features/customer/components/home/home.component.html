@@ -5,16 +5,117 @@
   ></app-payment>
 <div class="home-container">
   <h2 class="home-title">Find and Book Top Service Providers</h2>
-  <div class="search-bar">
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      placeholder="Search by name, specialization, or tag..."
-    />
+  
+  <!-- Search and Filter Section -->
+  <div class="search-section">
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+        placeholder="Search by name, specialization, or tag..."
+        class="search-input"
+      />
+      <button class="filter-toggle-btn" (click)="toggleFilters()">
+        <span class="filter-icon">🔍</span>
+        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+      </button>
+    </div>
+
+    <!-- Advanced Filters Panel -->
+    <div class="filters-panel" *ngIf="showFilters">
+      <div class="filters-grid">
+        <!-- Service Category Filter -->
+        <div class="filter-group">
+          <label>🏥 Service Category</label>
+          <select [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()" class="filter-select">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of serviceCategories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <!-- Specialization Filter -->
+        <div class="filter-group">
+          <label>🎯 Specialization</label>
+          <input 
+            type="text" 
+            [(ngModel)]="selectedSpecialization" 
+            (ngModelChange)="applyFilters()"
+            placeholder="e.g., Cardiology, Math"
+            class="filter-input"
+          />
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="filter-group">
+          <label>💰 Price Range</label>
+          <div class="price-range">
+            <input 
+              type="number" 
+              [(ngModel)]="minPrice" 
+              (ngModelChange)="applyFilters()"
+              placeholder="Min"
+              min="0"
+              class="filter-input price-input"
+            />
+            <span class="range-separator">-</span>
+            <input 
+              type="number" 
+              [(ngModel)]="maxPrice" 
+              (ngModelChange)="applyFilters()"
+              placeholder="Max"
+              min="0"
+              class="filter-input price-input"
+            />
+          </div>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="filter-group">
+          <label>⭐ Minimum Rating</label>
+          <select [(ngModel)]="minRating" (ngModelChange)="applyFilters()" class="filter-select">
+            <option [ngValue]="null">Any Rating</option>
+            <option [ngValue]="4.5">4.5+ Stars</option>
+            <option [ngValue]="4.0">4.0+ Stars</option>
+            <option [ngValue]="3.5">3.5+ Stars</option>
+            <option [ngValue]="3.0">3.0+ Stars</option>
+          </select>
+        </div>
+
+        <!-- Availability Filter -->
+        <div class="filter-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="onlyAvailable" 
+              (ngModelChange)="applyFilters()"
+              class="filter-checkbox"
+            />
+            <span>📅 Only show available providers</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="clear-filters-btn" (click)="clearFilters()">
+          <span>🗑️</span> Clear All Filters
+        </button>
+        <span class="results-count">{{ filteredResources.length }} provider(s) found</span>
+      </div>
+    </div>
   </div>
 
+  <!-- Resource Grid -->
   <div class="resource-grid">
     <app-resource-card *ngFor="let resource of filteredResources" [resource]="resource"></app-resource-card>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="filteredResources.length === 0" class="no-results">
+    <div class="no-results-icon">🔍</div>
+    <h3>No providers found</h3>
+    <p>Try adjusting your search or filters</p>
+    <button class="btn-reset" (click)="clearFilters()">Reset Filters</button>
   </div>
 
 

@@ -30,20 +30,16 @@ public class ResourceController {
         service.deleteResource(id);
     }
 
-    // Filter resources by specialization (service)
+    // Advanced filter resources by multiple criteria
     @GetMapping("/filter")
-    public List<Resource> filterResources(@RequestParam(required = false) String specialization,
-            @RequestParam(required = false) String status) {
-        if (specialization != null && status != null) {
-            // Filter by both specialization and status
-            return service.getResourcesBySpecializationAndStatus(specialization, status);
-        } else if (specialization != null) {
-            return service.getResourcesBySpecialization(specialization);
-        } else if (status != null) {
-            return service.getResourcesByStatus(status);
-        } else {
-            return service.getAllActiveResourcesForCustomers();
-        }
+    public List<Resource> filterResources(
+            @RequestParam(required = false) String serviceCategory,
+            @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(required = false) String availability) {
+        return service.filterResources(serviceCategory, specialization, minPrice, maxPrice, minRating, availability);
     }
 
     // Customer-facing endpoint: returns all active resources
