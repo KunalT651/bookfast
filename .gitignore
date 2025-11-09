@@ -1,0 +1,16 @@
+# Personal files
+Capstone_Timesheet.csv
+Capstone_Timesheet.xlsx
+*.csv
+*.xlsx
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
