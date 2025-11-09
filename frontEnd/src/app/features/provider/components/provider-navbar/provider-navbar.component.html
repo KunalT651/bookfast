@@ -1,7 +1,7 @@
 <nav class="provider-navbar">
   <div class="navbar-left">
     <div class="profile-logo" *ngIf="profilePictureUrl">
-      <img [src]="'http://localhost:8080' + profilePictureUrl" alt="Profile" class="profile-pic" />
+      <img [src]="profilePictureUrl.startsWith('http') ? profilePictureUrl : 'https://bookfast-backend.onrender.com' + profilePictureUrl" alt="Profile" class="profile-pic" />
     </div>
     <div class="profile-logo-placeholder" *ngIf="!profilePictureUrl">
       <span>👤</span>

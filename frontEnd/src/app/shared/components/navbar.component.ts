@@ -28,12 +28,6 @@ import { UserStateService } from '../../shared/services/user-state.service';
         <a routerLink="/admin/providers" routerLinkActive="active" class="nav-btn">Manage Providers</a>
         <a routerLink="/admin/database" routerLinkActive="active" class="nav-btn">Database Manager</a>
         <a routerLink="/admin/cleanup" routerLinkActive="active" class="nav-btn">Permanent Cleanup</a>
-      } @else if (userRole === 'PROVIDER') {
-        <a routerLink="/provider/dashboard" routerLinkActive="active" class="nav-btn">Home</a>
-        <a routerLink="/provider/dashboard/resources" routerLinkActive="active" class="nav-btn">My Resources</a>
-        <a routerLink="/provider/dashboard/bookings" routerLinkActive="active" class="nav-btn">Manage Bookings</a>
-        <a routerLink="/provider/dashboard/reviews" routerLinkActive="active" class="nav-btn">Manage Reviews</a>
-        <a routerLink="/provider/dashboard/profile" routerLinkActive="active" class="nav-btn">Edit Profile</a>
       }
         @if (loggedIn | async) {
           <button (click)="logout()" class="nav-btn logout">Logout</button>
