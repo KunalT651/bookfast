@@ -92,12 +92,21 @@ export class HomeComponent implements OnInit {
   }
 
   applyFilters() {
+    console.log('🔍 applyFilters() called');
+    console.log('onlyAvailable:', this.onlyAvailable);
+    console.log('selectedCategory:', this.selectedCategory);
+    console.log('minPrice:', this.minPrice);
+    console.log('maxPrice:', this.maxPrice);
+    console.log('minRating:', this.minRating);
+    
     // If availability checkbox is checked, fetch from backend with slot checking
     if (this.onlyAvailable) {
+      console.log('✅ Calling loadFilteredResources() for backend filtering');
       this.loadFilteredResources();
       return;
     }
     
+    console.log('📋 Doing client-side filtering');
     // Otherwise, do client-side filtering
     let filtered = [...this.resources];
     
@@ -140,6 +149,8 @@ export class HomeComponent implements OnInit {
   }
 
   loadFilteredResources() {
+    console.log('🌐 loadFilteredResources() called');
+    
     // Build query params
     const params: any = {};
     if (this.selectedCategory) params.serviceCategory = this.selectedCategory;
@@ -153,8 +164,15 @@ export class HomeComponent implements OnInit {
       .map(key => `${key}=${encodeURIComponent(params[key])}`)
       .join('&');
     
-    this.http.get<Resource[]>(`${environment.apiUrl}/resources/filter?${queryString}`).subscribe({
+    const url = `${environment.apiUrl}/resources/filter?${queryString}`;
+    console.log('📡 Backend filter URL:', url);
+    console.log('📦 Query params:', params);
+    
+    this.http.get<Resource[]>(url).subscribe({
       next: (resources) => {
+        console.log('✅ Backend returned resources:', resources);
+        console.log('📊 Number of resources:', resources.length);
+        
         this.filteredResources = resources;
         
         // Apply remaining client-side filters
@@ -168,12 +186,16 @@ export class HomeComponent implements OnInit {
             resource.specialization?.toLowerCase().includes(term) ||
             (resource.tags && resource.tags.some(tag => tag.toLowerCase().includes(term)))
           );
+          console.log('🔍 After search term filter:', filtered.length, 'resources');
         }
         
         this.filteredResources = filtered;
+        console.log('🎯 Final filtered resources:', this.filteredResources.length);
       },
       error: (err) => {
-        console.error('Failed to filter resources:', err);
+        console.error('❌ Failed to filter resources:', err);
+        console.error('Error details:', err.error);
+        console.error('Status:', err.status);
         this.filteredResources = [];
       }
     });
