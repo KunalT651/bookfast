@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/resources/{resourceId}/availability")
+@CrossOrigin(origins = {"http://localhost:4200", "https://*.vercel.app"}, allowCredentials = "true")
 public class AvailabilitySlotController {
     private final AvailabilitySlotService availabilitySlotService;
 
