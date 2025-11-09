@@ -103,13 +103,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/bookings/*").hasAnyRole("CUSTOMER", "PROVIDER") // Both customers and providers can delete bookings
                         
                         // Resource endpoints
-                        .requestMatchers(HttpMethod.POST, "/api/resources").hasRole("PROVIDER") // Providers can create/update resources
-                        .requestMatchers(HttpMethod.PUT, "/api/resources").hasRole("PROVIDER") // Providers can update resources
-                        .requestMatchers(HttpMethod.DELETE, "/api/resources").hasRole("PROVIDER") // Providers can delete resources
-                        .requestMatchers(HttpMethod.GET, "/api/resources/*/availability").authenticated() // Both customers and providers can view availability
-                        .requestMatchers(HttpMethod.POST, "/api/resources/*/availability").hasRole("PROVIDER") // Only providers can create availability
-                        .requestMatchers(HttpMethod.PUT, "/api/resources/*/availability").hasRole("PROVIDER") // Only providers can update availability
-                        .requestMatchers(HttpMethod.DELETE, "/api/resources/*/availability").hasRole("PROVIDER") // Only providers can delete availability
+                        .requestMatchers(HttpMethod.GET, "/api/resources/{id}").permitAll() // Public access to view resources
+                        .requestMatchers(HttpMethod.GET, "/api/resources/filter").permitAll() // Public access to filter resources
+                        .requestMatchers(HttpMethod.POST, "/api/resources").hasRole("PROVIDER") // Providers can create resources
+                        .requestMatchers(HttpMethod.PUT, "/api/resources/**").hasRole("PROVIDER") // Providers can update resources
+                        .requestMatchers(HttpMethod.DELETE, "/api/resources/**").hasRole("PROVIDER") // Providers can delete resources
+                        
+                        // Availability slot endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/resources/*/availability/**").permitAll() // Public access to view availability
+                        .requestMatchers(HttpMethod.GET, "/api/resources/*/availability").permitAll() // Public access to view availability
+                        .requestMatchers(HttpMethod.POST, "/api/resources/*/availability/**").hasRole("PROVIDER") // Providers create slots
+                        .requestMatchers(HttpMethod.PUT, "/api/resources/*/availability/**").hasRole("PROVIDER") // Providers update slots
+                        .requestMatchers(HttpMethod.DELETE, "/api/resources/*/availability/**").hasRole("PROVIDER") // Providers delete slots
                         
                         // Review endpoints
                         .requestMatchers("/api/reviews/provider/**").hasRole("PROVIDER") // Provider review management
