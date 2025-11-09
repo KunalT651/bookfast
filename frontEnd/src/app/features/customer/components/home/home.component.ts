@@ -92,6 +92,13 @@ export class HomeComponent implements OnInit {
   }
 
   applyFilters() {
+    // If availability checkbox is checked, fetch from backend with slot checking
+    if (this.onlyAvailable) {
+      this.loadFilteredResources();
+      return;
+    }
+    
+    // Otherwise, do client-side filtering
     let filtered = [...this.resources];
     
     // Search term filter
@@ -129,12 +136,47 @@ export class HomeComponent implements OnInit {
       filtered = filtered.filter(r => r.averageRating !== undefined && r.averageRating >= this.minRating!);
     }
     
-    // Availability filter (simple check)
-    if (this.onlyAvailable) {
-      filtered = filtered.filter(r => r.status === 'active');
-    }
-    
     this.filteredResources = filtered;
+  }
+
+  loadFilteredResources() {
+    // Build query params
+    const params: any = {};
+    if (this.selectedCategory) params.serviceCategory = this.selectedCategory;
+    if (this.selectedSpecialization) params.specialization = this.selectedSpecialization;
+    if (this.minPrice !== null) params.minPrice = this.minPrice;
+    if (this.maxPrice !== null) params.maxPrice = this.maxPrice;
+    if (this.minRating !== null) params.minRating = this.minRating;
+    if (this.onlyAvailable) params.availability = 'available';
+    
+    const queryString = Object.keys(params)
+      .map(key => `${key}=${encodeURIComponent(params[key])}`)
+      .join('&');
+    
+    this.http.get<Resource[]>(`${environment.apiUrl}/resources/filter?${queryString}`).subscribe({
+      next: (resources) => {
+        this.filteredResources = resources;
+        
+        // Apply remaining client-side filters
+        let filtered = [...this.filteredResources];
+        
+        // Search term filter (not in backend)
+        if (this.searchTerm) {
+          const term = this.searchTerm.toLowerCase();
+          filtered = filtered.filter(resource => 
+            resource.name?.toLowerCase().includes(term) ||
+            resource.specialization?.toLowerCase().includes(term) ||
+            (resource.tags && resource.tags.some(tag => tag.toLowerCase().includes(term)))
+          );
+        }
+        
+        this.filteredResources = filtered;
+      },
+      error: (err) => {
+        console.error('Failed to filter resources:', err);
+        this.filteredResources = [];
+      }
+    });
   }
 
   clearFilters() {
