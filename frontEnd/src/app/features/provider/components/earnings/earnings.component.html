@@ -1,0 +1,65 @@
+<div class="earnings-container">
+  <div class="page-header">
+    <h2>💰 Earnings Dashboard</h2>
+    <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()" class="period-select">
+      <option value="7">Last 7 days</option>
+      <option value="30">Last 30 days</option>
+      <option value="90">Last 90 days</option>
+      <option value="365">Last year</option>
+    </select>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="loading" class="loading">Loading...</div>
+
+  <div *ngIf="!loading && earnings" class="earnings-content">
+    <!-- Revenue Cards -->
+    <div class="revenue-grid">
+      <div class="revenue-card total">
+        <h3>Total Revenue</h3>
+        <p class="amount">${{ earnings.totalRevenue || 0 }}</p>
+        <small>All time</small>
+      </div>
+      
+      <div class="revenue-card period">
+        <h3>Period Revenue</h3>
+        <p class="amount">${{ earnings.periodRevenue || 0 }}</p>
+        <small>Last {{ selectedPeriod }} days</small>
+      </div>
+      
+      <div class="revenue-card average">
+        <h3>Avg per Booking</h3>
+        <p class="amount">${{ earnings.averageBookingValue || 0 }}</p>
+        <small>{{ earnings.periodBookings || 0 }} bookings</small>
+      </div>
+    </div>
+
+    <!-- Booking Summary -->
+    <div class="summary-card">
+      <h3>📊 Booking Summary</h3>
+      <div class="summary-stats">
+        <div class="stat-item">
+          <span class="stat-label">Total Bookings:</span>
+          <span class="stat-value">{{ earnings.totalBookings || 0 }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Period Bookings:</span>
+          <span class="stat-value">{{ earnings.periodBookings || 0 }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Confirmed:</span>
+          <span class="stat-value confirmed">{{ earnings.confirmedBookings || 0 }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Pending:</span>
+          <span class="stat-value pending">{{ earnings.pendingBookings || 0 }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Cancelled:</span>
+          <span class="stat-value cancelled">{{ earnings.cancelledBookings || 0 }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

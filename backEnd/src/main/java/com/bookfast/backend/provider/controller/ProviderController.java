@@ -5,6 +5,7 @@ import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
 import com.bookfast.backend.provider.service.ProviderService;
 import com.bookfast.backend.provider.service.GoogleCalendarService;
+import com.bookfast.backend.provider.service.ProviderAnalyticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,13 +22,16 @@ public class ProviderController {
     private final GoogleCalendarService googleCalendarService;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final ProviderAnalyticsService analyticsService;
 
     public ProviderController(ProviderService providerService, GoogleCalendarService googleCalendarService, 
-                             AuthService authService, UserRepository userRepository) {
+                             AuthService authService, UserRepository userRepository,
+                             ProviderAnalyticsService analyticsService) {
         this.providerService = providerService;
         this.googleCalendarService = googleCalendarService;
         this.authService = authService;
         this.userRepository = userRepository;
+        this.analyticsService = analyticsService;
     }
 
     @GetMapping("/profile")
@@ -184,6 +188,42 @@ public class ProviderController {
             return ResponseEntity.ok(Map.of("message", "Unavailable date removed successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Failed to remove unavailable date: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/analytics")
+    public ResponseEntity<?> getAnalytics(@RequestParam(defaultValue = "30") String period) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
+            User user = authService.getUserByEmail(email);
+            
+            if (user == null || !"PROVIDER".equals(user.getRole().getName())) {
+                return ResponseEntity.status(403).body(Map.of("error", "Access denied"));
+            }
+
+            Map<String, Object> analytics = analyticsService.getProviderAnalytics(user.getId(), period);
+            return ResponseEntity.ok(analytics);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Failed to fetch analytics: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/earnings")
+    public ResponseEntity<?> getEarnings(@RequestParam(defaultValue = "30") String period) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
+            User user = authService.getUserByEmail(email);
+            
+            if (user == null || !"PROVIDER".equals(user.getRole().getName())) {
+                return ResponseEntity.status(403).body(Map.of("error", "Access denied"));
+            }
+
+            Map<String, Object> earnings = analyticsService.getProviderAnalytics(user.getId(), period);
+            return ResponseEntity.ok(earnings);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Failed to fetch earnings: " + e.getMessage()));
         }
     }
 }

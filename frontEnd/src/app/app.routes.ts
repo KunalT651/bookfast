@@ -21,6 +21,8 @@ import { ProviderBookingsComponent } from './features/provider/components/provid
 import { ProviderReviewsComponent } from './features/provider/components/provider-reviews/provider-reviews.component';
 import { GoogleCalendarSyncComponent } from './features/provider/components/google-calendar-sync/google-calendar-sync.component';
 import { UnavailableDatesComponent } from './features/provider/components/unavailable-dates/unavailable-dates.component';
+import { ProviderAnalyticsComponent } from './features/provider/components/analytics/analytics.component';
+import { ProviderEarningsComponent } from './features/provider/components/earnings/earnings.component';
 import { AdminCustomersComponent } from './features/admin/components/admin-customers/admin-customers.component';
 import { AdminBookingsComponent } from './features/admin/components/admin-bookings/admin-bookings.component';
 import { AdminUsersComponent } from './features/admin/components/admin-users/admin-users.component';
@@ -61,6 +63,8 @@ export const routes: Routes = [
   { path: 'provider/dashboard/reviews', component: ProviderReviewsComponent, canActivate: [authGuard] },
   { path: 'provider/dashboard/calendar-sync', component: GoogleCalendarSyncComponent, canActivate: [authGuard] },
   { path: 'provider/dashboard/unavailable-dates', component: UnavailableDatesComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/analytics', component: ProviderAnalyticsComponent, canActivate: [authGuard] },
+  { path: 'provider/dashboard/earnings', component: ProviderEarningsComponent, canActivate: [authGuard] },
   { path: 'customer/home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'customer/reviews', component: MyReviewsComponent, canActivate: [authGuard] },
   { path: 'customer/bookings', loadComponent: () => import('./features/customer/components/customer-bookings/customer-bookings.component').then(m => m.CustomerBookingsComponent), canActivate: [authGuard] },

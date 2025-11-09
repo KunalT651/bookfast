@@ -143,4 +143,113 @@ public class AdminReportService {
             Map.of("description", "Review submitted", "timestamp", LocalDateTime.now().minusHours(5), "icon", "fa-star")
         );
     }
+
+    /**
+     * Export report data to CSV format
+     */
+    public byte[] exportReportToCSV(String reportType, String period) {
+        try {
+            StringBuilder csv = new StringBuilder();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            
+            switch (reportType.toLowerCase()) {
+                case "users":
+                    csv.append("ID,First Name,Last Name,Email,Role,Created Date,Active\n");
+                    List<User> users = userRepository.findAll();
+                    for (User user : users) {
+                        csv.append(String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%b\n",
+                            user.getId(),
+                            escapeCsv(user.getFirstName()),
+                            escapeCsv(user.getLastName()),
+                            escapeCsv(user.getEmail()),
+                            user.getRole() != null ? user.getRole().getName() : "N/A",
+                            user.getCreatedDate() != null ? user.getCreatedDate().format(formatter) : "N/A",
+                            user.getIsActive() != null ? user.getIsActive() : false
+                        ));
+                    }
+                    break;
+                    
+                case "bookings":
+                    csv.append("Booking ID,Customer Name,Email,Resource,Start Time,End Time,Status,Amount,Payment Status\n");
+                    List<Booking> bookings = bookingRepository.findAll();
+                    for (Booking booking : bookings) {
+                        csv.append(String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%.2f,\"%s\"\n",
+                            booking.getId(),
+                            escapeCsv(booking.getCustomerName()),
+                            escapeCsv(booking.getCustomerEmail()),
+                            booking.getResource() != null ? escapeCsv(booking.getResource().getName()) : "N/A",
+                            booking.getStartTime() != null ? booking.getStartTime().format(formatter) : "N/A",
+                            booking.getEndTime() != null ? booking.getEndTime().format(formatter) : "N/A",
+                            escapeCsv(booking.getStatus()),
+                            booking.getFinalAmount() != null ? booking.getFinalAmount() : 0.0,
+                            escapeCsv(booking.getPaymentStatus())
+                        ));
+                    }
+                    break;
+                    
+                case "revenue":
+                    csv.append("Payment ID,Booking ID,Amount,Payment Date,Payment Method,Status\n");
+                    List<Payment> payments = paymentRepository.findAll();
+                    for (Payment payment : payments) {
+                        csv.append(String.format("%d,%d,%.2f,\"%s\",\"%s\",\"%s\"\n",
+                            payment.getId(),
+                            payment.getBooking() != null ? payment.getBooking().getId() : 0,
+                            payment.getAmount() != null ? payment.getAmount() : 0.0,
+                            payment.getPaymentDate() != null ? payment.getPaymentDate().format(formatter) : "N/A",
+                            escapeCsv(payment.getPaymentMethod()),
+                            escapeCsv(payment.getPaymentStatus())
+                        ));
+                    }
+                    break;
+                    
+                case "providers":
+                    csv.append("ID,Name,Email,Organization,Service Category,Created Date,Active\n");
+                    List<User> providers = userRepository.findAll().stream()
+                        .filter(u -> u.getRole() != null && "PROVIDER".equalsIgnoreCase(u.getRole().getName()))
+                        .toList();
+                    for (User provider : providers) {
+                        csv.append(String.format("%d,\"%s %s\",\"%s\",\"%s\",\"%s\",\"%s\",%b\n",
+                            provider.getId(),
+                            escapeCsv(provider.getFirstName()),
+                            escapeCsv(provider.getLastName()),
+                            escapeCsv(provider.getEmail()),
+                            escapeCsv(provider.getOrganizationName()),
+                            escapeCsv(provider.getServiceCategory()),
+                            provider.getCreatedDate() != null ? provider.getCreatedDate().format(formatter) : "N/A",
+                            provider.getIsActive() != null ? provider.getIsActive() : false
+                        ));
+                    }
+                    break;
+                    
+                default:
+                    csv.append("System Overview Report\n");
+                    csv.append("Generated," + LocalDateTime.now().format(formatter) + "\n\n");
+                    Map<String, Object> reports = getSystemReports(period);
+                    csv.append("Metric,Value\n");
+                    csv.append("Total Users," + reports.get("totalUsers") + "\n");
+                    csv.append("Total Providers," + reports.get("totalProviders") + "\n");
+                    csv.append("Total Bookings," + reports.get("totalBookings") + "\n");
+                    csv.append("Total Revenue,$" + reports.get("totalRevenue") + "\n");
+                    break;
+            }
+            
+            return csv.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to export CSV: " + e.getMessage(), e);
+        }
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) {
+            return "";
+        }
+        // Escape quotes and wrap in quotes if contains comma
+        if (value.contains("\"")) {
+            value = value.replace("\"", "\"\"");
+        }
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            value = "\"" + value + "\"";
+        }
+        return value;
+    }
 }

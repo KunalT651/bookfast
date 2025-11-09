@@ -77,18 +77,18 @@ public class AdminReportController {
     }
 
     @GetMapping("/export/{reportType}")
-    public ResponseEntity<?> exportReport(@PathVariable String reportType, @RequestParam(defaultValue = "30") String period) {
+    public ResponseEntity<byte[]> exportReport(@PathVariable String reportType, @RequestParam(defaultValue = "30") String period) {
         try {
-            // For now, return a simple response
-            // In a real implementation, you would generate and return an Excel/CSV file
-            Map<String, Object> response = Map.of(
-                "message", "Export functionality not yet implemented",
-                "reportType", reportType,
-                "period", period
-            );
-            return ResponseEntity.ok(response);
+            byte[] csvData = adminReportService.exportReportToCSV(reportType, period);
+            
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.parseMediaType("text/csv"));
+            headers.setContentDispositionFormData("attachment", reportType + "_report_" + java.time.LocalDate.now() + ".csv");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            
+            return new ResponseEntity<>(csvData, headers, org.springframework.http.HttpStatus.OK);
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("Failed to export report: " + ex.getMessage()));
+            return ResponseEntity.badRequest().build();
         }
     }
 }

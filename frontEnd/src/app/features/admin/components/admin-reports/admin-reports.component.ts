@@ -52,17 +52,18 @@ export class AdminReportsComponent implements OnInit {
   exportReport(reportType: string) {
     this.adminReportService.exportReport(reportType, this.selectedPeriod).subscribe({
       next: (data) => {
-        // Create download link
-        const blob = new Blob([data], { type: 'application/vnd.ms-excel' });
+        // Create download link for CSV file
+        const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${reportType}_report_${new Date().toISOString().split('T')[0]}.xlsx`;
+        link.download = `${reportType}_report_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
         window.URL.revokeObjectURL(url);
+        console.log(`✅ ${reportType} report exported successfully as CSV`);
       },
       error: (error) => {
-        this.errorMessage = 'Failed to export report';
+        this.errorMessage = 'Failed to export report. Please try again.';
         console.error('Error exporting report:', error);
       }
     });

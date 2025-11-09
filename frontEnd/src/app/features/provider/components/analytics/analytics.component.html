@@ -1,0 +1,119 @@
+<div class="analytics-container">
+  <div class="page-header">
+    <h2>📊 Analytics & Insights</h2>
+    <div class="header-controls">
+      <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()" class="period-select">
+        <option value="7">Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+        <option value="365">Last year</option>
+      </select>
+      <button class="refresh-btn" (click)="refreshAnalytics()" [disabled]="loading">
+        {{ loading ? '⏳ Loading...' : '🔄 Refresh' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner">⏳</div>
+    <p>Loading analytics...</p>
+  </div>
+
+  <div *ngIf="!loading && analytics" class="analytics-content">
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">📅</div>
+        <div class="metric-content">
+          <h3>{{ analytics.periodBookings || 0 }}</h3>
+          <p>Bookings</p>
+          <small>{{ analytics.totalBookings || 0 }} total</small>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">💰</div>
+        <div class="metric-content">
+          <h3>${{ analytics.periodRevenue || 0 }}</h3>
+          <p>Revenue</p>
+          <small>Avg: ${{ analytics.averageBookingValue || 0 }}</small>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">⭐</div>
+        <div class="metric-content">
+          <h3>{{ analytics.averageRating || 0 }} / 5</h3>
+          <p>Avg. Rating</p>
+          <small>{{ analytics.totalReviews || 0 }} reviews</small>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">✅</div>
+        <div class="metric-content">
+          <h3>{{ analytics.confirmedBookings || 0 }}</h3>
+          <p>Confirmed</p>
+          <small>{{ analytics.pendingBookings || 0 }} pending</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Resources -->
+    <div class="details-section">
+      <div class="detail-card">
+        <h3>🏆 Top 5 Resources</h3>
+        <div *ngIf="analytics.topResources && analytics.topResources.length > 0" class="top-resources-list">
+          <div *ngFor="let resource of analytics.topResources" class="resource-item">
+            <span>{{ resource.name }}</span>
+            <span class="resource-bookings">{{ resource.bookings }} bookings</span>
+          </div>
+        </div>
+        <div *ngIf="!analytics.topResources || analytics.topResources.length === 0" class="no-data">
+          No resources yet
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h3>🕐 Recent Bookings</h3>
+        <div *ngIf="analytics.recentBookings && analytics.recentBookings.length > 0" class="recent-bookings-list">
+          <div *ngFor="let booking of analytics.recentBookings" class="recent-item">
+            <div class="booking-info">
+              <span class="booking-id">#{{ booking.id }}</span>
+              <span class="booking-customer">{{ booking.customerName }}</span>
+            </div>
+            <div class="booking-meta">
+              <span class="booking-resource">{{ booking.resourceName }}</span>
+              <span class="booking-time">{{ booking.startTime }}</span>
+              <span class="status-badge status-{{ booking.status }}">{{ booking.status }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!analytics.recentBookings || analytics.recentBookings.length === 0" class="no-data">
+          No recent bookings
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Breakdown -->
+    <div class="status-breakdown">
+      <h3>Booking Status</h3>
+      <div class="status-grid">
+        <div class="status-card status-confirmed">
+          <h4>Confirmed</h4>
+          <p>{{ analytics.confirmedBookings || 0 }}</p>
+        </div>
+        <div class="status-card status-pending">
+          <h4>Pending</h4>
+          <p>{{ analytics.pendingBookings || 0 }}</p>
+        </div>
+        <div class="status-card status-cancelled">
+          <h4>Cancelled</h4>
+          <p>{{ analytics.cancelledBookings || 0 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
