@@ -18,30 +18,30 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+        
+        // Use patterns to allow all Vercel deployments and localhost
+        java.util.List<String> allowedOriginPatterns = new java.util.ArrayList<>();
+        
         // Read from CORS_ALLOWED_ORIGINS environment variable
         String corsOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
-        java.util.List<String> allowedOrigins = new java.util.ArrayList<>();
         
         if (corsOrigins != null && !corsOrigins.isEmpty()) {
             // Split by comma and add all origins
             String[] origins = corsOrigins.split(",");
             for (String origin : origins) {
-                allowedOrigins.add(origin.trim());
+                allowedOriginPatterns.add(origin.trim());
             }
         } else {
-            // Fallback: Allow localhost for development and Vercel domains for production
-            allowedOrigins.add("http://localhost:4200");
-            allowedOrigins.add("http://localhost:3000");
-            // Add Vercel pattern - matches any Vercel deployment
-            String vercelUrl = System.getenv("FRONTEND_URL");
-            if (vercelUrl != null && !vercelUrl.isEmpty()) {
-                allowedOrigins.add(vercelUrl);
-            }
+            // Fallback: Allow localhost and all Vercel domains
+            allowedOriginPatterns.add("http://localhost:*");
+            allowedOriginPatterns.add("https://*.vercel.app"); // Matches all Vercel deployments
         }
         
-        configuration.setAllowedOrigins(allowedOrigins);
+        // Set allowed origin patterns (supports wildcards)
+        configuration.setAllowedOriginPatterns(allowedOriginPatterns);
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
+        configuration.setAllowedHeaders(java.util.List.of("*")); // Allow all headers
+        configuration.setExposedHeaders(java.util.List.of("Authorization", "X-XSRF-TOKEN"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L); // Cache preflight for 1 hour
         
