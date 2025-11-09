@@ -25,4 +25,18 @@ public class EmailService {
         request.setBody(mail.build());
         sg.api(request);
     }
+
+    public void sendHtmlEmail(String to, String subject, String htmlContent) throws Exception {
+        Email fromEmail = new Email("noreply@bookfast.com");
+        Email toEmail = new Email(to);
+        Content emailContent = new Content("text/html", htmlContent);
+        Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
+
+        SendGrid sg = new SendGrid(sendGridApiKey);
+        Request request = new Request();
+        request.setMethod(Method.POST);
+        request.setEndpoint("mail/send");
+        request.setBody(mail.build());
+        sg.api(request);
+    }
 }

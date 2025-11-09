@@ -87,7 +87,8 @@ public class ProviderAnalyticsService {
                 .toList();
         
         double averageRating = allReviews.stream()
-                .mapToInt(Review::getRating)
+                .filter(r -> r.getRating() != null)
+                .mapToDouble(Review::getRating)
                 .average()
                 .orElse(0.0);
 
