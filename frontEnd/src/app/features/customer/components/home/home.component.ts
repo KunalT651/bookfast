@@ -11,7 +11,7 @@ import { BookingComponent } from '../booking/booking.component';
 import { ResourceService } from '../../services/resource.service';
 import { Resource } from '../../models/resource.model';
 import { AvailabilitySlot } from '../../models/availability-slot.model';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-customer-home',
