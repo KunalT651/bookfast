@@ -13,7 +13,7 @@ import java.net.URLEncoder;
 
 @RestController
 @RequestMapping("/api/sms")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://*.vercel.app"}, allowCredentials = "true")
 public class SmsReminderController {
     @Autowired
     private BookingRepository bookingRepository;

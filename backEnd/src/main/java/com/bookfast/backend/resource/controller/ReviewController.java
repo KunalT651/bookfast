@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/reviews")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://*.vercel.app"}, allowCredentials = "true")
 public class ReviewController {
     @DeleteMapping("/resource/{resourceId}/{reviewId}")
     public void deleteReview(@PathVariable Long resourceId, @PathVariable Long reviewId) {

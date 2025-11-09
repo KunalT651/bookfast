@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/payments")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://*.vercel.app"}, allowCredentials = "true")
 public class PaymentController {
     private final PaymentService service;
 
