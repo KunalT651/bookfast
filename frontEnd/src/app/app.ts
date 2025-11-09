@@ -111,15 +111,10 @@ export class AppComponent implements OnInit {
   }
 
   shouldShowProviderNavbar(): boolean {
-    // Show provider navbar only if we're on a provider route AND user role is PROVIDER
-    const result = this.isProviderRoute && this.userRole === 'PROVIDER';
-    console.log('[AppComponent] shouldShowProviderNavbar:', {
-      isProviderRoute: this.isProviderRoute,
-      userRole: this.userRole,
-      result: result,
-      currentPath: window.location.pathname
-    });
-    return result;
+    // Show provider navbar if we're on any provider route
+    // The authGuard already ensures only providers can access these routes
+    const path = window.location.pathname;
+    return path.startsWith('/provider/');
   }
   }
 
