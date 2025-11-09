@@ -30,7 +30,7 @@
           <label>🏥 Service Category</label>
           <select [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()" class="filter-select">
             <option value="">All Categories</option>
-            <option *ngFor="let cat of serviceCategories" [value]="cat">{{ cat }}</option>
+            <option *ngFor="let cat of serviceCategories" [value]="cat.name">{{ cat.name }}</option>
           </select>
         </div>
 
