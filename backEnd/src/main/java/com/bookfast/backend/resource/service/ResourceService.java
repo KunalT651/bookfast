@@ -119,7 +119,22 @@ public class ResourceService {
         
         // Check if resource has at least one available slot
         List<AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
-        return slots.stream()
+        
+        // If no slots exist at all, resource is not available
+        if (slots == null || slots.isEmpty()) {
+            System.out.println("[ResourceService] Resource " + resource.getId() + " has NO slots - EXCLUDED");
+            return false;
+        }
+        
+        // Check if at least one slot has status = "available"
+        boolean hasAvailable = slots.stream()
                 .anyMatch(slot -> "available".equalsIgnoreCase(slot.getStatus()));
+        
+        System.out.println("[ResourceService] Resource " + resource.getId() + " (" + resource.getName() + ") - " +
+                "Total slots: " + slots.size() + 
+                ", Available slots: " + slots.stream().filter(s -> "available".equalsIgnoreCase(s.getStatus())).count() +
+                " - " + (hasAvailable ? "INCLUDED" : "EXCLUDED"));
+        
+        return hasAvailable;
     }
 }
