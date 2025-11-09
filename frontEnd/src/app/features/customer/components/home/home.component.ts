@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { ResourceCardComponent } from '../resource-card/resource-card.component';
 import { BookingModalComponent } from '../booking-modal/booking-modal.component';
 import { PaymentComponent } from '../payment/payment.component';
@@ -10,6 +11,7 @@ import { BookingComponent } from '../booking/booking.component';
 import { ResourceService } from '../../services/resource.service';
 import { Resource } from '../../models/resource.model';
 import { AvailabilitySlot } from '../../models/availability-slot.model';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-customer-home',
@@ -41,7 +43,7 @@ export class HomeComponent implements OnInit {
   
   // Advanced Filters
   showFilters: boolean = false;
-  serviceCategories: string[] = ['Healthcare', 'Education', 'Fitness', 'Beauty', 'Tech Support', 'Home Services'];
+  serviceCategories: any[] = [];
   selectedCategory: string = '';
   selectedSpecialization: string = '';
   minPrice: number | null = null;
@@ -49,7 +51,7 @@ export class HomeComponent implements OnInit {
   minRating: number | null = null;
   onlyAvailable: boolean = false;
 
-  constructor(private resourceService: ResourceService, private router: Router) {
+  constructor(private resourceService: ResourceService, private router: Router, private http: HttpClient) {
     // Listen for booking event from resource card
     window.addEventListener('book', (e: any) => {
       this.onBookResource(e.detail);
@@ -57,7 +59,21 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadServiceCategories();
     this.loadResources();
+  }
+
+  loadServiceCategories() {
+    this.http.get<any[]>(`${environment.apiUrl}/categories`).subscribe({
+      next: (categories) => {
+        this.serviceCategories = categories;
+      },
+      error: (err) => {
+        console.error('Failed to load service categories:', err);
+        // Fallback to empty array
+        this.serviceCategories = [];
+      }
+    });
   }
 
   loadResources() {
