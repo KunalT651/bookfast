@@ -2,20 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './shared/components/navbar.component';
+import { ProviderNavbarComponent } from './features/provider/components/provider-navbar/provider-navbar.component';
 import { AuthService } from './features/auth/services/auth.service';
 import { UserStateService } from './shared/services/user-state.service';
 
-// ...existing code...
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, ProviderNavbarComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class AppComponent implements OnInit {
   loggedIn;
   showNavbar = true;
+  userRole: string | null = null;
+  isProviderRoute = false;
 
   constructor(
     private authService: AuthService,
@@ -26,6 +28,15 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(() => {
       const hiddenRoutes = ['/login', '/registration', '/provider/registration'];
       this.showNavbar = !hiddenRoutes.includes(this.router.url.split('?')[0]);
+      
+      // Check if current route is a provider route
+      const currentUrl = this.router.url.split('?')[0];
+      this.isProviderRoute = currentUrl.startsWith('/provider');
+      
+      // Update user role from state
+      this.userState.getUser().subscribe(user => {
+        this.userRole = user ? user.role?.name : null;
+      });
     });
   }
 
@@ -74,6 +85,10 @@ export class AppComponent implements OnInit {
     console.log('[AppComponent] isPublicRoute check:', url, '=>', result);
     return result;
   }
+
+  shouldShowProviderNavbar(): boolean {
+    return this.isProviderRoute && this.userRole === 'PROVIDER';
   }
+}
 
 

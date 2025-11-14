@@ -21,6 +21,8 @@ import { BookingComponent } from './features/customer/components/booking/booking
 import { MyReviewsComponent } from './features/customer/components/my-reviews/my-reviews.component';
 import { TestDataComponent } from './features/customer/components/test-data/test-data.component';
 import { TestResourceComponent } from './features/customer/components/test-resource/test-resource.component';
+import { CustomerProfileComponent } from './features/customer/components/customer-profile/customer-profile.component';
+import { AdminLoginComponent } from './features/auth/components/admin-login/admin-login.component';
 
 export const routes: Routes = [
   { path: 'registration', component: RegisterComponent },
@@ -28,6 +30,7 @@ export const routes: Routes = [
   { path: 'create-admin', component: CreateAdminComponent },
   { path: '', redirectTo: 'registration', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'admin/login', component: AdminLoginComponent },
   { path: 'password-reset', component: PasswordResetComponent },
   { path: 'reset-password', component: ResetPasswordFormComponent },
 
@@ -52,6 +55,7 @@ export const routes: Routes = [
   { path: 'customer/home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'customer/reviews', component: MyReviewsComponent, canActivate: [authGuard] },
   { path: 'customer/bookings', loadComponent: () => import('./features/customer/components/customer-bookings/customer-bookings.component').then(m => m.CustomerBookingsComponent), canActivate: [authGuard] },
+  { path: 'customer/profile/edit', component: CustomerProfileComponent, canActivate: [authGuard] },
   { path: 'test-data', component: TestDataComponent, canActivate: [authGuard] },
   { path: 'test-resource', component: TestResourceComponent, canActivate: [authGuard] },
 

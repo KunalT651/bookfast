@@ -11,10 +11,9 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   // Public routes are always accessible
-  const publicRoutes = ['/', '/login', '/registration', '/provider/registration'];
-  const isAdminLogin = state.url === '/admin/login';
-  const isPublic = publicRoutes.some(publicRoute => state.url === publicRoute || state.url.startsWith(publicRoute + '/')) || isAdminLogin;
-  console.log('[authGuard] state.url:', state.url, 'isPublic:', isPublic, 'isAdminLogin:', isAdminLogin);
+  const publicRoutes = ['/', '/login', '/registration', '/provider/registration', '/admin/login', '/password-reset', '/reset-password', '/create-admin'];
+  const isPublic = publicRoutes.some(publicRoute => state.url === publicRoute || state.url.startsWith(publicRoute + '/'));
+  console.log('[authGuard] state.url:', state.url, 'isPublic:', isPublic);
 
   if (isPublic) {
     return true;
