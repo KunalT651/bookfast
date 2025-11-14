@@ -103,12 +103,12 @@ export class UnavailableDatesComponent implements OnInit {
     this.successMessage = '';
 
     this.providerService.removeUnavailableDate(id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.successMessage = 'Unavailable period removed successfully!';
         this.loadUnavailableDates();
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = error.error?.error || 'Failed to remove unavailable period';
         this.loading = false;
         console.error('Error removing unavailable date:', error);
