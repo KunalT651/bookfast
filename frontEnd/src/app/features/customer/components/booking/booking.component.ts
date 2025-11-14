@@ -51,7 +51,7 @@ export class BookingComponent implements OnInit, AfterViewInit {
         this.customerPhone = user.phone || '';
       }
     });
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params: any) => {
       console.log('Route params:', params);
       if (!this.resourceId && params['resourceId']) {
         this.resourceId = +params['resourceId'];
@@ -61,9 +61,9 @@ export class BookingComponent implements OnInit, AfterViewInit {
       if ((!this.slots || !this.slots.length) && params['slotIds']) {
         const slotIds = params['slotIds'].split(',').map((id: string) => +id);
         console.log('Loading slots for resourceId:', this.resourceId, 'slotIds:', slotIds);
-        this.slotService.getSlotsForResource(this.resourceId).subscribe(slots => {
+        this.slotService.getSlotsForResource(this.resourceId).subscribe((slots: any) => {
           console.log('Loaded slots:', slots);
-          this.slotDetails = slots.filter(s => slotIds.includes(s.id!));
+          this.slotDetails = slots.filter((s: any) => slotIds.includes(s.id!));
           this.slots = this.slotDetails;
           console.log('Filtered slots:', this.slots);
           this.calculateTotalAmount();
@@ -71,8 +71,8 @@ export class BookingComponent implements OnInit, AfterViewInit {
       }
       // Fetch resource details
       if (this.resourceId) {
-        this.resourceService.getResources().subscribe(resources => {
-          this.resource = resources.find(r => r.id === this.resourceId) || null;
+        this.resourceService.getResources().subscribe((resources: any) => {
+          this.resource = resources.find((r: any) => r.id === this.resourceId) || null;
           console.log('Found resource:', this.resource);
           this.amount = this.resource?.price || null;
           this.calculateTotalAmount();
@@ -177,14 +177,14 @@ async confirmBooking() {
     console.log('Current resource:', this.resource);
     
     this.bookingService.createBooking(bookingData).subscribe({
-      next: (created) => {
+      next: (created: any) => {
         this.booking = created;
         this.payment.emit(created);
         alert('Booking saved successfully!');
         // Redirect to my bookings page
         this.router.navigate(['/customer/bookings']);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Booking error:', err);
         console.log('Error details:', err.error);
         

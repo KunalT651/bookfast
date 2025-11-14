@@ -27,12 +27,12 @@ export class ProviderAnalyticsComponent implements OnInit {
     this.errorMessage = '';
 
     this.analyticsService.getAnalytics(this.selectedPeriod).subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.analytics = data;
         this.loading = false;
         console.log('✅ Analytics loaded:', data);
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to load analytics. Please try again.';
         this.loading = false;
         console.error('Error loading analytics:', error);

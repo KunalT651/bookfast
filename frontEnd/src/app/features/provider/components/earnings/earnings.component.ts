@@ -27,11 +27,11 @@ export class ProviderEarningsComponent implements OnInit {
     this.errorMessage = '';
 
     this.analyticsService.getEarnings(this.selectedPeriod).subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.earnings = data;
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to load earnings data.';
         this.loading = false;
         console.error('Error loading earnings:', error);

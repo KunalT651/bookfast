@@ -36,11 +36,11 @@ export class UnavailableDatesComponent implements OnInit {
   loadUnavailableDates() {
     this.loading = true;
     this.providerService.getUnavailableDates().subscribe({
-      next: (dates) => {
+      next: (dates: any) => {
         this.unavailableDates = dates;
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to load unavailable dates';
         this.loading = false;
         console.error('Error loading unavailable dates:', error);
@@ -78,14 +78,14 @@ export class UnavailableDatesComponent implements OnInit {
       formValue.endDate,
       formValue.reason
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.successMessage = 'Unavailable dates marked successfully!';
         this.loadUnavailableDates();
         this.showAddForm = false;
         this.addForm.reset();
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = error.error?.error || 'Failed to mark unavailable dates';
         this.loading = false;
         console.error('Error marking unavailable dates:', error);

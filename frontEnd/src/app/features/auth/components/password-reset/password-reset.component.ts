@@ -31,7 +31,7 @@ export class PasswordResetComponent {
           this.success = true;
           this.loading = false;
         },
-        error: err => {
+        error: (err: any) => {
           this.error = 'Failed to send reset email.';
           this.loading = false;
         }

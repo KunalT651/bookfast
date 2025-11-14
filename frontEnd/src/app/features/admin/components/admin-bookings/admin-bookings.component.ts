@@ -39,13 +39,13 @@ export class AdminBookingsComponent implements OnInit {
     
     console.log('[AdminBookingsComponent] Loading bookings using AdminBookingService');
     this.adminBookingService.getAllBookings().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         console.log('[AdminBookingsComponent] Received bookings:', data?.length || 0);
         this.bookings = data;
         this.applyFilters();
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to load bookings. Please try again.';
         this.loading = false;
         console.error('[AdminBookingsComponent] Error loading bookings:', error);
@@ -99,7 +99,7 @@ export class AdminBookingsComponent implements OnInit {
 
     this.loading = true;
     this.adminBookingService.updateBooking(this.editingBooking.id, this.editForm).subscribe({
-      next: (updatedBooking) => {
+      next: (updatedBooking: any) => {
         const index = this.bookings.findIndex(b => b.id === this.editingBooking.id);
         if (index !== -1) {
           this.bookings[index] = updatedBooking;
@@ -110,7 +110,7 @@ export class AdminBookingsComponent implements OnInit {
         this.loading = false;
         setTimeout(() => this.successMessage = '', 3000);
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to update booking. Please try again.';
         this.loading = false;
         console.error('Error updating booking:', error);
@@ -134,7 +134,7 @@ export class AdminBookingsComponent implements OnInit {
           this.loading = false;
           setTimeout(() => this.successMessage = '', 3000);
         },
-        error: (error) => {
+        error: (error: any) => {
           this.errorMessage = 'Failed to delete booking. Please try again.';
           this.loading = false;
           console.error('Error deleting booking:', error);
@@ -173,7 +173,7 @@ export class AdminBookingsComponent implements OnInit {
     
     // Export all bookings from last 365 days
     this.adminReportService.exportReport('bookings', '365').subscribe({
-      next: (data) => {
+      next: (data: any) => {
         // Create download link for CSV file
         const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
         const url = window.URL.createObjectURL(blob);
@@ -193,7 +193,7 @@ export class AdminBookingsComponent implements OnInit {
         
         console.log(`✅ Exported ${bookingCount} bookings to ${filename}`);
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to export bookings. Please try again.';
         this.exporting = false;
         console.error('Error exporting bookings:', error);

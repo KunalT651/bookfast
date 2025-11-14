@@ -33,7 +33,7 @@ export class RegisterProviderComponent implements OnInit {
 
   ngOnInit() {
     this.authService.getServiceCategories().subscribe({
-      next: (cats) => this.serviceCategories = cats,
+      next: (cats: any) => this.serviceCategories = cats,
       error: () => this.serviceCategories = []
     });
   }

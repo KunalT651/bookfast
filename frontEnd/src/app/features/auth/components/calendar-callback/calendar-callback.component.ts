@@ -112,7 +112,7 @@ export class CalendarCallbackComponent implements OnInit {
   }
 
   handleCallback() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params: any) => {
       const code = params['code'];
       const error = params['error'];
       const state = params['state'];

@@ -35,7 +35,7 @@ export class ResetPasswordFormComponent implements OnInit {
 
   ngOnInit() {
     // Get token from URL query params
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params: any) => {
       this.token = params['token'] || '';
       if (this.token) {
         this.validateToken();
@@ -90,7 +90,7 @@ export class ResetPasswordFormComponent implements OnInit {
             this.router.navigate(['/login']);
           }, 3000);
         },
-        error: (err) => {
+        error: (err: any) => {
           this.error = err.error?.message || 'Failed to reset password';
           this.loading = false;
         }
