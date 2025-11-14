@@ -38,6 +38,14 @@ export class HomeComponent implements OnInit {
   searchTerm: string = '';
   showModal: boolean = false;
   selectedResource: Resource | null = null;
+  showFilters: boolean = false;
+  selectedCategory: string = '';
+  serviceCategories: any[] = [];
+  selectedSpecialization: string = '';
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  minRating: number | null = null;
+  onlyAvailable: boolean = false;
 
   constructor(private resourceService: ResourceService, private router: Router) {
     // Listen for booking event from resource card
@@ -98,6 +106,71 @@ export class HomeComponent implements OnInit {
 
   clearFilters() {
     this.searchTerm = '';
+    this.selectedCategory = '';
+    this.selectedSpecialization = '';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.minRating = null;
+    this.onlyAvailable = false;
     this.filteredResources = this.resources;
+  }
+
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
+  }
+
+  applyFilters() {
+    let filtered = [...this.resources];
+
+    // Search term filter
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(resource => {
+        return (
+          resource.name?.toLowerCase().includes(term) ||
+          resource.specialization?.toLowerCase().includes(term) ||
+          (resource.tags && resource.tags.some(tag => tag.toLowerCase().includes(term)))
+        );
+      });
+    }
+
+    // Category filter
+    if (this.selectedCategory) {
+      filtered = filtered.filter(resource => 
+        resource.specialization?.toLowerCase() === this.selectedCategory.toLowerCase()
+      );
+    }
+
+    // Specialization filter
+    if (this.selectedSpecialization) {
+      const spec = this.selectedSpecialization.toLowerCase();
+      filtered = filtered.filter(resource => 
+        resource.specialization?.toLowerCase().includes(spec)
+      );
+    }
+
+    // Price range filter
+    if (this.minPrice !== null && this.minPrice !== undefined) {
+      filtered = filtered.filter(resource => 
+        resource.price !== null && resource.price !== undefined && resource.price >= this.minPrice!
+      );
+    }
+    if (this.maxPrice !== null && this.maxPrice !== undefined) {
+      filtered = filtered.filter(resource => 
+        resource.price !== null && resource.price !== undefined && resource.price <= this.maxPrice!
+      );
+    }
+
+    // Rating filter
+    if (this.minRating !== null && this.minRating !== undefined) {
+      filtered = filtered.filter(resource => 
+        resource.rating !== null && resource.rating !== undefined && resource.rating >= this.minRating!
+      );
+    }
+
+    // Availability filter (onlyAvailable would need to check actual availability slots)
+    // For now, we'll skip this as it requires additional API calls
+
+    this.filteredResources = filtered;
   }
 }
