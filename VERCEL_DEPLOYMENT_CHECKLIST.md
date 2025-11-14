@@ -10,9 +10,27 @@
 5. Verify **Production Branch** is set to `main`
 
 ### Solution 2: Manual Deployment Trigger
+
+#### Option A: Redeploy Latest (Fastest)
 1. Go to Vercel Dashboard → Your Project → Deployments
-2. Click "Redeploy" on the latest deployment
-3. Or click "Deploy" → "Deploy from GitHub" → Select `main` branch
+2. Find the latest deployment
+3. Click the **three dots (⋯)** menu
+4. Select **"Redeploy"**
+5. Choose **"Rebuild"** (clean build)
+6. Click **"Redeploy"**
+
+#### Option B: Deploy from GitHub
+1. Go to Vercel Dashboard → Your Project → Deployments
+2. Click **"Deploy"** button (top right)
+3. Select **"Deploy from GitHub"**
+4. Choose branch `main`
+5. Click **"Deploy"**
+
+#### Option C: Empty Git Commit (No Code Changes)
+```bash
+git commit --allow-empty -m "Trigger: Empty commit to trigger deployment"
+git push origin main
+```
 
 ### Solution 3: Check Vercel Configuration
 - The `frontEnd/vercel.json` file should be used (root `vercel.json` has been removed)
@@ -42,4 +60,7 @@
 - Push a new commit or trigger manual deployment
 - Check Vercel dashboard for deployment status
 - Verify the deployment succeeds
+
+## See Also
+- **VERCEL_MANUAL_DEPLOYMENT.md** - Detailed guide on manual deployment methods
 
