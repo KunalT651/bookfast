@@ -170,15 +170,20 @@ public class AdminProviderService {
 
         // Send welcome email with credentials
         try {
-            String emailContent = createProviderWelcomeEmail(savedProvider, generatedPassword);
-            emailService.sendHtmlEmail(
-                savedProvider.getEmail(),
-                "Welcome to BookFast - Your Provider Account Credentials",
-                emailContent
-            );
-            System.out.println("[AdminProviderService] Welcome email sent to: " + savedProvider.getEmail());
+            if (savedProvider.getEmail() != null && !savedProvider.getEmail().isEmpty()) {
+                String emailContent = createProviderWelcomeEmail(savedProvider, generatedPassword);
+                emailService.sendHtmlEmail(
+                    savedProvider.getEmail(),
+                    "Welcome to BookFast - Your Provider Account Credentials",
+                    emailContent
+                );
+                System.out.println("[AdminProviderService] Welcome email sent to: " + savedProvider.getEmail());
+            } else {
+                System.err.println("[AdminProviderService] Cannot send email: email address is null or empty");
+            }
         } catch (Exception e) {
             System.err.println("[AdminProviderService] Failed to send welcome email: " + e.getMessage());
+            e.printStackTrace();
             // Don't fail the provider creation if email fails
         }
 
