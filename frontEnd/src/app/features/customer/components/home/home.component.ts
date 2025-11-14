@@ -55,37 +55,72 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('[HomeComponent] Loading resources...');
-    this.resourceService.getResources().subscribe({
-      next: (res: Resource[]) => {
-        console.log('[HomeComponent] Received resources:', res?.length || 0, res);
-        this.resources = res || [];
-        this.filteredResources = res || [];
-        if (this.resources.length === 0) {
-          console.warn('[HomeComponent] No resources received from API');
+    console.log('[HomeComponent] ngOnInit - Loading resources...');
+    try {
+      this.resourceService.getResources().subscribe({
+        next: (res: Resource[]) => {
+          console.log('[HomeComponent] Received resources:', res?.length || 0, res);
+          try {
+            this.resources = Array.isArray(res) ? res : [];
+            this.filteredResources = [...this.resources];
+            if (this.resources.length === 0) {
+              console.warn('[HomeComponent] No resources received from API');
+            } else {
+              console.log('[HomeComponent] Successfully loaded', this.resources.length, 'resources');
+            }
+          } catch (err: any) {
+            console.error('[HomeComponent] Error processing resources:', err);
+            this.resources = [];
+            this.filteredResources = [];
+          }
+        },
+        error: (error: any) => {
+          console.error('[HomeComponent] Error loading resources:', error);
+          console.error('[HomeComponent] Error details:', {
+            status: error?.status,
+            statusText: error?.statusText,
+            message: error?.message,
+            error: error?.error,
+            url: error?.url
+          });
+          this.resources = [];
+          this.filteredResources = [];
         }
-      },
-      error: (error: any) => {
-        console.error('[HomeComponent] Error loading resources:', error);
-        this.resources = [];
-        this.filteredResources = [];
-      }
-    });
-  }
-
-  ngOnChanges() {
-    this.filterResources();
+      });
+    } catch (err: any) {
+      console.error('[HomeComponent] Exception in ngOnInit:', err);
+      this.resources = [];
+      this.filteredResources = [];
+    }
   }
 
   filterResources() {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredResources = this.resources.filter(resource => {
-      return (
-        resource.name?.toLowerCase().includes(term) ||
-        resource.specialization?.toLowerCase().includes(term) ||
-        (resource.tags && resource.tags.some(tag => tag.toLowerCase().includes(term)))
-      );
-    });
+    try {
+      if (!Array.isArray(this.resources)) {
+        console.warn('[HomeComponent] filterResources: resources is not an array', this.resources);
+        this.filteredResources = [];
+        return;
+      }
+
+      const term = (this.searchTerm || '').toLowerCase().trim();
+      
+      if (!term) {
+        this.filteredResources = [...this.resources];
+        return;
+      }
+
+      this.filteredResources = this.resources.filter(resource => {
+        if (!resource) return false;
+        return (
+          resource.name?.toLowerCase().includes(term) ||
+          resource.specialization?.toLowerCase().includes(term) ||
+          (Array.isArray(resource.tags) && resource.tags.some((tag: string) => tag?.toLowerCase().includes(term)))
+        );
+      });
+    } catch (err: any) {
+      console.error('[HomeComponent] Error in filterResources:', err);
+      this.filteredResources = this.resources || [];
+    }
   }
 
   onBookResource(resource: Resource) {
@@ -111,9 +146,9 @@ export class HomeComponent implements OnInit {
   this.showBookingForm = false;
   }
 
-  // Watch for searchTerm changes
-  ngDoCheck() {
-    this.filterResources();
+  // Watch for searchTerm changes - use input event handler instead of ngDoCheck for better performance
+  onSearchChange() {
+    this.applyFilters();
   }
 
   clearFilters() {

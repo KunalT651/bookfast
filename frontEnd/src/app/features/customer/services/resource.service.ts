@@ -18,7 +18,22 @@ export class ResourceService {
   }
 
   getResources(): Observable<Resource[]> {
-    return this.http.get<Resource[]>(this.apiUrl, { withCredentials: true });
+    console.log('[ResourceService] Fetching resources from:', this.apiUrl);
+    return this.http.get<Resource[]>(this.apiUrl, { withCredentials: true }).pipe(
+      // Add error handling with catchError
+      catchError((error: any) => {
+        console.error('[ResourceService] Error fetching resources:', error);
+        console.error('[ResourceService] Error details:', {
+          status: error?.status,
+          statusText: error?.statusText,
+          message: error?.message,
+          error: error?.error,
+          url: error?.url
+        });
+        // Return empty array on error instead of throwing
+        return of([]);
+      })
+    );
   }
 
   getResource(resourceId: number): Observable<Resource> {
