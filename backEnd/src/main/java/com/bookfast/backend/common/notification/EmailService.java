@@ -11,6 +11,30 @@ import org.springframework.stereotype.Service;
 public class EmailService {
     @Value("${sendgrid.api-key:}")
     private String sendGridApiKey;
+    
+    @Value("${sendgrid.sender.email:noreply@bookfast.com}")
+    private String senderEmail;
+    
+    @Value("${sendgrid.sender.name:BookFast}")
+    private String senderName;
+
+    public EmailService() {
+        // Constructor for initialization
+    }
+    
+    @javax.annotation.PostConstruct
+    public void init() {
+        System.out.println("[EmailService] Initializing EmailService...");
+        System.out.println("[EmailService] SendGrid API key configured: " + (sendGridApiKey != null && !sendGridApiKey.isEmpty()));
+        System.out.println("[EmailService] Sender email: " + senderEmail);
+        System.out.println("[EmailService] Sender name: " + senderName);
+        if (sendGridApiKey == null || sendGridApiKey.isEmpty()) {
+            System.err.println("[EmailService] WARNING: SendGrid API key is not configured!");
+        } else {
+            System.out.println("[EmailService] SendGrid API key length: " + sendGridApiKey.length());
+            System.out.println("[EmailService] SendGrid API key starts with: " + (sendGridApiKey.length() > 3 ? sendGridApiKey.substring(0, 3) : "N/A"));
+        }
+    }
 
     public void sendEmail(String to, String subject, String content) throws Exception {
         if (sendGridApiKey == null || sendGridApiKey.isEmpty()) {
@@ -19,9 +43,10 @@ public class EmailService {
         
         System.out.println("[EmailService] Sending email to: " + to);
         System.out.println("[EmailService] Subject: " + subject);
+        System.out.println("[EmailService] From: " + senderEmail);
         System.out.println("[EmailService] SendGrid API key configured: " + (sendGridApiKey != null && !sendGridApiKey.isEmpty()));
         
-        Email fromEmail = new Email("noreply@bookfast.com");
+        Email fromEmail = new Email(senderEmail);
         Email toEmail = new Email(to);
         Content emailContent = new Content("text/plain", content);
         Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
@@ -51,9 +76,10 @@ public class EmailService {
         
         System.out.println("[EmailService] Sending HTML email to: " + to);
         System.out.println("[EmailService] Subject: " + subject);
+        System.out.println("[EmailService] From: " + senderEmail);
         System.out.println("[EmailService] SendGrid API key configured: " + (sendGridApiKey != null && !sendGridApiKey.isEmpty()));
         
-        Email fromEmail = new Email("noreply@bookfast.com");
+        Email fromEmail = new Email(senderEmail);
         Email toEmail = new Email(to);
         Content emailContent = new Content("text/html", htmlContent);
         Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
