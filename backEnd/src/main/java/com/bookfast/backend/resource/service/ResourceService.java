@@ -53,8 +53,20 @@ public class ResourceService {
     }
 
     // Return only active resources for customers
+    // Returns resources with status "active" or null (default active)
     public List<Resource> getAllActiveResourcesForCustomers() {
-        return repository.findByStatus("active");
+        List<Resource> allResources = repository.findAll();
+        // Filter to include only active resources or resources with null status (treat as active)
+        return allResources.stream()
+            .filter(resource -> {
+                String status = resource.getStatus();
+                // Include if status is null, empty, "active", or "available"
+                return status == null || 
+                       status.isEmpty() || 
+                       status.equalsIgnoreCase("active") || 
+                       status.equalsIgnoreCase("available");
+            })
+            .collect(java.util.stream.Collectors.toList());
     }
 
     public Resource getResourceById(Long id) {

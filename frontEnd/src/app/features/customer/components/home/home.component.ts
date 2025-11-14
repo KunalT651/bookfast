@@ -55,9 +55,21 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.resourceService.getResources().subscribe((res: Resource[]) => {
-      this.resources = res;
-      this.filteredResources = res;
+    console.log('[HomeComponent] Loading resources...');
+    this.resourceService.getResources().subscribe({
+      next: (res: Resource[]) => {
+        console.log('[HomeComponent] Received resources:', res?.length || 0, res);
+        this.resources = res || [];
+        this.filteredResources = res || [];
+        if (this.resources.length === 0) {
+          console.warn('[HomeComponent] No resources received from API');
+        }
+      },
+      error: (error: any) => {
+        console.error('[HomeComponent] Error loading resources:', error);
+        this.resources = [];
+        this.filteredResources = [];
+      }
     });
   }
 
