@@ -12,6 +12,7 @@ export class AdminBookingService {
   constructor(private http: HttpClient) {}
 
   getAllBookings(): Observable<any[]> {
+    console.log('[AdminBookingService] Making GET request to:', this.apiUrl);
     return this.http.get<any[]>(this.apiUrl, { withCredentials: true });
   }
 

@@ -37,8 +37,10 @@ export class AdminBookingsComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
     
+    console.log('[AdminBookingsComponent] Loading bookings using AdminBookingService');
     this.adminBookingService.getAllBookings().subscribe({
       next: (data) => {
+        console.log('[AdminBookingsComponent] Received bookings:', data?.length || 0);
         this.bookings = data;
         this.applyFilters();
         this.loading = false;
@@ -46,7 +48,9 @@ export class AdminBookingsComponent implements OnInit {
       error: (error) => {
         this.errorMessage = 'Failed to load bookings. Please try again.';
         this.loading = false;
-        console.error('Error loading bookings:', error);
+        console.error('[AdminBookingsComponent] Error loading bookings:', error);
+        console.error('[AdminBookingsComponent] Error status:', error?.status);
+        console.error('[AdminBookingsComponent] Error URL:', error?.url);
       }
     });
   }
