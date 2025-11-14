@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-    @Value("${sendgrid.api-key:}")
+    @Value("${sendgrid.api-key:#{null}}")
     private String sendGridApiKey;
     
     @Value("${sendgrid.sender.email:noreply@bookfast.com}")
@@ -37,74 +37,82 @@ public class EmailService {
     }
 
     public void sendEmail(String to, String subject, String content) throws Exception {
-        if (sendGridApiKey == null || sendGridApiKey.isEmpty()) {
-            throw new IllegalStateException("SendGrid API key is not configured. Please set SENDGRID_API_KEY environment variable.");
+        // Check if API key is configured - fail silently if not (like old version)
+        if (sendGridApiKey == null || sendGridApiKey.isEmpty() || sendGridApiKey.trim().isEmpty()) {
+            System.err.println("[EmailService] WARNING: SendGrid API key is not configured. Email will not be sent.");
+            return; // Silently return instead of throwing exception (like old version)
         }
         
-        System.out.println("[EmailService] Sending email to: " + to);
-        System.out.println("[EmailService] Subject: " + subject);
-        System.out.println("[EmailService] From: " + senderEmail);
-        System.out.println("[EmailService] SendGrid API key configured: " + (sendGridApiKey != null && !sendGridApiKey.isEmpty()));
-        
-        Email fromEmail = new Email(senderEmail);
-        Email toEmail = new Email(to);
-        Content emailContent = new Content("text/plain", content);
-        Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
+        try {
+            System.out.println("[EmailService] Sending email to: " + to);
+            System.out.println("[EmailService] Subject: " + subject);
+            
+            // Use simpler approach like old version
+            Email fromEmail = new Email(senderEmail != null && !senderEmail.isEmpty() ? senderEmail : "noreply@bookfast.com");
+            Email toEmail = new Email(to);
+            Content emailContent = new Content("text/plain", content);
+            Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
 
-        SendGrid sg = new SendGrid(sendGridApiKey);
-        Request request = new Request();
-        request.setMethod(Method.POST);
-        request.setEndpoint("mail/send");
-        request.setBody(mail.build());
-        
-        Response response = sg.api(request);
-        System.out.println("[EmailService] SendGrid response status: " + response.getStatusCode());
-        System.out.println("[EmailService] SendGrid response body: " + response.getBody());
-        System.out.println("[EmailService] SendGrid response headers: " + response.getHeaders());
-        
-        if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
-            System.out.println("[EmailService] Email sent successfully to: " + to);
-        } else {
-            throw new Exception("SendGrid API returned status " + response.getStatusCode() + ": " + response.getBody());
+            SendGrid sg = new SendGrid(sendGridApiKey);
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            
+            Response response = sg.api(request);
+            System.out.println("[EmailService] SendGrid response status: " + response.getStatusCode());
+            
+            // Log response but don't throw exception on non-200 (like old version)
+            if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
+                System.out.println("[EmailService] Email sent successfully to: " + to);
+            } else {
+                System.err.println("[EmailService] SendGrid API returned status " + response.getStatusCode() + ": " + response.getBody());
+                // Don't throw exception - just log the error (like old version)
+            }
+        } catch (Exception e) {
+            System.err.println("[EmailService] Error sending email: " + e.getMessage());
+            e.printStackTrace();
+            // Don't rethrow - fail silently like old version
         }
     }
 
     public void sendHtmlEmail(String to, String subject, String htmlContent) throws Exception {
-        if (sendGridApiKey == null || sendGridApiKey.isEmpty()) {
-            throw new IllegalStateException("SendGrid API key is not configured. Please set SENDGRID_API_KEY environment variable.");
+        // Check if API key is configured - fail silently if not (like old version)
+        if (sendGridApiKey == null || sendGridApiKey.isEmpty() || sendGridApiKey.trim().isEmpty()) {
+            System.err.println("[EmailService] WARNING: SendGrid API key is not configured. Email will not be sent.");
+            return; // Silently return instead of throwing exception (like old version)
         }
         
-        System.out.println("[EmailService] Sending HTML email to: " + to);
-        System.out.println("[EmailService] Subject: " + subject);
-        System.out.println("[EmailService] From: " + senderEmail + " (" + senderName + ")");
-        System.out.println("[EmailService] SendGrid API key configured: " + (sendGridApiKey != null && !sendGridApiKey.isEmpty()));
-        
-        // Create from email with name for better deliverability
-        Email fromEmail = new Email(senderEmail, senderName);
-        Email toEmail = new Email(to);
-        Content emailContent = new Content("text/html", htmlContent);
-        
-        // Use simpler Mail constructor for better compatibility
-        Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
-        
-        // Add reply-to (same as from for better deliverability)
-        mail.setReplyTo(fromEmail);
-        
-        SendGrid sg = new SendGrid(sendGridApiKey);
-        Request request = new Request();
-        request.setMethod(Method.POST);
-        request.setEndpoint("mail/send");
-        request.setBody(mail.build());
-        
-        Response response = sg.api(request);
-        System.out.println("[EmailService] SendGrid response status: " + response.getStatusCode());
-        System.out.println("[EmailService] SendGrid response body: " + response.getBody());
-        System.out.println("[EmailService] SendGrid response headers: " + response.getHeaders());
-        
-        if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
-            System.out.println("[EmailService] HTML email sent successfully to: " + to);
-        } else {
-            throw new Exception("SendGrid API returned status " + response.getStatusCode() + ": " + response.getBody());
+        try {
+            System.out.println("[EmailService] Sending HTML email to: " + to);
+            System.out.println("[EmailService] Subject: " + subject);
+            
+            // Use simpler approach like old version - just use sender email without name
+            Email fromEmail = new Email(senderEmail != null && !senderEmail.isEmpty() ? senderEmail : "noreply@bookfast.com");
+            Email toEmail = new Email(to);
+            Content emailContent = new Content("text/html", htmlContent);
+            Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
+            
+            SendGrid sg = new SendGrid(sendGridApiKey);
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            
+            Response response = sg.api(request);
+            System.out.println("[EmailService] SendGrid response status: " + response.getStatusCode());
+            
+            // Log response but don't throw exception on non-200 (like old version)
+            if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
+                System.out.println("[EmailService] HTML email sent successfully to: " + to);
+            } else {
+                System.err.println("[EmailService] SendGrid API returned status " + response.getStatusCode() + ": " + response.getBody());
+                // Don't throw exception - just log the error (like old version)
+            }
+        } catch (Exception e) {
+            System.err.println("[EmailService] Error sending email: " + e.getMessage());
+            e.printStackTrace();
+            // Don't rethrow - fail silently like old version
         }
     }
 }
