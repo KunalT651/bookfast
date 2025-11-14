@@ -30,6 +30,7 @@ com\bookfast\backend\admin\service\ServiceCategoryService.class
 com\bookfast\backend\common\auth\controller\AdminController.class
 com\bookfast\backend\provider\service\GoogleCalendarService.class
 com\bookfast\backend\resource\controller\BookingController.class
+com\bookfast\backend\common\config\WebConfig.class
 com\bookfast\backend\provider\service\ProviderService.class
 com\bookfast\backend\common\repository\ProviderProfileRepository.class
 com\bookfast\backend\common\config\SendGridConfig.class
@@ -39,6 +40,7 @@ com\bookfast\backend\resource\controller\PasswordResetController.class
 com\bookfast\backend\common\dto\ResourceAvailabilityDto.class
 com\bookfast\backend\common\dto\AuthResponse.class
 com\bookfast\backend\admin\controller\ServiceCategoryController.class
+com\bookfast\backend\common\service\ReminderService.class
 com\bookfast\backend\admin\controller\AdminManagementController.class
 com\bookfast\backend\admin\service\AdminReportService.class
 com\bookfast\backend\admin\model\ServiceCategory.class
@@ -70,6 +72,7 @@ com\bookfast\backend\resource\service\ReviewService$ReviewDetailsDTO.class
 com\bookfast\backend\model\DemoForm.class
 com\bookfast\backend\resource\controller\DatabaseController.class
 com\bookfast\backend\common\config\CorsConfig$1.class
+com\bookfast\backend\provider\service\ProviderAnalyticsService.class
 com\bookfast\backend\admin\controller\AdminDashboardController.class
 com\bookfast\backend\common\repository\RoleRepository.class
 com\bookfast\backend\resource\repository\ReviewRepository.class

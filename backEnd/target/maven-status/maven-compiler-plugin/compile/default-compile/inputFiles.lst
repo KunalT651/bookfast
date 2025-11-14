@@ -24,6 +24,7 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\com
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\config\GoogleCalendarConfig.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\config\SecurityConfig.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\config\SendGridConfig.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\config\WebConfig.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\controller\CalendarController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\dto\AuthRequest.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\dto\AuthResponse.java
@@ -45,6 +46,7 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\com
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\repository\RoleRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\repository\UserRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\service\AdminInitializationService.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\service\ReminderService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\common\util\PasswordUtil.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\controller\DemoFormController.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\model\DemoForm.java
@@ -53,6 +55,7 @@ C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\pro
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\model\UnavailableDate.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\repository\UnavailableDateRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\service\GoogleCalendarService.java
+C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\service\ProviderAnalyticsService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\provider\service\ProviderService.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\repository\DemoFormRepository.java
 C:\Users\kunal\Downloads\BookFast\backEnd\src\main\java\com\bookfast\backend\resource\controller\AvailabilitySlotController.java

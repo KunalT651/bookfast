@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/provider/profile/upload-picture")
-@CrossOrigin(origins = {"http://localhost:4200", "https://*.vercel.app"}, allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProviderProfilePictureController {
 
     private final UserRepository userRepository;

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './shared/components/navbar.component';
-import { ProviderNavbarComponent } from './features/provider/components/provider-navbar/provider-navbar.component';
 import { AuthService } from './features/auth/services/auth.service';
 import { UserStateService } from './shared/services/user-state.service';
 
@@ -10,15 +9,13 @@ import { UserStateService } from './shared/services/user-state.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, ProviderNavbarComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class AppComponent implements OnInit {
   loggedIn;
   showNavbar = true;
-  userRole: string | null = null;
-  isProviderRoute: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -29,13 +26,6 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(() => {
       const hiddenRoutes = ['/login', '/registration', '/provider/registration'];
       this.showNavbar = !hiddenRoutes.includes(this.router.url.split('?')[0]);
-      this.isProviderRoute = this.isProviderDashboardRoute();
-      console.log('[AppComponent] Route changed:', {
-        url: this.router.url,
-        isProviderRoute: this.isProviderRoute,
-        showNavbar: this.showNavbar,
-        userRole: this.userRole
-      });
     });
   }
 
@@ -51,19 +41,13 @@ export class AppComponent implements OnInit {
     const isPublic = publicRoutes.some(route => currentUrl.startsWith(route));
   console.log('[AppComponent] currentUrl:', currentUrl, 'isPublic:', isPublic);
     if (!isPublic) {
-      console.log('[AppComponent] Calling getCurrentUser()...');
       this.authService.getCurrentUser().subscribe({
         next: (user) => {
-          console.log('[AppComponent] getCurrentUser success:', user);
           this.userState.setUser(user);
-          this.userRole = user ? user.role?.name || null : null;
         },
-        error: (error) => {
-          console.log('[AppComponent] getCurrentUser error:', error);
-          // Don't clear user state immediately - give user a chance to see the error
-          // this.userState.clear();
-          // this.userRole = null;
-          // this.router.navigate(['/login']);
+        error: () => {
+          this.userState.clear();
+          this.router.navigate(['/login']);
         }
       });
       this.loggedIn.subscribe(isLoggedIn => {
@@ -76,19 +60,6 @@ export class AppComponent implements OnInit {
       });
     }
     // For public routes, do NOT call getCurrentUser or redirect
-    
-    // Subscribe to user state changes
-    this.userState.getUser().subscribe(user => {
-      this.userRole = user ? user.role?.name || null : null;
-      this.isProviderRoute = this.isProviderDashboardRoute(); // Recalculate on user change
-      console.log('User state changed:', user);
-      console.log('User role:', this.userRole);
-      console.log('Is provider route:', this.isProviderRoute);
-      console.log('Should show provider navbar:', this.shouldShowProviderNavbar());
-    });
-    
-    // Check if current route is provider route
-    this.isProviderRoute = this.isProviderDashboardRoute();
   }
   
   isPublicRoute(url: string): boolean {
@@ -102,19 +73,6 @@ export class AppComponent implements OnInit {
     const result = publicRoutes.some(route => url.startsWith(route));
     console.log('[AppComponent] isPublicRoute check:', url, '=>', result);
     return result;
-  }
-
-  isProviderDashboardRoute(): boolean {
-    // Show provider navbar for any /provider route
-    const path = window.location.pathname;
-    return path.startsWith('/provider/');
-  }
-
-  shouldShowProviderNavbar(): boolean {
-    // Show provider navbar if we're on any provider route
-    // The authGuard already ensures only providers can access these routes
-    const path = window.location.pathname;
-    return path.startsWith('/provider/');
   }
   }
 

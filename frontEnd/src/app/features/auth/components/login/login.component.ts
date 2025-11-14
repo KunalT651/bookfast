@@ -50,8 +50,6 @@ export class LoginComponent implements OnInit {
         this.success = 'Login successful!';
         this.error = '';
         // Set user state for navbar
-        console.log('Login response:', res);
-        console.log('User role:', res.user?.role?.name);
         this.userState.setUser(res.user);
 
         if (res.user.role.name === 'PROVIDER') {

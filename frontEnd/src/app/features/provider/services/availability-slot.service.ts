@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AvailabilitySlot } from '../models/availability-slot.model';
-import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AvailabilitySlotService {
-  private baseUrl = `${environment.apiUrl}/resources`;
+  private baseUrl = 'http://localhost:8080/api/resources';
 
   constructor(private http: HttpClient) {}
 

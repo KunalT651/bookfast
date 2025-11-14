@@ -1,9 +1,7 @@
 package com.bookfast.backend.resource.service;
 
 import com.bookfast.backend.resource.model.Resource;
-import com.bookfast.backend.resource.model.AvailabilitySlot;
 import com.bookfast.backend.resource.repository.ResourceRepository;
-import com.bookfast.backend.resource.repository.AvailabilitySlotRepository;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -17,36 +15,17 @@ public class ResourceService {
 
     private final ResourceRepository repository;
     private final UserRepository userRepository;
-    private final AvailabilitySlotRepository availabilitySlotRepository;
 
-    public ResourceService(ResourceRepository repository, UserRepository userRepository, 
-                          AvailabilitySlotRepository availabilitySlotRepository) {
+    public ResourceService(ResourceRepository repository, UserRepository userRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
-        this.availabilitySlotRepository = availabilitySlotRepository;
     }
 
-    // Extract providerId from JWT
+    // Extract providerId from JWT (stub for demo)
     public Long getProviderIdFromAuthHeader(String authHeader) {
-        try {
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
-                // Parse JWT token to extract user ID
-                // For now, we'll use the SecurityContext to get the current user
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (authentication != null && authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails) {
-                    org.springframework.security.core.userdetails.UserDetails userDetails = 
-                        (org.springframework.security.core.userdetails.UserDetails) authentication.getPrincipal();
-                    String username = userDetails.getUsername();
-                    User user = userRepository.findByEmail(username).orElse(null);
-                    return user != null ? user.getId() : 1L;
-                }
-            }
-        } catch (Exception e) {
-            // Log the error and fallback to default
-            System.err.println("Error parsing JWT token: " + e.getMessage());
-        }
-        return 1L; // Fallback for demo purposes
+        // TODO: Parse JWT and extract providerId
+        // For demo, return a fixed value or parse from token
+        return 1L;
     }
 
     public void deleteResource(Long id) {
@@ -92,49 +71,5 @@ public class ResourceService {
 
     public Resource createResource(Resource resource) {
         return repository.save(resource);
-    }
-
-    // Advanced filter resources by multiple criteria
-    public List<Resource> filterResources(String serviceCategory, String specialization, 
-                                         Double minPrice, Double maxPrice, 
-                                         Double minRating, String availability) {
-        List<Resource> allResources = repository.findByStatus("active");
-        
-        return allResources.stream()
-            .filter(r -> serviceCategory == null || serviceCategory.isEmpty() || 
-                        (r.getServiceCategory() != null && r.getServiceCategory().equalsIgnoreCase(serviceCategory)))
-            .filter(r -> specialization == null || specialization.isEmpty() || 
-                        (r.getSpecialization() != null && r.getSpecialization().toLowerCase().contains(specialization.toLowerCase())))
-            .filter(r -> minPrice == null || (r.getPrice() != null && r.getPrice() >= minPrice))
-            .filter(r -> maxPrice == null || (r.getPrice() != null && r.getPrice() <= maxPrice))
-            .filter(r -> minRating == null || (r.getAverageRating() != null && r.getAverageRating() >= minRating))
-            .filter(r -> availability == null || availability.isEmpty() || hasAvailability(r, availability))
-            .toList();
-    }
-
-    private boolean hasAvailability(Resource resource, String availability) {
-        if (!"available".equalsIgnoreCase(availability)) {
-            return true; // If not filtering by availability, include all
-        }
-        
-        // Check if resource has at least one available slot
-        List<AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
-        
-        // If no slots exist at all, resource is not available
-        if (slots == null || slots.isEmpty()) {
-            System.out.println("[ResourceService] Resource " + resource.getId() + " has NO slots - EXCLUDED");
-            return false;
-        }
-        
-        // Check if at least one slot has status = "available"
-        boolean hasAvailable = slots.stream()
-                .anyMatch(slot -> "available".equalsIgnoreCase(slot.getStatus()));
-        
-        System.out.println("[ResourceService] Resource " + resource.getId() + " (" + resource.getName() + ") - " +
-                "Total slots: " + slots.size() + 
-                ", Available slots: " + slots.stream().filter(s -> "available".equalsIgnoreCase(s.getStatus())).count() +
-                " - " + (hasAvailable ? "INCLUDED" : "EXCLUDED"));
-        
-        return hasAvailable;
     }
 }

@@ -18,33 +18,10 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        
-        // Use patterns to allow all Vercel deployments and localhost
-        java.util.List<String> allowedOriginPatterns = new java.util.ArrayList<>();
-        
-        // Read from CORS_ALLOWED_ORIGINS environment variable
-        String corsOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
-        
-        if (corsOrigins != null && !corsOrigins.isEmpty()) {
-            // Split by comma and add all origins
-            String[] origins = corsOrigins.split(",");
-            for (String origin : origins) {
-                allowedOriginPatterns.add(origin.trim());
-            }
-        } else {
-            // Fallback: Allow localhost and all Vercel domains
-            allowedOriginPatterns.add("http://localhost:*");
-            allowedOriginPatterns.add("https://*.vercel.app"); // Matches all Vercel deployments
-        }
-        
-        // Set allowed origin patterns (supports wildcards)
-        configuration.setAllowedOriginPatterns(allowedOriginPatterns);
-        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(java.util.List.of("*")); // Allow all headers
-        configuration.setExposedHeaders(java.util.List.of("Authorization", "X-XSRF-TOKEN"));
+        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
-        
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -60,71 +37,31 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/register-provider",
                                 "/api/auth/logout",
-                                "/api/reviews",
                                 "/api/reviews/**",
                                 "/api/payments/create-intent",
                                 "/api/bookings", // Allow POST for bookings without CSRF
-                                "/api/bookings/*/cancel", // Allow cancel booking without CSRF
-                                "/api/bookings/provider/*/edit/*", // Allow provider edit booking without CSRF
-                                "/api/bookings/provider/*/cancel/*", // Allow provider cancel booking without CSRF
-                                "/api/resources", // Allow POST/PUT/DELETE for resources without CSRF
-                                "/api/resources/*/availability", // Allow availability operations without CSRF
-                                "/api/admin/**", // Allow all admin operations without CSRF
-                                "/api/customers/**", // Allow customer operations without CSRF (for PUT/PATCH requests)
-                                "/api/test",
-                                "/api/database",
-                                "/api/test-resource",
-                                "/api/cleanup"
+                                "/api/admin/create-admin",
+                                "/api/admin/check-admin-exists",
+                                "/api/test/**",
+                                "/api/database/**",
+                                "/api/test-resource/**",
+                                "/api/cleanup/**"
                         )
                 )
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow all OPTIONS requests for CORS preflight
-                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/resources").permitAll()
-                        .requestMatchers("/uploads/**").permitAll() // Allow public access to uploaded images
-                        .requestMatchers("/api/auth", "/api/auth/**", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test", "/api/database", "/api/test-resource", "/api/cleanup").permitAll()
-                        .requestMatchers("/api/calendar/**").authenticated() // Calendar endpoints require authentication
-                        
-                        // Admin endpoints (most specific first)
-                        .requestMatchers("/api/admin/categories/**").hasRole("ADMIN") // Admin category management
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // All other admin operations
-                        
-                        // Provider endpoints
-                        .requestMatchers("/api/provider/**").hasRole("PROVIDER") // All provider operations
-                        
-                        // Provider booking endpoints (specific first)
-                        .requestMatchers("/api/bookings/provider/**").hasRole("PROVIDER") // All provider booking operations
-                        .requestMatchers(HttpMethod.GET, "/api/bookings/provider/me").hasRole("PROVIDER") // Providers can view their bookings
-                        
-                        // Booking endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/categories", "/api/resources/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/auth/logout", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test/**", "/api/database/**", "/api/test-resource/**", "/api/cleanup/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/bookings").hasRole("CUSTOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/bookings").authenticated() // Authenticated users can view bookings
-                        .requestMatchers(HttpMethod.PUT, "/api/bookings/*/cancel").hasRole("CUSTOMER") // Customers can cancel their bookings
-                        .requestMatchers(HttpMethod.DELETE, "/api/bookings/*").hasAnyRole("CUSTOMER", "PROVIDER") // Both customers and providers can delete bookings
-                        
-                        // Resource endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/resources/{id}").permitAll() // Public access to view resources
-                        .requestMatchers(HttpMethod.GET, "/api/resources/filter").permitAll() // Public access to filter resources
-                        .requestMatchers(HttpMethod.POST, "/api/resources").hasRole("PROVIDER") // Providers can create resources
-                        .requestMatchers(HttpMethod.PUT, "/api/resources/**").hasRole("PROVIDER") // Providers can update resources
-                        .requestMatchers(HttpMethod.DELETE, "/api/resources/**").hasRole("PROVIDER") // Providers can delete resources
-                        
-                        // Availability slot endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/resources/*/availability/**").permitAll() // Public access to view availability
-                        .requestMatchers(HttpMethod.GET, "/api/resources/*/availability").permitAll() // Public access to view availability
-                        .requestMatchers(HttpMethod.POST, "/api/resources/*/availability/**").hasRole("PROVIDER") // Providers create slots
-                        .requestMatchers(HttpMethod.PUT, "/api/resources/*/availability/**").hasRole("PROVIDER") // Providers update slots
-                        .requestMatchers(HttpMethod.DELETE, "/api/resources/*/availability/**").hasRole("PROVIDER") // Providers delete slots
-                        
-                        // Review endpoints
-                        .requestMatchers("/api/reviews/provider/**").hasRole("PROVIDER") // Provider review management
-                        .requestMatchers("/api/reviews", "/api/reviews/**").hasRole("CUSTOMER")
-                        
-                        // Other role-based endpoints
-                        .requestMatchers("/api/provider").hasRole("PROVIDER")
-                        .requestMatchers("/api/customer", "/api/customers/**").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/**").authenticated() // Authenticated users can view bookings
+                        .requestMatchers("/api/admin/categories").hasRole("ADMIN") // Ensure admin categories are protected
+                        .requestMatchers("/api/resources/**").hasRole("PROVIDER") // Providers manage their resources
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/provider/**").hasRole("PROVIDER")
+                        .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/reviews/**").hasRole("CUSTOMER")
                         .requestMatchers("/api/payments/create-intent").hasRole("CUSTOMER")
-                        .requestMatchers("/api/payments").authenticated()
+                        .requestMatchers("/api/payments/**").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
 

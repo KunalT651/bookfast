@@ -20,14 +20,6 @@ public class Resource {
     private String specialization;
     private String status;
     private Double price;
-    
-    @Column(name = "service_category")
-    @JsonProperty("serviceCategory")
-    private String serviceCategory;
-    
-    @Column(name = "average_rating")
-    @JsonProperty("averageRating")
-    private Double averageRating;
 
     @Column(name = "experience_years")
     @JsonProperty("experienceYears")
@@ -49,11 +41,10 @@ public class Resource {
     private Double rating;
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
-    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @com.fasterxml.jackson.annotation.JsonManagedReference
     private List<AvailabilitySlot> availabilitySlots;
 
     public List<AvailabilitySlot> getAvailabilitySlots() { return availabilitySlots; }
@@ -101,10 +92,4 @@ public class Resource {
 
     public List<Review> getReviews() { return reviews; }
     public void setReviews(List<Review> reviews) { this.reviews = reviews; }
-    
-    public String getServiceCategory() { return serviceCategory; }
-    public void setServiceCategory(String serviceCategory) { this.serviceCategory = serviceCategory; }
-    
-    public Double getAverageRating() { return averageRating; }
-    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
 }

@@ -1,11 +1,12 @@
 
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+import { ProviderNavbarComponent } from '../provider-navbar/provider-navbar.component';
 
 @Component({
   selector: 'app-provider-dashboard',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterOutlet, ProviderNavbarComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })

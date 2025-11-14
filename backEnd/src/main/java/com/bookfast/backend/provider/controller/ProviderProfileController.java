@@ -35,12 +35,9 @@ public class ProviderProfileController {
         }
 
         return ResponseEntity.ok(Map.of(
-                "id", currentUser.getId(),
                 "firstName", currentUser.getFirstName(),
                 "lastName", currentUser.getLastName(),
-                "email", currentUser.getEmail(),
-                "organizationName", currentUser.getOrganizationName(),
-                "serviceCategory", currentUser.getServiceCategory()
+                "email", currentUser.getEmail()
         ));
     }
 
@@ -73,12 +70,9 @@ public class ProviderProfileController {
 
         return ResponseEntity.ok(Map.of(
                 "message", "Profile updated successfully",
-                "id", currentUser.getId(),
                 "firstName", currentUser.getFirstName(),
                 "lastName", currentUser.getLastName(),
-                "email", currentUser.getEmail(),
-                "organizationName", currentUser.getOrganizationName(),
-                "serviceCategory", currentUser.getServiceCategory()
+                "email", currentUser.getEmail()
         ));
     }
 }
