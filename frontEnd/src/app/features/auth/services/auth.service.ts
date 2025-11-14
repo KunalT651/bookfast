@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = 'http://localhost:8080/api/auth';
 
   constructor(private http: HttpClient) {}
 
@@ -18,7 +17,7 @@ export class AuthService {
   }
 
   getServiceCategories(): Observable<string[]> {
-    return this.http.get<string[]>(`${environment.apiUrl}/categories`, { withCredentials: true });
+    return this.http.get<string[]>('http://localhost:8080/api/categories', { withCredentials: true });
   }
 
   login(data: any): Observable<any> {
@@ -50,14 +49,11 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/password-reset/request`, { email }, { withCredentials: true });
   }
 
-  verifyResetToken(token: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/password-reset/verify?token=${token}`, { withCredentials: true });
+  validateResetToken(token: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/password-reset/validate?token=${token}`, { withCredentials: true });
   }
 
-  resetPassword(token: string, newPassword: string, confirmPassword: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/password-reset/reset`, 
-      { token, newPassword, confirmPassword }, 
-      { withCredentials: true }
-    );
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/password-reset/reset`, { token, newPassword }, { withCredentials: true });
   }
 }

@@ -4,21 +4,40 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "password_reset_token")
 public class PasswordResetToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @Column(nullable = false, unique = true)
     private String token;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
+    @Column(nullable = false)
     private LocalDateTime expiryDate;
-    private Boolean used = false;
     
-    // Getters and setters
+    @Column(nullable = false)
+    private boolean used = false;
+    
+    private LocalDateTime createdDate;
+    
+    // Constructors
+    public PasswordResetToken() {
+        this.createdDate = LocalDateTime.now();
+    }
+    
+    public PasswordResetToken(String token, User user, LocalDateTime expiryDate) {
+        this.token = token;
+        this.user = user;
+        this.expiryDate = expiryDate;
+        this.createdDate = LocalDateTime.now();
+    }
+    
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -51,12 +70,20 @@ public class PasswordResetToken {
         this.expiryDate = expiryDate;
     }
     
-    public Boolean getUsed() {
+    public boolean isUsed() {
         return used;
     }
     
-    public void setUsed(Boolean used) {
+    public void setUsed(boolean used) {
         this.used = used;
+    }
+    
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+    
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
     
     public boolean isExpired() {

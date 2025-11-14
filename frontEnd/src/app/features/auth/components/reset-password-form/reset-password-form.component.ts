@@ -13,11 +13,11 @@ import { AuthService } from '../../services/auth.service';
 })
 export class ResetPasswordFormComponent implements OnInit {
   resetForm: FormGroup;
+  token: string = '';
   loading = false;
   success = false;
   error: string | null = null;
-  token: string | null = null;
-  verifying = true;
+  validatingToken = true;
   tokenValid = false;
 
   constructor(
@@ -27,32 +27,37 @@ export class ResetPasswordFormComponent implements OnInit {
     private router: Router
   ) {
     this.resetForm = this.fb.group({
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
-    }, {
-      validators: this.passwordMatchValidator
-    });
+    }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit() {
-    // Get token from query params
-    this.token = this.route.snapshot.queryParamMap.get('token');
-    
-    if (!this.token) {
-      this.error = 'Invalid reset link. Please request a new password reset.';
-      this.verifying = false;
-      return;
-    }
+    // Get token from URL query params
+    this.route.queryParams.subscribe(params => {
+      this.token = params['token'] || '';
+      if (this.token) {
+        this.validateToken();
+      } else {
+        this.validatingToken = false;
+        this.error = 'Invalid reset link';
+      }
+    });
+  }
 
-    // Verify token
-    this.authService.verifyResetToken(this.token).subscribe({
-      next: () => {
-        this.tokenValid = true;
-        this.verifying = false;
+  validateToken() {
+    this.authService.validateResetToken(this.token).subscribe({
+      next: (response: any) => {
+        this.tokenValid = response.valid;
+        this.validatingToken = false;
+        if (!this.tokenValid) {
+          this.error = 'This reset link is invalid or has expired';
+        }
       },
-      error: (err) => {
-        this.error = err.error?.message || 'This reset link is invalid or has expired. Please request a new one.';
-        this.verifying = false;
+      error: () => {
+        this.tokenValid = false;
+        this.validatingToken = false;
+        this.error = 'This reset link is invalid or has expired';
       }
     });
   }
@@ -69,34 +74,35 @@ export class ResetPasswordFormComponent implements OnInit {
   }
 
   resetPassword() {
-    if (this.resetForm.invalid || !this.token) {
-      return;
+    if (this.resetForm.valid && this.token) {
+      this.loading = true;
+      this.error = null;
+
+      const newPassword = this.resetForm.value.newPassword;
+
+      this.authService.resetPassword(this.token, newPassword).subscribe({
+        next: () => {
+          this.success = true;
+          this.loading = false;
+          // Redirect to login after 3 seconds
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 3000);
+        },
+        error: (err) => {
+          this.error = err.error?.message || 'Failed to reset password';
+          this.loading = false;
+        }
+      });
     }
-
-    this.loading = true;
-    this.error = null;
-
-    const { newPassword, confirmPassword } = this.resetForm.value;
-
-    this.authService.resetPassword(this.token, newPassword, confirmPassword).subscribe({
-      next: (response) => {
-        this.success = true;
-        this.loading = false;
-        
-        // Redirect to login after 3 seconds
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 3000);
-      },
-      error: (err) => {
-        this.error = err.error?.message || 'Failed to reset password. Please try again.';
-        this.loading = false;
-      }
-    });
   }
 
-  requestNewLink() {
-    this.router.navigate(['/password-reset']);
+  get newPassword() {
+    return this.resetForm.get('newPassword');
+  }
+
+  get confirmPassword() {
+    return this.resetForm.get('confirmPassword');
   }
 }
 
