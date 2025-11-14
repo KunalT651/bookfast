@@ -40,37 +40,59 @@ export class AdminBookingsComponent implements OnInit {
     console.log('[AdminBookingsComponent] Loading bookings using AdminBookingService');
     this.adminBookingService.getAllBookings().subscribe({
       next: (data: any) => {
-        console.log('[AdminBookingsComponent] Received bookings:', data);
+        console.log('[AdminBookingsComponent] Received bookings in next callback:', data);
         // Handle both array and object responses
         if (Array.isArray(data)) {
           this.bookings = data;
+          console.log('[AdminBookingsComponent] Set bookings array with', data.length, 'items');
         } else if (data && Array.isArray(data.bookings)) {
           this.bookings = data.bookings;
         } else if (data && Array.isArray(data.data)) {
           this.bookings = data.data;
+        } else if (data === null || data === undefined) {
+          console.log('[AdminBookingsComponent] Null/undefined response, setting empty array');
+          this.bookings = [];
         } else {
-          console.warn('[AdminBookingsComponent] Unexpected data format:', data);
+          console.warn('[AdminBookingsComponent] Unexpected data format:', typeof data, data);
           this.bookings = [];
         }
         this.applyFilters();
         this.loading = false;
+        this.errorMessage = '';
       },
       error: (error: any) => {
-        this.errorMessage = 'Failed to load bookings. Please try again.';
-        this.loading = false;
-        console.error('[AdminBookingsComponent] Error loading bookings:', error);
+        console.error('[AdminBookingsComponent] Error callback triggered');
+        console.error('[AdminBookingsComponent] Full error object:', error);
         console.error('[AdminBookingsComponent] Error status:', error?.status);
+        console.error('[AdminBookingsComponent] Error message:', error?.message);
         console.error('[AdminBookingsComponent] Error URL:', error?.url);
-        // If status is 200 but error, try to parse response
-        if (error?.status === 200 && error?.error) {
-          console.log('[AdminBookingsComponent] Attempting to parse error response:', error.error);
-          if (Array.isArray(error.error)) {
-            this.bookings = error.error;
+        console.error('[AdminBookingsComponent] Error error:', error?.error);
+        
+        // If status is 200, the response might be in error.error
+        if (error?.status === 200) {
+          console.log('[AdminBookingsComponent] Status 200 but in error callback, checking error.error');
+          const responseData = error?.error;
+          if (Array.isArray(responseData)) {
+            console.log('[AdminBookingsComponent] Found array in error.error, using it');
+            this.bookings = responseData;
             this.applyFilters();
             this.loading = false;
             this.errorMessage = '';
+            return;
+          } else if (responseData === null || responseData === undefined || responseData === '') {
+            console.log('[AdminBookingsComponent] Empty response with status 200, setting empty array');
+            this.bookings = [];
+            this.applyFilters();
+            this.loading = false;
+            this.errorMessage = '';
+            return;
           }
         }
+        
+        // For actual errors
+        this.errorMessage = error?.error?.message || error?.message || 'Failed to load bookings. Please try again.';
+        this.loading = false;
+        this.bookings = [];
       }
     });
   }
