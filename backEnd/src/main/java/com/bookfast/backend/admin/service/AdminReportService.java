@@ -174,13 +174,14 @@ public class AdminReportService {
                     break;
                     
                 case "bookings":
-                    csv.append("Booking ID,Customer Name,Email,Resource,Start Time,End Time,Status,Amount,Payment Status\n");
+                    csv.append("Booking ID,Customer Name,Email,Phone,Resource,Start Time,End Time,Status,Amount,Payment Status\n");
                     List<Booking> bookings = bookingRepository.findAll();
                     for (Booking booking : bookings) {
-                        csv.append(String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%.2f,\"%s\"\n",
+                        csv.append(String.format("%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%.2f,\"%s\"\n",
                             booking.getId(),
                             escapeCsv(booking.getCustomerName()),
                             escapeCsv(booking.getCustomerEmail()),
+                            escapeCsv(booking.getCustomerPhone()),
                             booking.getResource() != null ? escapeCsv(booking.getResource().getName()) : "N/A",
                             booking.getStartTime() != null ? booking.getStartTime().format(formatter) : "N/A",
                             booking.getEndTime() != null ? booking.getEndTime().format(formatter) : "N/A",

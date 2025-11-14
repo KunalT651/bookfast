@@ -19,9 +19,14 @@
           <option value="cancelled">Cancelled</option>
         </select>
       </div>
-      <button class="refresh-btn" (click)="loadBookings()" [disabled]="loading">
-        {{ loading ? 'Loading...' : 'Refresh' }}
-      </button>
+      <div class="action-buttons">
+        <button class="export-btn" (click)="exportBookings()" [disabled]="exporting || bookings.length === 0">
+          {{ exporting ? 'Exporting...' : '📥 Export CSV' }}
+        </button>
+        <button class="refresh-btn" (click)="loadBookings()" [disabled]="loading">
+          {{ loading ? 'Loading...' : 'Refresh' }}
+        </button>
+      </div>
     </div>
   </div>
 

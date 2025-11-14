@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BookingService } from '../../../provider/services/booking.service';
+import { AdminReportService } from '../../services/admin-report.service';
 
 @Component({
   selector: 'app-admin-bookings',
@@ -20,8 +21,12 @@ export class AdminBookingsComponent implements OnInit {
   statusFilter = 'all';
   editingBooking: any = null;
   editForm: any = {};
+  exporting = false;
 
-  constructor(private bookingService: BookingService) {}
+  constructor(
+    private bookingService: BookingService,
+    private adminReportService: AdminReportService
+  ) {}
 
   ngOnInit() {
     this.loadBookings();
@@ -145,5 +150,35 @@ export class AdminBookingsComponent implements OnInit {
       case 'failed': return 'payment-failed';
       default: return 'payment-default';
     }
+  }
+
+  exportBookings() {
+    this.exporting = true;
+    this.errorMessage = '';
+    
+    this.adminReportService.exportReport('bookings', '365').subscribe({
+      next: (data) => {
+        // Create download link for CSV file
+        const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const filename = `bookfast_bookings_${new Date().toISOString().split('T')[0]}.csv`;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        
+        this.successMessage = 'Bookings exported successfully!';
+        this.exporting = false;
+        setTimeout(() => this.successMessage = '', 3000);
+        
+        console.log(`✅ Bookings exported to ${filename}`);
+      },
+      error: (error) => {
+        this.errorMessage = 'Failed to export bookings. Please try again.';
+        this.exporting = false;
+        console.error('Error exporting bookings:', error);
+      }
+    });
   }
 }
