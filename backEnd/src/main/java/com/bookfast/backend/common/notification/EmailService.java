@@ -22,7 +22,7 @@ public class EmailService {
         // Constructor for initialization
     }
     
-    @javax.annotation.PostConstruct
+    @jakarta.annotation.PostConstruct
     public void init() {
         System.out.println("[EmailService] Initializing EmailService...");
         System.out.println("[EmailService] SendGrid API key configured: " + (sendGridApiKey != null && !sendGridApiKey.isEmpty()));
