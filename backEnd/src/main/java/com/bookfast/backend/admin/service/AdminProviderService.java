@@ -140,12 +140,20 @@ public class AdminProviderService {
     }
 
     @Transactional
-    public User createProvider(User provider) {
+    public User createProvider(com.bookfast.backend.common.dto.ProviderCreateRequest request) {
         // Check if email already exists
-        if (userRepository.existsByEmail(provider.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("A user with this email already exists");
         }
 
+        // Create new User
+        User provider = new User();
+        provider.setFirstName(request.getFirstName());
+        provider.setLastName(request.getLastName());
+        provider.setEmail(request.getEmail());
+        provider.setOrganizationName(request.getOrganizationName());
+        provider.setServiceCategory(request.getServiceCategory());
+        
         // Set PROVIDER role
         provider.setRole(roleRepository.findByNameIgnoreCase("PROVIDER"));
         
@@ -178,7 +186,7 @@ public class AdminProviderService {
     }
 
     @Transactional
-    public User updateProvider(Long id, User providerData) {
+    public User updateProvider(Long id, com.bookfast.backend.common.dto.ProviderUpdateRequest request) {
         Optional<User> providerOpt = userRepository.findById(id);
         if (providerOpt.isEmpty() || !"PROVIDER".equals(providerOpt.get().getRole().getName())) {
             return null;
@@ -187,20 +195,23 @@ public class AdminProviderService {
         User provider = providerOpt.get();
         
         // Update fields
-        if (providerData.getFirstName() != null) {
-            provider.setFirstName(providerData.getFirstName());
+        if (request.getFirstName() != null) {
+            provider.setFirstName(request.getFirstName());
         }
-        if (providerData.getLastName() != null) {
-            provider.setLastName(providerData.getLastName());
+        if (request.getLastName() != null) {
+            provider.setLastName(request.getLastName());
         }
-        if (providerData.getEmail() != null) {
-            provider.setEmail(providerData.getEmail());
+        if (request.getEmail() != null) {
+            provider.setEmail(request.getEmail());
         }
-        if (providerData.getOrganizationName() != null) {
-            provider.setOrganizationName(providerData.getOrganizationName());
+        if (request.getOrganizationName() != null) {
+            provider.setOrganizationName(request.getOrganizationName());
         }
-        if (providerData.getServiceCategory() != null) {
-            provider.setServiceCategory(providerData.getServiceCategory());
+        if (request.getServiceCategory() != null) {
+            provider.setServiceCategory(request.getServiceCategory());
+        }
+        if (request.getIsActive() != null) {
+            provider.setIsActive(request.getIsActive());
         }
 
         return userRepository.save(provider);

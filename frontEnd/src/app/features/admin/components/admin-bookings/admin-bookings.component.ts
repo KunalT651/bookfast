@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BookingService } from '../../../provider/services/booking.service';
+import { AdminBookingService } from '../../services/admin-booking.service';
 import { AdminReportService } from '../../services/admin-report.service';
 
 @Component({
@@ -24,7 +24,7 @@ export class AdminBookingsComponent implements OnInit {
   exporting = false;
 
   constructor(
-    private bookingService: BookingService,
+    private adminBookingService: AdminBookingService,
     private adminReportService: AdminReportService
   ) {}
 
@@ -37,9 +37,7 @@ export class AdminBookingsComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
     
-    // For now, we'll use the provider endpoint to get all bookings
-    // In a real system, you'd have a dedicated admin endpoint
-    this.bookingService.getBookingsByProvider().subscribe({
+    this.adminBookingService.getAllBookings().subscribe({
       next: (data) => {
         this.bookings = data;
         this.applyFilters();
@@ -95,16 +93,25 @@ export class AdminBookingsComponent implements OnInit {
   saveEdit() {
     if (!this.editingBooking) return;
 
-    // For now, we'll just update the local data
-    // In a real system, you'd call an admin update endpoint
-    const index = this.bookings.findIndex(b => b.id === this.editingBooking.id);
-    if (index !== -1) {
-      this.bookings[index] = { ...this.bookings[index], ...this.editForm };
-      this.applyFilters();
-    }
-    this.editingBooking = null;
-    this.successMessage = 'Booking updated successfully!';
-    setTimeout(() => this.successMessage = '', 3000);
+    this.loading = true;
+    this.adminBookingService.updateBooking(this.editingBooking.id, this.editForm).subscribe({
+      next: (updatedBooking) => {
+        const index = this.bookings.findIndex(b => b.id === this.editingBooking.id);
+        if (index !== -1) {
+          this.bookings[index] = updatedBooking;
+          this.applyFilters();
+        }
+        this.editingBooking = null;
+        this.successMessage = 'Booking updated successfully!';
+        this.loading = false;
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (error) => {
+        this.errorMessage = 'Failed to update booking. Please try again.';
+        this.loading = false;
+        console.error('Error updating booking:', error);
+      }
+    });
   }
 
   cancelEdit() {
@@ -114,15 +121,18 @@ export class AdminBookingsComponent implements OnInit {
 
   deleteBooking(id: number) {
     if (confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
-      this.bookingService.deleteBooking(id).subscribe({
+      this.loading = true;
+      this.adminBookingService.deleteBooking(id).subscribe({
         next: () => {
           this.bookings = this.bookings.filter(b => b.id !== id);
           this.applyFilters();
           this.successMessage = 'Booking deleted successfully!';
+          this.loading = false;
           setTimeout(() => this.successMessage = '', 3000);
         },
         error: (error) => {
           this.errorMessage = 'Failed to delete booking. Please try again.';
+          this.loading = false;
           console.error('Error deleting booking:', error);
         }
       });

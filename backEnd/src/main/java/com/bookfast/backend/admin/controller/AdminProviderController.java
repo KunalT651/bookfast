@@ -2,6 +2,8 @@ package com.bookfast.backend.admin.controller;
 
 import com.bookfast.backend.admin.service.AdminProviderService;
 import com.bookfast.backend.common.dto.ErrorResponse;
+import com.bookfast.backend.common.dto.ProviderCreateRequest;
+import com.bookfast.backend.common.dto.ProviderUpdateRequest;
 import com.bookfast.backend.common.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,9 +43,9 @@ public class AdminProviderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createProvider(@RequestBody User provider) {
+    public ResponseEntity<?> createProvider(@RequestBody ProviderCreateRequest request) {
         try {
-            User createdProvider = adminProviderService.createProvider(provider);
+            User createdProvider = adminProviderService.createProvider(request);
             return ResponseEntity.ok(createdProvider);
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Failed to create provider: " + ex.getMessage()));
@@ -51,9 +53,9 @@ public class AdminProviderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProvider(@PathVariable Long id, @RequestBody User provider) {
+    public ResponseEntity<?> updateProvider(@PathVariable Long id, @RequestBody ProviderUpdateRequest request) {
         try {
-            User updatedProvider = adminProviderService.updateProvider(id, provider);
+            User updatedProvider = adminProviderService.updateProvider(id, request);
             if (updatedProvider == null) {
                 return ResponseEntity.notFound().build();
             }
