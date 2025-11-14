@@ -10,6 +10,7 @@ import { ResetPasswordFormComponent } from './features/auth/components/reset-pas
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { ServiceCategoriesComponent } from './features/admin/components/service-categories/service-categories.component';
 import { ProvidersComponent } from './features/admin/components/providers/providers.component';
+import { AdminBookingsComponent } from './features/admin/components/admin-bookings/admin-bookings.component';
 import { DatabaseManagerComponent } from './features/admin/components/database-manager/database-manager.component';
 import { PermanentCleanupComponent } from './features/admin/components/permanent-cleanup/permanent-cleanup.component';
 import { ResourcesComponent } from './features/provider/components/resources/resources.component';
@@ -33,6 +34,7 @@ export const routes: Routes = [
   { path: 'admin/dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'admin/services', component: ServiceCategoriesComponent, canActivate: [authGuard] },
   { path: 'admin/providers', component: ProvidersComponent, canActivate: [authGuard] },
+  { path: 'admin/bookings', component: AdminBookingsComponent, canActivate: [authGuard] },
   { path: 'admin/database', component: DatabaseManagerComponent, canActivate: [authGuard] },
   { path: 'admin/cleanup', component: PermanentCleanupComponent, canActivate: [authGuard] },
 

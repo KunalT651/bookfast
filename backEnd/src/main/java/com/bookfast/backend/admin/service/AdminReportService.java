@@ -154,7 +154,8 @@ public class AdminReportService {
     public byte[] exportReportToCSV(String reportType, String period) {
         try {
             StringBuilder csv = new StringBuilder();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             
             switch (reportType.toLowerCase()) {
                 case "users":
@@ -167,7 +168,7 @@ public class AdminReportService {
                             escapeCsv(user.getLastName()),
                             escapeCsv(user.getEmail()),
                             user.getRole() != null ? user.getRole().getName() : "N/A",
-                            user.getCreatedDate() != null ? user.getCreatedDate().format(formatter) : "N/A",
+                            user.getCreatedDate() != null ? user.getCreatedDate().format(dateFormatter) : "N/A",
                             user.getIsActive() != null ? user.getIsActive() : false
                         ));
                     }
@@ -183,8 +184,8 @@ public class AdminReportService {
                             escapeCsv(booking.getCustomerEmail()),
                             escapeCsv(booking.getCustomerPhone()),
                             booking.getResource() != null ? escapeCsv(booking.getResource().getName()) : "N/A",
-                            booking.getStartTime() != null ? booking.getStartTime().format(formatter) : "N/A",
-                            booking.getEndTime() != null ? booking.getEndTime().format(formatter) : "N/A",
+                            booking.getStartTime() != null ? booking.getStartTime().format(dateTimeFormatter) : "N/A",
+                            booking.getEndTime() != null ? booking.getEndTime().format(dateTimeFormatter) : "N/A",
                             escapeCsv(booking.getStatus()),
                             booking.getFinalAmount() != null ? booking.getFinalAmount() : 0.0,
                             escapeCsv(booking.getPaymentStatus())
@@ -200,7 +201,7 @@ public class AdminReportService {
                             payment.getId(),
                             payment.getBooking() != null ? payment.getBooking().getId() : 0,
                             payment.getAmount() != null ? payment.getAmount() : 0.0,
-                            payment.getPaymentDate() != null ? payment.getPaymentDate().format(formatter) : "N/A",
+                            payment.getPaymentDate() != null ? payment.getPaymentDate().format(dateTimeFormatter) : "N/A",
                             escapeCsv(payment.getPaymentMethod()),
                             escapeCsv(payment.getPaymentStatus())
                         ));
@@ -220,7 +221,7 @@ public class AdminReportService {
                             escapeCsv(provider.getEmail()),
                             escapeCsv(provider.getOrganizationName()),
                             escapeCsv(provider.getServiceCategory()),
-                            provider.getCreatedDate() != null ? provider.getCreatedDate().format(formatter) : "N/A",
+                            provider.getCreatedDate() != null ? provider.getCreatedDate().format(dateFormatter) : "N/A",
                             provider.getIsActive() != null ? provider.getIsActive() : false
                         ));
                     }
@@ -228,7 +229,7 @@ public class AdminReportService {
                     
                 default:
                     csv.append("System Overview Report\n");
-                    csv.append("Generated," + LocalDateTime.now().format(formatter) + "\n\n");
+                    csv.append("Generated," + LocalDateTime.now().format(dateTimeFormatter) + "\n\n");
                     Map<String, Object> reports = getSystemReports(period);
                     csv.append("Metric,Value\n");
                     csv.append("Total Users," + reports.get("totalUsers") + "\n");
