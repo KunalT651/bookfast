@@ -3,6 +3,7 @@ package com.bookfast.backend.resource.controller;
 import com.bookfast.backend.common.auth.service.AuthService;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
+import com.bookfast.backend.common.util.PasswordUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -81,9 +82,8 @@ public class CustomerProfileController {
             currentUser.setEmail(updates.get("email"));
         }
         if (updates.containsKey("password") && !updates.get("password").isEmpty()) {
-            // Note: In a real application, you should hash the password
-            // For now, we'll store it as plain text (NOT RECOMMENDED FOR PRODUCTION)
-            currentUser.setPassword(updates.get("password"));
+            // Hash the password before storing
+            currentUser.setPassword(PasswordUtil.hash(updates.get("password")));
         }
 
         userRepository.save(currentUser);
