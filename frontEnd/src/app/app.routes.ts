@@ -7,7 +7,7 @@ import { CreateAdminComponent } from './features/auth/components/create-admin/cr
 import { PasswordResetComponent } from './features/auth/components/password-reset/password-reset.component';
 import { ResetPasswordFormComponent } from './features/auth/components/reset-password-form/reset-password-form.component';
 
-import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
+import { AdminDashboardComponent } from './features/admin/components/admin-dashboard/admin-dashboard.component';
 import { ServiceCategoriesComponent } from './features/admin/components/service-categories/service-categories.component';
 import { ProvidersComponent } from './features/admin/components/providers/providers.component';
 import { AdminBookingsComponent } from './features/admin/components/admin-bookings/admin-bookings.component';
@@ -34,7 +34,7 @@ export const routes: Routes = [
   { path: 'password-reset', component: PasswordResetComponent },
   { path: 'reset-password', component: ResetPasswordFormComponent },
 
-  { path: 'admin/dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [authGuard] },
   { path: 'admin/services', component: ServiceCategoriesComponent, canActivate: [authGuard] },
   { path: 'admin/providers', component: ProvidersComponent, canActivate: [authGuard] },
   { path: 'admin/bookings', component: AdminBookingsComponent, canActivate: [authGuard] },

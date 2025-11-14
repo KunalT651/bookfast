@@ -41,11 +41,11 @@ export class AdminDashboardComponent implements OnInit {
     this.errorMessage = '';
     
     this.adminDashboardService.getDashboardData().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.dashboardData = { ...this.dashboardData, ...data };
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to load dashboard data';
         this.loading = false;
         console.error('Error loading dashboard data:', error);
