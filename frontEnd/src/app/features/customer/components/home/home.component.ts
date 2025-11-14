@@ -56,6 +56,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     console.log('[HomeComponent] ngOnInit - Loading resources...');
+    console.log('[HomeComponent] Component initialized at:', new Date().toISOString());
     try {
       this.resourceService.getResources().subscribe({
         next: (res: Resource[]) => {
