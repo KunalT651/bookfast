@@ -51,15 +51,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .ignoringRequestMatchers(
-                                "/api/auth/login",
-                                "/api/auth/register",
-                                "/api/auth/register-provider",
-                                "/api/auth/logout",
+                                "/api/auth/**",
+                                "/api/admin/**", // Allow all admin operations without CSRF
                                 "/api/reviews/**",
                                 "/api/payments/create-intent",
-                                "/api/bookings", // Allow POST for bookings without CSRF
-                                "/api/admin/create-admin",
-                                "/api/admin/check-admin-exists",
+                                "/api/bookings/**", // Allow all booking operations without CSRF
+                                "/api/resources/**", // Allow all resource operations without CSRF
+                                "/api/customers/**", // Allow customer operations without CSRF
                                 "/api/test/**",
                                 "/api/database/**",
                                 "/api/test-resource/**",
