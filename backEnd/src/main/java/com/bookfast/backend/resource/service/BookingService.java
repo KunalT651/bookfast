@@ -129,9 +129,16 @@ public class BookingService {
         String endTime = booking.getEndTime().format(timeFormatter);
         
         String serviceName = booking.getResource() != null ? booking.getResource().getName() : "Service";
-        String providerName = booking.getResource() != null && booking.getResource().getProvider() != null 
-            ? booking.getResource().getProvider().getFirstName() + " " + booking.getResource().getProvider().getLastName()
-            : "Provider";
+        
+        // Get provider name from User entity
+        String providerName = "Provider";
+        if (booking.getResource() != null && booking.getResource().getProviderId() != null) {
+            Optional<User> providerOpt = userRepository.findById(booking.getResource().getProviderId());
+            if (providerOpt.isPresent()) {
+                User provider = providerOpt.get();
+                providerName = provider.getFirstName() + " " + provider.getLastName();
+            }
+        }
         
         // Send Email Confirmation
         if (booking.getCustomerEmail() != null && !booking.getCustomerEmail().isEmpty()) {
