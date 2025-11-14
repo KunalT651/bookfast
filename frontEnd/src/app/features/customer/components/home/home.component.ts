@@ -95,4 +95,9 @@ export class HomeComponent implements OnInit {
   ngDoCheck() {
     this.filterResources();
   }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.filteredResources = this.resources;
+  }
 }
