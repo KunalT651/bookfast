@@ -94,26 +94,36 @@ public class AdminUserService {
         // Send welcome email based on role
         try {
             if (savedUser.getEmail() != null && !savedUser.getEmail().isEmpty()) {
+                System.out.println("[AdminUserService] Attempting to send welcome email to: " + savedUser.getEmail());
                 String emailContent;
                 String subject;
                 
                 if ("CUSTOMER".equalsIgnoreCase(roleName)) {
                     emailContent = createCustomerWelcomeEmail(savedUser, generatedPassword);
                     subject = "Welcome to BookFast - Your Account Has Been Created";
+                    System.out.println("[AdminUserService] Created customer welcome email");
                 } else if ("PROVIDER".equalsIgnoreCase(roleName)) {
                     emailContent = createProviderWelcomeEmail(savedUser, generatedPassword);
                     subject = "Welcome to BookFast - Your Provider Account Credentials";
+                    System.out.println("[AdminUserService] Created provider welcome email");
                 } else {
                     // For other roles (like ADMIN), send a generic welcome email
                     emailContent = createGenericWelcomeEmail(savedUser, generatedPassword);
                     subject = "Welcome to BookFast - Your Account Has Been Created";
+                    System.out.println("[AdminUserService] Created generic welcome email");
                 }
                 
+                System.out.println("[AdminUserService] Calling emailService.sendHtmlEmail...");
                 emailService.sendHtmlEmail(savedUser.getEmail(), subject, emailContent);
-                System.out.println("[AdminUserService] Welcome email sent to: " + savedUser.getEmail());
+                System.out.println("[AdminUserService] SUCCESS: Welcome email sent to: " + savedUser.getEmail());
+            } else {
+                System.err.println("[AdminUserService] Cannot send email: email is null or empty");
             }
         } catch (Exception e) {
-            System.err.println("[AdminUserService] Failed to send welcome email: " + e.getMessage());
+            System.err.println("[AdminUserService] ERROR: Failed to send welcome email to " + savedUser.getEmail());
+            System.err.println("[AdminUserService] Exception type: " + e.getClass().getName());
+            System.err.println("[AdminUserService] Exception message: " + e.getMessage());
+            System.err.println("[AdminUserService] Exception cause: " + (e.getCause() != null ? e.getCause().getMessage() : "null"));
             e.printStackTrace();
             // Don't fail user creation if email fails
         }

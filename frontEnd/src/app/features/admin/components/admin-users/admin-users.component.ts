@@ -22,6 +22,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   successMessage = '';
   private subscriptions: Subscription[] = [];
   private isLoading = false; // Guard to prevent multiple simultaneous loads
+  private hasLoaded = false; // Track if data has been loaded
 
   // User form fields
   userForm = {
@@ -36,8 +37,13 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   constructor(private adminUserService: AdminUserService) {}
 
   ngOnInit() {
-    console.log('[AdminUsersComponent] ngOnInit called');
-    this.loadUsers();
+    console.log('[AdminUsersComponent] ngOnInit called, hasLoaded:', this.hasLoaded);
+    // Only load if we haven't loaded yet or if users array is empty
+    if (!this.hasLoaded || this.users.length === 0) {
+      this.loadUsers();
+    } else {
+      console.log('[AdminUsersComponent] Data already loaded, skipping loadUsers');
+    }
   }
 
   ngOnDestroy() {
@@ -70,12 +76,14 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
         this.filteredUsers = users;
         this.loading = false;
         this.isLoading = false;
+        this.hasLoaded = true; // Mark as loaded
       },
       error: (error) => {
         console.error('[AdminUsersComponent] Error loading users:', error);
         this.errorMessage = 'Failed to load users: ' + (error.message || error.statusText);
         this.loading = false;
         this.isLoading = false;
+        this.hasLoaded = false; // Reset on error so we can retry
       }
     });
     
