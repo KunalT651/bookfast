@@ -165,7 +165,9 @@ export class AdminBookingsComponent implements OnInit {
   exportBookings() {
     this.exporting = true;
     this.errorMessage = '';
+    this.successMessage = '';
     
+    // Export all bookings from last 365 days
     this.adminReportService.exportReport('bookings', '365').subscribe({
       next: (data) => {
         // Create download link for CSV file
@@ -173,21 +175,25 @@ export class AdminBookingsComponent implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const filename = `bookfast_bookings_${new Date().toISOString().split('T')[0]}.csv`;
+        const date = new Date().toISOString().split('T')[0];
+        const filename = `bookfast_bookings_${date}.csv`;
         link.download = filename;
         link.click();
         window.URL.revokeObjectURL(url);
         
-        this.successMessage = 'Bookings exported successfully!';
+        // Show success message with booking count
+        const bookingCount = this.bookings.length;
+        this.successMessage = `Successfully exported ${bookingCount} booking${bookingCount !== 1 ? 's' : ''} to CSV!`;
         this.exporting = false;
-        setTimeout(() => this.successMessage = '', 3000);
+        setTimeout(() => this.successMessage = '', 5000);
         
-        console.log(`✅ Bookings exported to ${filename}`);
+        console.log(`✅ Exported ${bookingCount} bookings to ${filename}`);
       },
       error: (error) => {
         this.errorMessage = 'Failed to export bookings. Please try again.';
         this.exporting = false;
         console.error('Error exporting bookings:', error);
+        setTimeout(() => this.errorMessage = '', 5000);
       }
     });
   }
