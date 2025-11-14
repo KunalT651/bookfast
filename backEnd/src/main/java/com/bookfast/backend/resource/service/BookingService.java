@@ -13,10 +13,13 @@ import com.bookfast.backend.resource.dto.BookingDetailsDTO;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
 import com.bookfast.backend.provider.service.GoogleCalendarService;
+import com.bookfast.backend.common.notification.EmailService;
+import com.bookfast.backend.common.notification.SmsService;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
@@ -26,15 +29,20 @@ public class BookingService {
     private final UserRepository userRepository;
     private final GoogleCalendarService googleCalendarService;
     private final AvailabilitySlotRepository availabilitySlotRepository;
+    private final EmailService emailService;
+    private final SmsService smsService;
 
     public BookingService(BookingRepository repository, PaymentRepository paymentRepository, 
                          UserRepository userRepository, GoogleCalendarService googleCalendarService,
-                         AvailabilitySlotRepository availabilitySlotRepository) {
+                         AvailabilitySlotRepository availabilitySlotRepository,
+                         EmailService emailService, SmsService smsService) {
         this.repository = repository;
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.googleCalendarService = googleCalendarService;
         this.availabilitySlotRepository = availabilitySlotRepository;
+        this.emailService = emailService;
+        this.smsService = smsService;
     }
 
     public Booking createBooking(Booking booking) {
@@ -98,7 +106,179 @@ public class BookingService {
             System.err.println("Failed to create Google Calendar event: " + e.getMessage());
         }
         
+        // Send confirmation notifications (email & SMS)
+        try {
+            sendBookingConfirmationNotifications(savedBooking);
+        } catch (Exception e) {
+            // Log the error but don't fail the booking creation
+            System.err.println("[BookingService] Failed to send notifications: " + e.getMessage());
+        }
+        
         return savedBooking;
+    }
+    
+    /**
+     * Send booking confirmation notifications via email and SMS
+     */
+    private void sendBookingConfirmationNotifications(Booking booking) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
+        
+        String date = booking.getStartTime().format(dateFormatter);
+        String startTime = booking.getStartTime().format(timeFormatter);
+        String endTime = booking.getEndTime().format(timeFormatter);
+        
+        String serviceName = booking.getResource() != null ? booking.getResource().getName() : "Service";
+        String providerName = booking.getResource() != null && booking.getResource().getProvider() != null 
+            ? booking.getResource().getProvider().getFirstName() + " " + booking.getResource().getProvider().getLastName()
+            : "Provider";
+        
+        // Send Email Confirmation
+        if (booking.getCustomerEmail() != null && !booking.getCustomerEmail().isEmpty()) {
+            try {
+                String emailContent = createBookingConfirmationEmail(booking, date, startTime, endTime, serviceName, providerName);
+                emailService.sendHtmlEmail(
+                    booking.getCustomerEmail(),
+                    "Booking Confirmation - " + serviceName,
+                    emailContent
+                );
+                System.out.println("[BookingService] Confirmation email sent to: " + booking.getCustomerEmail());
+            } catch (Exception e) {
+                System.err.println("[BookingService] Failed to send confirmation email: " + e.getMessage());
+            }
+        }
+        
+        // Send SMS Confirmation (only if phone number is provided)
+        if (booking.getCustomerPhone() != null && !booking.getCustomerPhone().trim().isEmpty()) {
+            try {
+                String smsContent = createBookingConfirmationSms(booking, date, startTime, endTime, serviceName, providerName);
+                boolean smsSent = smsService.sendSms(booking.getCustomerPhone(), smsContent);
+                if (smsSent) {
+                    System.out.println("[BookingService] Confirmation SMS sent to: " + booking.getCustomerPhone());
+                } else {
+                    System.out.println("[BookingService] SMS not sent (Twilio not configured or phone number invalid)");
+                }
+            } catch (Exception e) {
+                System.err.println("[BookingService] Failed to send confirmation SMS: " + e.getMessage());
+            }
+        } else {
+            System.out.println("[BookingService] No phone number provided. Skipping SMS notification.");
+        }
+    }
+    
+    /**
+     * Create HTML email content for booking confirmation
+     */
+    private String createBookingConfirmationEmail(Booking booking, String date, String startTime, 
+                                                  String endTime, String serviceName, String providerName) {
+        return String.format("""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #10b981; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+                    .content { background-color: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+                    .booking-details { background-color: white; padding: 20px; margin: 20px 0; border-left: 4px solid #10b981; border-radius: 4px; }
+                    .detail-item { margin: 12px 0; }
+                    .detail-label { font-weight: bold; color: #10b981; }
+                    .detail-value { margin-left: 10px; }
+                    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 0.875rem; }
+                    .important { background-color: #fef3c7; padding: 15px; border-radius: 6px; margin: 20px 0; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>✅ Booking Confirmed!</h1>
+                    </div>
+                    <div class="content">
+                        <h2>Hello %s,</h2>
+                        <p>Your booking has been successfully confirmed! Here are the details:</p>
+                        
+                        <div class="booking-details">
+                            <h3>📋 Booking Details:</h3>
+                            <div class="detail-item">
+                                <span class="detail-label">Booking ID:</span>
+                                <span class="detail-value">#%d</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Service:</span>
+                                <span class="detail-value">%s</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Provider:</span>
+                                <span class="detail-value">%s</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Date:</span>
+                                <span class="detail-value">%s</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Time:</span>
+                                <span class="detail-value">%s - %s</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Amount:</span>
+                                <span class="detail-value">$%.2f</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value">%s</span>
+                            </div>
+                        </div>
+                        
+                        <div class="important">
+                            <strong>⏰ Reminder:</strong> Please arrive 5 minutes before your scheduled time.
+                        </div>
+                        
+                        <p>If you need to cancel or reschedule, please log in to your account or contact us at least 24 hours in advance.</p>
+                        
+                        <p>Thank you for choosing BookFast!</p>
+                    </div>
+                    <div class="footer">
+                        <p>© 2025 BookFast. All rights reserved.</p>
+                        <p>This is an automated message. Please do not reply to this email.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """,
+            booking.getCustomerName(),
+            booking.getId(),
+            serviceName,
+            providerName,
+            date,
+            startTime,
+            endTime,
+            booking.getFinalAmount() != null ? booking.getFinalAmount() : 0.0,
+            booking.getStatus() != null ? booking.getStatus().toUpperCase() : "PENDING"
+        );
+    }
+    
+    /**
+     * Create SMS content for booking confirmation
+     */
+    private String createBookingConfirmationSms(Booking booking, String date, String startTime, 
+                                                String endTime, String serviceName, String providerName) {
+        return String.format(
+            "✅ BookFast Booking Confirmed!\n\n" +
+            "Booking #%d\n" +
+            "Service: %s\n" +
+            "Provider: %s\n" +
+            "Date: %s\n" +
+            "Time: %s - %s\n" +
+            "Amount: $%.2f\n\n" +
+            "Please arrive 5 min early. Thank you!",
+            booking.getId(),
+            serviceName,
+            providerName,
+            date,
+            startTime,
+            endTime,
+            booking.getFinalAmount() != null ? booking.getFinalAmount() : 0.0
+        );
     }
 
     public List<Booking> getBookingsByResource(Long resourceId) {
