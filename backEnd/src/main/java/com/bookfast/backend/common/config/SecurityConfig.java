@@ -18,10 +18,28 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        configuration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        
+        // Read from CORS_ALLOWED_ORIGINS environment variable
+        String corsOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
+        java.util.List<String> allowedOrigins = new java.util.ArrayList<>();
+
+        if (corsOrigins != null && !corsOrigins.isEmpty()) {
+            // Split by comma and add all origins
+            String[] origins = corsOrigins.split(",");
+            for (String origin : origins) {
+                allowedOrigins.add(origin.trim());
+            }
+        } else {
+            // Fallback to localhost for development
+            allowedOrigins.add("http://localhost:4200");
+        }
+
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
+        
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
