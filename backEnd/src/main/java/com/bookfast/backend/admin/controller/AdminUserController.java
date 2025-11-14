@@ -2,6 +2,8 @@ package com.bookfast.backend.admin.controller;
 
 import com.bookfast.backend.admin.service.AdminUserService;
 import com.bookfast.backend.common.dto.ErrorResponse;
+import com.bookfast.backend.common.dto.UserCreateRequest;
+import com.bookfast.backend.common.dto.UserUpdateRequest;
 import com.bookfast.backend.common.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,9 +43,9 @@ public class AdminUserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ResponseEntity<?> createUser(@RequestBody UserCreateRequest request) {
         try {
-            User createdUser = adminUserService.createUser(user);
+            User createdUser = adminUserService.createUser(request);
             return ResponseEntity.ok(createdUser);
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Failed to create user: " + ex.getMessage()));
@@ -51,9 +53,9 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
         try {
-            User updatedUser = adminUserService.updateUser(id, user);
+            User updatedUser = adminUserService.updateUser(id, request);
             if (updatedUser == null) {
                 return ResponseEntity.notFound().build();
             }

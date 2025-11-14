@@ -1,5 +1,8 @@
 package com.bookfast.backend.admin.service;
 
+import com.bookfast.backend.common.dto.UserCreateRequest;
+import com.bookfast.backend.common.dto.UserUpdateRequest;
+import com.bookfast.backend.common.model.Role;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
 import com.bookfast.backend.common.repository.RoleRepository;
@@ -7,6 +10,7 @@ import com.bookfast.backend.common.util.PasswordUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,24 +33,38 @@ public class AdminUserService {
     }
 
     @Transactional
-    public User createUser(User user) {
-        // Set default password if not provided
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+    public User createUser(UserCreateRequest request) {
+        User user = new User();
+        
+        // Set basic fields
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setOrganizationName(request.getOrganizationName());
+        user.setServiceCategory(request.getServiceCategory());
+        user.setCreatedDate(LocalDate.now());
+        user.setIsActive(true);
+        
+        // Set password
+        if (request.getPassword() == null || request.getPassword().isEmpty()) {
             user.setPassword(PasswordUtil.hash("defaultPassword123"));
         } else {
-            user.setPassword(PasswordUtil.hash(user.getPassword()));
+            user.setPassword(PasswordUtil.hash(request.getPassword()));
         }
 
-        // Set role if not provided
-        if (user.getRole() == null) {
-            user.setRole(roleRepository.findByNameIgnoreCase("CUSTOMER"));
+        // Set role
+        String roleName = request.getRole() != null ? request.getRole() : "CUSTOMER";
+        Role role = roleRepository.findByNameIgnoreCase(roleName);
+        if (role == null) {
+            throw new RuntimeException("Role not found: " + roleName);
         }
+        user.setRole(role);
 
         return userRepository.save(user);
     }
 
     @Transactional
-    public User updateUser(Long id, User userData) {
+    public User updateUser(Long id, UserUpdateRequest request) {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
             return null;
@@ -55,23 +73,32 @@ public class AdminUserService {
         User user = userOpt.get();
         
         // Update fields
-        if (userData.getFirstName() != null) {
-            user.setFirstName(userData.getFirstName());
+        if (request.getFirstName() != null) {
+            user.setFirstName(request.getFirstName());
         }
-        if (userData.getLastName() != null) {
-            user.setLastName(userData.getLastName());
+        if (request.getLastName() != null) {
+            user.setLastName(request.getLastName());
         }
-        if (userData.getEmail() != null) {
-            user.setEmail(userData.getEmail());
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
         }
-        if (userData.getOrganizationName() != null) {
-            user.setOrganizationName(userData.getOrganizationName());
+        if (request.getOrganizationName() != null) {
+            user.setOrganizationName(request.getOrganizationName());
         }
-        if (userData.getServiceCategory() != null) {
-            user.setServiceCategory(userData.getServiceCategory());
+        if (request.getServiceCategory() != null) {
+            user.setServiceCategory(request.getServiceCategory());
         }
-        if (userData.getRole() != null) {
-            user.setRole(userData.getRole());
+        if (request.getIsActive() != null) {
+            user.setIsActive(request.getIsActive());
+        }
+        
+        // Update role if provided
+        if (request.getRole() != null && !request.getRole().isEmpty()) {
+            Role role = roleRepository.findByNameIgnoreCase(request.getRole());
+            if (role == null) {
+                throw new RuntimeException("Role not found: " + request.getRole());
+            }
+            user.setRole(role);
         }
 
         return userRepository.save(user);
