@@ -106,8 +106,8 @@ public class BookingController {
     }
 
     @PutMapping("/{bookingId}/cancel")
-    public Booking cancelBooking(@PathVariable Long bookingId) {
-        return service.cancelBooking(bookingId);
+    public void cancelBooking(@PathVariable Long bookingId) {
+        service.cancelBooking(bookingId);
     }
 
     @PutMapping("/provider/{providerId}/edit/{bookingId}")

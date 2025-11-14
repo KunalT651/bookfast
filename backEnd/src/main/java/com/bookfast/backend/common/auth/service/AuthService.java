@@ -21,20 +21,22 @@ public class AuthService {
 
     @Transactional
     public AuthResponse registerCustomer(RegisterRequest req) {
-        if (!req.password.equals(req.confirmPassword)) {
+        if (!req.getPassword().equals(req.getConfirmPassword())) {
             throw new RuntimeException("Passwords do not match");
         }
-        if (userRepo.existsByEmail(req.email)) {
+        if (userRepo.existsByEmail(req.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
         User user = new User();
-        user.setFirstName(req.firstName);
-        user.setLastName(req.lastName);
-        user.setEmail(req.email);
-        user.setPassword(PasswordUtil.hash(req.password));
+        user.setFirstName(req.getFirstName());
+        user.setLastName(req.getLastName());
+        user.setEmail(req.getEmail());
+        user.setPassword(PasswordUtil.hash(req.getPassword()));
+        user.setCreatedDate(java.time.LocalDate.now());
+        user.setIsActive(true);
 
         // Lookup Role entity by name (e.g., "CUSTOMER")
-        Role role = roleRepo.findByNameIgnoreCase(req.role);
+        Role role = roleRepo.findByNameIgnoreCase(req.getRole());
         if (role == null) throw new RuntimeException("Invalid role");
         user.setRole(role);
 
@@ -46,17 +48,21 @@ public class AuthService {
 
     @Transactional
     public AuthResponse registerProvider(RegisterProviderRequest req) {
-        if (!req.password.equals(req.confirmPassword)) {
+        if (!req.getPassword().equals(req.getConfirmPassword())) {
             throw new RuntimeException("Passwords do not match");
         }
-        if (userRepo.existsByEmail(req.email)) {
+        if (userRepo.existsByEmail(req.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
         User user = new User();
-        user.setFirstName(req.firstName);
-        user.setLastName(req.lastName);
-        user.setEmail(req.email);
-        user.setPassword(PasswordUtil.hash(req.password));
+        user.setFirstName(req.getFirstName());
+        user.setLastName(req.getLastName());
+        user.setEmail(req.getEmail());
+        user.setPassword(PasswordUtil.hash(req.getPassword()));
+        user.setOrganizationName(req.getOrganizationName());
+        user.setServiceCategory(req.getServiceCategory());
+        user.setCreatedDate(java.time.LocalDate.now());
+        user.setIsActive(true);
 
         // Lookup Role entity by name (e.g., "PROVIDER")
         Role role = roleRepo.findByNameIgnoreCase(req.getRole());
@@ -72,9 +78,9 @@ public class AuthService {
     }
 
     public AuthResponse login(AuthRequest req) {
-        User user = userRepo.findByEmail(req.email)
+        User user = userRepo.findByEmail(req.getEmail())
             .orElseThrow(() -> new RuntimeException("Invalid email or password"));
-        if (!PasswordUtil.matches(req.password, user.getPassword())) {
+        if (!PasswordUtil.matches(req.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
         String token = jwtService.generateToken(user.getEmail(), user.getRole().getName());

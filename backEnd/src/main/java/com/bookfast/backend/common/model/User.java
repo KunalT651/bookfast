@@ -1,6 +1,7 @@
 package com.bookfast.backend.common.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class User {
@@ -11,6 +12,13 @@ public class User {
     private String organizationName; // For providers
     private String serviceCategory; // For providers
     private String imageUrl; // For profile picture
+    private LocalDate createdDate; // User registration date
+    private Boolean isActive = true; // User account status
+    
+    // Google Calendar integration fields
+    private Boolean calendarConnected = false;
+    private String calendarEmail;
+    private String googleCalendarId;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
@@ -57,5 +65,45 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public Boolean getCalendarConnected() {
+        return calendarConnected;
+    }
+
+    public void setCalendarConnected(Boolean calendarConnected) {
+        this.calendarConnected = calendarConnected;
+    }
+
+    public String getCalendarEmail() {
+        return calendarEmail;
+    }
+
+    public void setCalendarEmail(String calendarEmail) {
+        this.calendarEmail = calendarEmail;
+    }
+
+    public String getGoogleCalendarId() {
+        return googleCalendarId;
+    }
+
+    public void setGoogleCalendarId(String googleCalendarId) {
+        this.googleCalendarId = googleCalendarId;
     }
 }
