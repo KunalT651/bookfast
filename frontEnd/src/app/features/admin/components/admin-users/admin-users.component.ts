@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminUserService } from '../../services/admin-user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-admin-users',
@@ -10,7 +11,7 @@ import { AdminUserService } from '../../services/admin-user.service';
   templateUrl: './admin-users.component.html',
   styleUrls: ['./admin-users.component.css']
 })
-export class AdminUsersComponent implements OnInit {
+export class AdminUsersComponent implements OnInit, OnDestroy {
   users: any[] = [];
   filteredUsers: any[] = [];
   searchTerm = '';
@@ -19,6 +20,8 @@ export class AdminUsersComponent implements OnInit {
   loading = false;
   errorMessage = '';
   successMessage = '';
+  private subscriptions: Subscription[] = [];
+  private isLoading = false; // Guard to prevent multiple simultaneous loads
 
   // User form fields
   userForm = {
@@ -37,24 +40,46 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
   }
 
+  ngOnDestroy() {
+    // Unsubscribe from all subscriptions to prevent memory leaks
+    this.subscriptions.forEach(sub => {
+      if (sub && !sub.closed) {
+        sub.unsubscribe();
+      }
+    });
+    this.subscriptions = [];
+  }
+
   loadUsers() {
+    // Prevent multiple simultaneous calls
+    if (this.isLoading) {
+      console.log('[AdminUsersComponent] loadUsers already in progress, skipping...');
+      return;
+    }
+
     console.log('[AdminUsersComponent] loadUsers called');
+    this.isLoading = true;
     this.loading = true;
     this.errorMessage = '';
     console.log('[AdminUsersComponent] About to call adminUserService.getAllUsers()');
-    this.adminUserService.getAllUsers().subscribe({
+    
+    const subscription = this.adminUserService.getAllUsers().subscribe({
       next: (users) => {
         console.log('[AdminUsersComponent] Received users:', users);
         this.users = users;
         this.filteredUsers = users;
         this.loading = false;
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('[AdminUsersComponent] Error loading users:', error);
         this.errorMessage = 'Failed to load users: ' + (error.message || error.statusText);
         this.loading = false;
+        this.isLoading = false;
       }
     });
+    
+    this.subscriptions.push(subscription);
   }
 
   searchUsers() {
@@ -115,7 +140,7 @@ export class AdminUsersComponent implements OnInit {
 
     if (this.selectedUser) {
       // Update existing user
-      this.adminUserService.updateUser(this.selectedUser.id, this.userForm).subscribe({
+      const subscription = this.adminUserService.updateUser(this.selectedUser.id, this.userForm).subscribe({
         next: () => {
           this.successMessage = 'User updated successfully';
           this.loadUsers();
@@ -128,9 +153,10 @@ export class AdminUsersComponent implements OnInit {
           console.error('Error updating user:', error);
         }
       });
+      this.subscriptions.push(subscription);
     } else {
       // Create new user
-      this.adminUserService.createUser(this.userForm).subscribe({
+      const subscription = this.adminUserService.createUser(this.userForm).subscribe({
         next: () => {
           this.successMessage = 'User created successfully';
           this.loadUsers();
@@ -143,6 +169,7 @@ export class AdminUsersComponent implements OnInit {
           console.error('Error creating user:', error);
         }
       });
+      this.subscriptions.push(subscription);
     }
   }
 
@@ -152,7 +179,7 @@ export class AdminUsersComponent implements OnInit {
     }
 
     this.loading = true;
-    this.adminUserService.deleteUser(user.id).subscribe({
+    const subscription = this.adminUserService.deleteUser(user.id).subscribe({
       next: () => {
         this.successMessage = 'User deleted successfully';
         this.loadUsers();
@@ -164,6 +191,7 @@ export class AdminUsersComponent implements OnInit {
         console.error('Error deleting user:', error);
       }
     });
+    this.subscriptions.push(subscription);
   }
 
   getRoleDisplayName(role: string) {
