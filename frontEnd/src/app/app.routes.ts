@@ -4,6 +4,8 @@ import { RegisterComponent } from './features/auth/components/register/register.
 import { RegisterProviderComponent } from './features/auth/components/register-provider/register-provider.component';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { CreateAdminComponent } from './features/auth/components/create-admin/create-admin.component';
+import { PasswordResetComponent } from './features/auth/components/password-reset/password-reset.component';
+import { ResetPasswordFormComponent } from './features/auth/components/reset-password-form/reset-password-form.component';
 
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { ServiceCategoriesComponent } from './features/admin/components/service-categories/service-categories.component';
@@ -25,6 +27,8 @@ export const routes: Routes = [
   { path: 'create-admin', component: CreateAdminComponent },
   { path: '', redirectTo: 'registration', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'password-reset', component: PasswordResetComponent },
+  { path: 'reset-password', component: ResetPasswordFormComponent },
 
   { path: 'admin/dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'admin/services', component: ServiceCategoriesComponent, canActivate: [authGuard] },
