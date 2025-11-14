@@ -4,6 +4,7 @@ import com.sendgrid.*;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import com.sendgrid.helpers.mail.objects.Personalization;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -76,14 +77,30 @@ public class EmailService {
         
         System.out.println("[EmailService] Sending HTML email to: " + to);
         System.out.println("[EmailService] Subject: " + subject);
-        System.out.println("[EmailService] From: " + senderEmail);
+        System.out.println("[EmailService] From: " + senderEmail + " (" + senderName + ")");
         System.out.println("[EmailService] SendGrid API key configured: " + (sendGridApiKey != null && !sendGridApiKey.isEmpty()));
         
-        Email fromEmail = new Email(senderEmail);
+        // Create from email with name for better deliverability
+        Email fromEmail = new Email(senderEmail, senderName);
         Email toEmail = new Email(to);
         Content emailContent = new Content("text/html", htmlContent);
-        Mail mail = new Mail(fromEmail, subject, toEmail, emailContent);
-
+        
+        Mail mail = new Mail();
+        mail.setFrom(fromEmail);
+        mail.setSubject(subject);
+        mail.addContent(emailContent);
+        
+        // Add recipient
+        Personalization personalization = new Personalization();
+        personalization.addTo(toEmail);
+        mail.addPersonalization(personalization);
+        
+        // Add reply-to (same as from for better deliverability)
+        mail.setReplyTo(fromEmail);
+        
+        // Set mail settings for better deliverability
+        mail.setMailSettings(new com.sendgrid.helpers.mail.objects.MailSettings());
+        
         SendGrid sg = new SendGrid(sendGridApiKey);
         Request request = new Request();
         request.setMethod(Method.POST);
