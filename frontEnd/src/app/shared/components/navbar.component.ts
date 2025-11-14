@@ -11,8 +11,8 @@ import { UserStateService } from '../../shared/services/user-state.service';
   imports: [CommonModule, RouterModule],
   template: `
     <nav class="navbar">
-      <a routerLink="/customer/home" routerLinkActive="active" class="nav-btn">Home</a>
       @if (userRole === 'CUSTOMER') {
+        <a routerLink="/customer/home" routerLinkActive="active" class="nav-btn">Home</a>
         <a routerLink="/customer/bookings" routerLinkActive="active" class="nav-btn">My Bookings</a>
         <a routerLink="/customer/reviews" routerLinkActive="active" class="nav-btn">My Reviews</a>
         <a routerLink="/customer/profile/edit" routerLinkActive="active" class="nav-btn">Edit Profile</a>
@@ -25,6 +25,7 @@ import { UserStateService } from '../../shared/services/user-state.service';
         <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-btn">Admin Dashboard</a>
         <a routerLink="/admin/services" routerLinkActive="active" class="nav-btn">Manage Categories</a>
         <a routerLink="/admin/providers" routerLinkActive="active" class="nav-btn">Manage Providers</a>
+        <a routerLink="/admin/bookings" routerLinkActive="active" class="nav-btn">Manage Bookings</a>
         <a routerLink="/admin/database" routerLinkActive="active" class="nav-btn">Database Manager</a>
         <a routerLink="/admin/cleanup" routerLinkActive="active" class="nav-btn">Permanent Cleanup</a>
       }

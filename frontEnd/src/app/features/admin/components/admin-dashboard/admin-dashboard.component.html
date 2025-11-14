@@ -1,6 +1,9 @@
 <div class="admin-dashboard">
   <div class="dashboard-header">
-    <h1>Admin Dashboard</h1>
+    <div class="header-left">
+      <img src="/BookFast_logo.jpg" alt="BookFast" class="logo" />
+      <h1>Admin Dashboard</h1>
+    </div>
     <div class="header-actions">
       <button class="refresh-btn" (click)="refreshData()" [disabled]="loading">
         <span class="refresh-icon">🔄</span>
@@ -164,18 +167,6 @@
         <div class="action-icon">🔧</div>
         <h3>Service Categories</h3>
         <p>Manage service types and categories</p>
-      </a>
-
-      <a routerLink="/admin/analytics" class="action-card">
-        <div class="action-icon">📊</div>
-        <h3>Analytics</h3>
-        <p>View detailed analytics and reports</p>
-      </a>
-
-      <a routerLink="/admin/settings" class="action-card">
-        <div class="action-icon">⚙️</div>
-        <h3>Settings</h3>
-        <p>System configuration and settings</p>
       </a>
     </div>
   </div>

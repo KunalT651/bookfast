@@ -40,8 +40,18 @@ export class AdminBookingsComponent implements OnInit {
     console.log('[AdminBookingsComponent] Loading bookings using AdminBookingService');
     this.adminBookingService.getAllBookings().subscribe({
       next: (data: any) => {
-        console.log('[AdminBookingsComponent] Received bookings:', data?.length || 0);
-        this.bookings = data;
+        console.log('[AdminBookingsComponent] Received bookings:', data);
+        // Handle both array and object responses
+        if (Array.isArray(data)) {
+          this.bookings = data;
+        } else if (data && Array.isArray(data.bookings)) {
+          this.bookings = data.bookings;
+        } else if (data && Array.isArray(data.data)) {
+          this.bookings = data.data;
+        } else {
+          console.warn('[AdminBookingsComponent] Unexpected data format:', data);
+          this.bookings = [];
+        }
         this.applyFilters();
         this.loading = false;
       },
@@ -51,6 +61,16 @@ export class AdminBookingsComponent implements OnInit {
         console.error('[AdminBookingsComponent] Error loading bookings:', error);
         console.error('[AdminBookingsComponent] Error status:', error?.status);
         console.error('[AdminBookingsComponent] Error URL:', error?.url);
+        // If status is 200 but error, try to parse response
+        if (error?.status === 200 && error?.error) {
+          console.log('[AdminBookingsComponent] Attempting to parse error response:', error.error);
+          if (Array.isArray(error.error)) {
+            this.bookings = error.error;
+            this.applyFilters();
+            this.loading = false;
+            this.errorMessage = '';
+          }
+        }
       }
     });
   }

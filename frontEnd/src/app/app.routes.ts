@@ -11,6 +11,9 @@ import { AdminDashboardComponent } from './features/admin/components/admin-dashb
 import { ServiceCategoriesComponent } from './features/admin/components/service-categories/service-categories.component';
 import { ProvidersComponent } from './features/admin/components/providers/providers.component';
 import { AdminBookingsComponent } from './features/admin/components/admin-bookings/admin-bookings.component';
+import { AdminUsersComponent } from './features/admin/components/admin-users/admin-users.component';
+import { AdminCustomersComponent } from './features/admin/components/admin-customers/admin-customers.component';
+import { AdminReportsComponent } from './features/admin/components/admin-reports/admin-reports.component';
 import { DatabaseManagerComponent } from './features/admin/components/database-manager/database-manager.component';
 import { PermanentCleanupComponent } from './features/admin/components/permanent-cleanup/permanent-cleanup.component';
 import { ResourcesComponent } from './features/provider/components/resources/resources.component';
@@ -37,7 +40,10 @@ export const routes: Routes = [
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [authGuard] },
   { path: 'admin/services', component: ServiceCategoriesComponent, canActivate: [authGuard] },
   { path: 'admin/providers', component: ProvidersComponent, canActivate: [authGuard] },
+  { path: 'admin/users', component: AdminUsersComponent, canActivate: [authGuard] },
+  { path: 'admin/customers', component: AdminCustomersComponent, canActivate: [authGuard] },
   { path: 'admin/bookings', component: AdminBookingsComponent, canActivate: [authGuard] },
+  { path: 'admin/reports', component: AdminReportsComponent, canActivate: [authGuard] },
   { path: 'admin/database', component: DatabaseManagerComponent, canActivate: [authGuard] },
   { path: 'admin/cleanup', component: PermanentCleanupComponent, canActivate: [authGuard] },
 

@@ -17,6 +17,18 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
 .dashboard-header h1 {
   margin: 0;
   color: #2c3e50;
