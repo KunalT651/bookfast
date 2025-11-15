@@ -1,6 +1,18 @@
 <div class="resources-header">
   <h2>Manage Resources</h2>
-  <button (click)="openForm()">+ Add Resource</button>
+  <button (click)="openForm()" [disabled]="loading">+ Add Resource</button>
+</div>
+
+<div *ngIf="loading" class="loading-overlay">
+  <div class="loading-spinner">Loading resources...</div>
+</div>
+
+<div *ngIf="errorMessage" class="error-message">
+  {{ errorMessage }}
+</div>
+
+<div *ngIf="successMessage" class="success-message">
+  {{ successMessage }}
 </div>
 
 <div class="resource-form-modal" *ngIf="showForm">
@@ -14,7 +26,12 @@
     <label>Phone: <input formControlName="phone"></label>
     <label>Email: <input formControlName="email"></label>
     <label>Specialization: <input formControlName="specialization"></label>
-    <label>Status: <input formControlName="status"></label>
+    <label>Status: 
+      <select formControlName="status">
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </label>
     <label>Image URL: <input formControlName="imageUrl"></label>
     <div class="form-actions">
       <button type="submit">Save</button>
@@ -23,7 +40,10 @@
   </form>
 </div>
 
-  <div class="resource-cards">
+  <div class="resource-cards" *ngIf="!loading">
+    <div *ngIf="resources.length === 0" class="no-resources">
+      <p>No resources found. Click "+ Add Resource" to create your first resource.</p>
+    </div>
     <div class="resource-card" *ngFor="let resource of resources">
       <img *ngIf="resource.imageUrl" [src]="resource.imageUrl" alt="{{resource.name}}" />
       <h3>{{ resource.name }}</h3>
@@ -44,5 +64,6 @@
 
   <app-resource-availability-modal
     *ngIf="showAvailabilityModal && selectedResource && selectedResource.id !== undefined"
-  [resourceId]="selectedResource.id || 0"
+    [resourceId]="selectedResource.id || 0"
+    (close)="closeAvailability()"
   ></app-resource-availability-modal>

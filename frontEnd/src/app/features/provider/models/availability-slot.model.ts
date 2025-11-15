@@ -4,4 +4,5 @@ export interface AvailabilitySlot {
   startTime: string; // HH:MM
   endTime: string; // HH:MM
   status: 'available' | 'booked' | 'unavailable';
+  reason?: string; // Optional reason for unavailability
 }

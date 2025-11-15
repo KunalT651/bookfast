@@ -10,32 +10,19 @@ export class ProviderService {
   constructor(private http: HttpClient) {}
 
   getProviderProfileForCurrentUser(): Observable<any> {
+    console.log('[ProviderService] Making GET request to:', `${this.apiUrl}/profile/me`);
     return this.http.get<any>(`${this.apiUrl}/profile/me`, { withCredentials: true });
   }
 
   updateProviderProfile(profileData: any): Observable<any> {
+    console.log('[ProviderService] Making PUT request to:', `${this.apiUrl}/profile/me`);
     return this.http.put<any>(`${this.apiUrl}/profile/me`, profileData, { withCredentials: true });
   }
 
   uploadProfilePicture(file: File): Observable<any> {
+    console.log('[ProviderService] Making POST request to:', `${this.apiUrl}/profile/upload-picture`);
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${this.apiUrl}/profile-picture`, formData, { withCredentials: true });
-  }
-
-  getUnavailableDates(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/unavailable-dates`, { withCredentials: true });
-  }
-
-  markUnavailableDates(startDate: string, endDate: string, reason: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/unavailable-dates`, {
-      startDate,
-      endDate,
-      reason
-    }, { withCredentials: true });
-  }
-
-  removeUnavailableDate(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/unavailable-dates/${id}`, { withCredentials: true });
+    return this.http.post(`${this.apiUrl}/profile/upload-picture`, formData, { withCredentials: true });
   }
 }

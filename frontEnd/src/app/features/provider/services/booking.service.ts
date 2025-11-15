@@ -17,8 +17,9 @@ export class BookingService {
 
 
 	providerEditBooking(providerId: number, bookingId: number, payload: any) {
-		console.log('[BookingService] Editing booking:', `${this.apiUrl}/${bookingId}`, payload);
-		return this.http.put<any>(`${this.apiUrl}/${bookingId}`, payload, { withCredentials: true });
+		const url = `${this.apiUrl}/provider/${providerId}/edit/${bookingId}`;
+		console.log('[BookingService] Editing booking:', url, payload);
+		return this.http.put<any>(url, payload, { withCredentials: true });
 	}
 
 	deleteBooking(bookingId: number) {

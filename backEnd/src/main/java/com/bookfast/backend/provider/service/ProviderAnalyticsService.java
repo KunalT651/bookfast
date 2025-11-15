@@ -61,25 +61,50 @@ public class ProviderAnalyticsService {
         analytics.put("cancelledBookings", periodBookings.stream().filter(b -> "cancelled".equalsIgnoreCase(b.getStatus())).count());
         analytics.put("pendingBookings", periodBookings.stream().filter(b -> "pending".equalsIgnoreCase(b.getStatus())).count());
 
-        // Calculate revenue statistics
-        List<Payment> allPayments = paymentRepository.findAll().stream()
-                .filter(p -> p.getBooking() != null && p.getBooking().getResource() != null && 
-                            resourceIds.contains(p.getBooking().getResource().getId()))
+        // Calculate revenue statistics using booking finalAmount (amount saved when booking is created)
+        // Include all bookings with finalAmount > 0 (regardless of status, as long as they have an amount)
+        // This ensures we capture all bookings that have payment amounts saved
+        List<Booking> bookingsWithAmount = allBookings.stream()
+                .filter(b -> b.getFinalAmount() != null && b.getFinalAmount() > 0)
+                .filter(b -> !"cancelled".equalsIgnoreCase(b.getStatus())) // Exclude cancelled bookings
+                .toList();
+        
+        List<Booking> periodBookingsWithAmount = periodBookings.stream()
+                .filter(b -> b.getFinalAmount() != null && b.getFinalAmount() > 0)
+                .filter(b -> !"cancelled".equalsIgnoreCase(b.getStatus())) // Exclude cancelled bookings
                 .toList();
 
-        double totalRevenue = allPayments.stream()
-                .mapToDouble(p -> p.getAmount() != null ? p.getAmount() : 0.0)
+        // Debug logging
+        System.out.println("[ProviderAnalyticsService] Total bookings: " + allBookings.size());
+        System.out.println("[ProviderAnalyticsService] Bookings with amount: " + bookingsWithAmount.size());
+        System.out.println("[ProviderAnalyticsService] Period bookings: " + periodBookings.size());
+        System.out.println("[ProviderAnalyticsService] Period bookings with amount: " + periodBookingsWithAmount.size());
+        
+        // Log finalAmount for each booking with amount
+        bookingsWithAmount.forEach(b -> {
+            System.out.println("[ProviderAnalyticsService] Booking ID: " + b.getId() + 
+                ", Status: " + b.getStatus() + 
+                ", PaymentStatus: " + b.getPaymentStatus() + 
+                ", FinalAmount: " + b.getFinalAmount());
+        });
+
+        // Calculate total revenue from all bookings with amount (excluding cancelled)
+        double totalRevenue = bookingsWithAmount.stream()
+                .mapToDouble(b -> b.getFinalAmount())
                 .sum();
         
-        double periodRevenue = allPayments.stream()
-                .filter(p -> p.getPaymentDate() != null && !p.getPaymentDate().isBefore(startDate))
-                .mapToDouble(p -> p.getAmount() != null ? p.getAmount() : 0.0)
+        // Calculate period revenue from bookings with amount in the period (excluding cancelled)
+        double periodRevenue = periodBookingsWithAmount.stream()
+                .mapToDouble(b -> b.getFinalAmount())
                 .sum();
+        
+        System.out.println("[ProviderAnalyticsService] Total Revenue: " + totalRevenue);
+        System.out.println("[ProviderAnalyticsService] Period Revenue: " + periodRevenue);
 
         analytics.put("totalRevenue", String.format("%.2f", totalRevenue));
         analytics.put("periodRevenue", String.format("%.2f", periodRevenue));
-        analytics.put("averageBookingValue", periodBookings.size() > 0 ? 
-            String.format("%.2f", periodRevenue / periodBookings.size()) : "0.00");
+        analytics.put("averageBookingValue", periodBookingsWithAmount.size() > 0 ? 
+            String.format("%.2f", periodRevenue / periodBookingsWithAmount.size()) : "0.00");
 
         // Calculate review statistics
         List<Review> allReviews = reviewRepository.findAll().stream()

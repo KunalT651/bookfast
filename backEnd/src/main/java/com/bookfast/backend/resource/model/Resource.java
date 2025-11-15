@@ -1,11 +1,13 @@
 package com.bookfast.backend.resource.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "resource")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,14 +43,31 @@ public class Resource {
     private Double rating;
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
-    @com.fasterxml.jackson.annotation.JsonManagedReference
+    @JsonIgnore
     private List<AvailabilitySlot> availabilitySlots;
+
+    // Transient field to hold provider's service category (not stored in database)
+    @Transient
+    @JsonProperty("serviceCategory")
+    private String serviceCategory;
+
+    // Transient field to indicate if resource has available slots (not stored in database)
+    @Transient
+    @JsonProperty("hasAvailableSlots")
+    private Boolean hasAvailableSlots;
 
     public List<AvailabilitySlot> getAvailabilitySlots() { return availabilitySlots; }
     public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) { this.availabilitySlots = availabilitySlots; }
+
+    public String getServiceCategory() { return serviceCategory; }
+    public void setServiceCategory(String serviceCategory) { this.serviceCategory = serviceCategory; }
+
+    public Boolean getHasAvailableSlots() { return hasAvailableSlots; }
+    public void setHasAvailableSlots(Boolean hasAvailableSlots) { this.hasAvailableSlots = hasAvailableSlots; }
 
     // Getters and setters
     public Long getId() { return id; }

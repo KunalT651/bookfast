@@ -13,7 +13,11 @@ import java.time.LocalDate;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByResource_Id(Long resourceId);
 
-    List<Booking> findByCustomerId(Long customerId);
+    @Query("SELECT b FROM Booking b JOIN FETCH b.resource WHERE b.customerId = :customerId")
+    List<Booking> findByCustomerId(@Param("customerId") Long customerId);
+    
+    @Query("SELECT b FROM Booking b JOIN FETCH b.resource WHERE b.customerEmail = :customerEmail")
+    List<Booking> findByCustomerEmail(@Param("customerEmail") String customerEmail);
 
     @Query("SELECT b FROM Booking b JOIN FETCH b.resource r WHERE r.providerId = :providerId")
     List<Booking> findByResourceProviderId(@Param("providerId") Long providerId);

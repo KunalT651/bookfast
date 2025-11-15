@@ -1,10 +1,13 @@
 package com.bookfast.backend.resource.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class AvailabilitySlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,9 +17,11 @@ public class AvailabilitySlot {
     private LocalTime startTime;
     private LocalTime endTime;
     private String status; // e.g., "available", "booked", "unavailable"
+    private String reason; // Reason for unavailability (optional, only used when status is "unavailable")
 
     @ManyToOne
     @JoinColumn(name = "resource_id")
+    @JsonIgnore
     private Resource resource;
 
     // Getters and setters
@@ -66,5 +71,13 @@ public class AvailabilitySlot {
 
     public void setResource(Resource resource) {
         this.resource = resource;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

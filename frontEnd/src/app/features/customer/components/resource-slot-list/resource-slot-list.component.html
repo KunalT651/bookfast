@@ -14,7 +14,9 @@
         'booked-text': slot.status === 'booked'
       }">
         {{ formatSlotDisplay(slot) }}
-        <span *ngIf="slot.status === 'unavailable'" class="status-badge unavailable-badge">Unavailable</span>
+        <span *ngIf="slot.status === 'unavailable'" class="status-badge unavailable-badge">
+          Unavailable{{ slot.reason ? ' - ' + slot.reason : '' }}
+        </span>
         <span *ngIf="slot.status === 'booked'" class="status-badge booked-badge">Booked</span>
       </span>
     </li>

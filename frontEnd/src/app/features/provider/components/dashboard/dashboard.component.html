@@ -1,10 +1,17 @@
 <div class="provider-dashboard">
-  <div class="dashboard-header">
+  <!-- Provider Navbar - always shown in provider dashboard -->
+  <app-provider-navbar></app-provider-navbar>
+  
+  <!-- Display child route components here -->
+  <router-outlet></router-outlet>
+  
+  <!-- Show dashboard grid only when on base route (no child route active) -->
+  <div class="dashboard-header" *ngIf="!isChildRouteActive">
     <h2>Provider Dashboard</h2>
     <p>Manage your services, bookings, and availability</p>
   </div>
 
-  <div class="dashboard-grid">
+  <div class="dashboard-grid" *ngIf="!isChildRouteActive">
     <a routerLink="/provider/dashboard/resources" class="dashboard-card">
       <div class="card-icon">🏢</div>
       <h3>My Resources</h3>
@@ -33,12 +40,6 @@
       <div class="card-icon">📱</div>
       <h3>Google Calendar</h3>
       <p>Sync with your Google Calendar</p>
-    </a>
-
-    <a routerLink="/provider/dashboard/unavailable-dates" class="dashboard-card">
-      <div class="card-icon">🚫</div>
-      <h3>Unavailable Dates</h3>
-      <p>Mark vacation and unavailable periods</p>
     </a>
 
     <a routerLink="/provider/dashboard/analytics" class="dashboard-card">

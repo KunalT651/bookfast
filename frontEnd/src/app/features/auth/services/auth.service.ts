@@ -47,7 +47,12 @@ export class AuthService {
   }
 
   requestPasswordReset(email: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/password-reset/request`, { email }, { withCredentials: true });
+    // Include the current frontend URL so the reset link works from any device
+    const frontendUrl = window.location.origin;
+    return this.http.post(`${this.apiUrl}/password-reset/request`, { 
+      email, 
+      frontendUrl 
+    }, { withCredentials: true });
   }
 
   validateResetToken(token: string): Observable<any> {

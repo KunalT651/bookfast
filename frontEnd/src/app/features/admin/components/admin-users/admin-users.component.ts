@@ -23,6 +23,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   private isLoading = false; // Guard to prevent multiple simultaneous loads
   private hasLoaded = false; // Track if data has been loaded
+  private isInitialized = false; // Track if component has been initialized
 
   // User form fields
   userForm = {
@@ -37,7 +38,15 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   constructor(private adminUserService: AdminUserService) {}
 
   ngOnInit() {
+    // Prevent multiple initializations
+    if (this.isInitialized) {
+      console.log('[AdminUsersComponent] Already initialized, skipping ngOnInit');
+      return;
+    }
+    
     console.log('[AdminUsersComponent] ngOnInit called, hasLoaded:', this.hasLoaded);
+    this.isInitialized = true;
+    
     // Only load if we haven't loaded yet or if users array is empty
     if (!this.hasLoaded || this.users.length === 0) {
       this.loadUsers();
@@ -47,6 +56,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log('[AdminUsersComponent] ngOnDestroy called');
     // Unsubscribe from all subscriptions to prevent memory leaks
     this.subscriptions.forEach(sub => {
       if (sub && !sub.closed) {
@@ -54,12 +64,21 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions = [];
+    // Reset flags when component is destroyed
+    this.isInitialized = false;
+    this.isLoading = false;
   }
 
   loadUsers() {
     // Prevent multiple simultaneous calls
     if (this.isLoading) {
       console.log('[AdminUsersComponent] loadUsers already in progress, skipping...');
+      return;
+    }
+
+    // Prevent loading if already loaded (unless explicitly called after CRUD operations)
+    if (this.hasLoaded && this.users.length > 0 && !this.loading) {
+      console.log('[AdminUsersComponent] Users already loaded, skipping loadUsers');
       return;
     }
 
@@ -72,11 +91,18 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     const subscription = this.adminUserService.getAllUsers().subscribe({
       next: (users) => {
         console.log('[AdminUsersComponent] Received users:', users);
-        this.users = users;
-        this.filteredUsers = users;
+        this.users = Array.isArray(users) ? users : [];
+        this.filteredUsers = [...this.users];
         this.loading = false;
         this.isLoading = false;
         this.hasLoaded = true; // Mark as loaded
+        
+        // Unsubscribe after successful load to prevent memory leaks
+        subscription.unsubscribe();
+        const index = this.subscriptions.indexOf(subscription);
+        if (index > -1) {
+          this.subscriptions.splice(index, 1);
+        }
       },
       error: (error) => {
         console.error('[AdminUsersComponent] Error loading users:', error);
@@ -84,6 +110,13 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.isLoading = false;
         this.hasLoaded = false; // Reset on error so we can retry
+        
+        // Unsubscribe on error
+        subscription.unsubscribe();
+        const index = this.subscriptions.indexOf(subscription);
+        if (index > -1) {
+          this.subscriptions.splice(index, 1);
+        }
       }
     });
     

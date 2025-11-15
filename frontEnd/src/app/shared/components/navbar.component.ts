@@ -18,8 +18,8 @@ import { UserStateService } from '../../shared/services/user-state.service';
         <a routerLink="/customer/profile/edit" routerLinkActive="active" class="nav-btn">Edit Profile</a>
       } @else if (userRole === 'PROVIDER') {
         <a routerLink="/provider/dashboard" routerLinkActive="active" class="nav-btn">Dashboard</a>
-        <a routerLink="/provider/bookings" routerLinkActive="active" class="nav-btn">My Bookings</a>
-        <a routerLink="/provider/reviews" routerLinkActive="active" class="nav-btn">My Reviews</a>
+        <a routerLink="/provider/dashboard/bookings" routerLinkActive="active" class="nav-btn">My Bookings</a>
+        <a routerLink="/provider/dashboard/reviews" routerLinkActive="active" class="nav-btn">My Reviews</a>
         <a routerLink="/provider/dashboard/profile" routerLinkActive="active" class="nav-btn">Edit Profile</a>
       } @else if (userRole === 'ADMIN') {
         <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-btn">Admin Dashboard</a>

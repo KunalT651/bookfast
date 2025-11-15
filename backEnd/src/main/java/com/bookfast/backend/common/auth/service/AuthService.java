@@ -52,16 +52,22 @@ public class AuthService {
         // Send welcome email
         try {
             if (savedUser.getEmail() != null && !savedUser.getEmail().isEmpty()) {
+                System.out.println("[AuthService] Attempting to send welcome email to customer: " + savedUser.getEmail());
                 String emailContent = createCustomerWelcomeEmail(savedUser);
+                System.out.println("[AuthService] Email content created, length: " + (emailContent != null ? emailContent.length() : 0));
+                System.out.println("[AuthService] Calling emailService.sendHtmlEmail...");
                 emailService.sendHtmlEmail(
                     savedUser.getEmail(),
                     "Welcome to BookFast!",
                     emailContent
                 );
-                System.out.println("[AuthService] Welcome email sent to: " + savedUser.getEmail());
+                System.out.println("[AuthService] SUCCESS: Welcome email sent to customer: " + savedUser.getEmail());
+            } else {
+                System.err.println("[AuthService] Cannot send welcome email: email is null or empty");
             }
         } catch (Exception e) {
-            System.err.println("[AuthService] Failed to send welcome email: " + e.getMessage());
+            System.err.println("[AuthService] ERROR: Failed to send welcome email to customer: " + e.getMessage());
+            e.printStackTrace();
             // Don't fail registration if email fails
         }
 
@@ -99,16 +105,22 @@ public class AuthService {
         // Send welcome email
         try {
             if (savedUser.getEmail() != null && !savedUser.getEmail().isEmpty()) {
+                System.out.println("[AuthService] Attempting to send welcome email to provider: " + savedUser.getEmail());
                 String emailContent = createProviderWelcomeEmail(savedUser);
+                System.out.println("[AuthService] Email content created, length: " + (emailContent != null ? emailContent.length() : 0));
+                System.out.println("[AuthService] Calling emailService.sendHtmlEmail...");
                 emailService.sendHtmlEmail(
                     savedUser.getEmail(),
                     "Welcome to BookFast - Provider Account Created!",
                     emailContent
                 );
-                System.out.println("[AuthService] Welcome email sent to: " + savedUser.getEmail());
+                System.out.println("[AuthService] SUCCESS: Welcome email sent to provider: " + savedUser.getEmail());
+            } else {
+                System.err.println("[AuthService] Cannot send welcome email: email is null or empty");
             }
         } catch (Exception e) {
-            System.err.println("[AuthService] Failed to send welcome email: " + e.getMessage());
+            System.err.println("[AuthService] ERROR: Failed to send welcome email to provider: " + e.getMessage());
+            e.printStackTrace();
             // Don't fail registration if email fails
         }
 

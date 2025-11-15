@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ResourceAvailabilityModalComponent } from '../resource-availability-modal/resource-availability-modal.component';
 import { ResourceService } from '../../services/resource.service';
 import { ProviderService } from '../../services/provider.service';
+import { AuthService } from '../../../auth/services/auth.service';
 import { Resource } from '../../models/resource.model';
 import { AvailabilitySlot } from '../../models/availability-slot.model';
 import { AvailabilitySlotService } from '../../services/availability-slot.service';
@@ -16,33 +17,25 @@ import { AvailabilitySlotService } from '../../services/availability-slot.servic
   styleUrls: ['./resources.component.css']
 })
 export class ResourcesComponent implements OnInit {
-  deleteResource(resource: Resource) {
-    if (!resource.id) {
-      alert('Resource ID not found.');
-      return;
-    }
-    if (!confirm('Are you sure you want to delete this resource?')) return;
-    this.resourceService.deleteResource(resource.id).subscribe({
-      next: () => {
-        this.resources = this.resources.filter(r => r.id !== resource.id);
-      },
-      error: () => alert('Failed to delete resource')
-    });
-  }
   showAvailabilityModal = false;
   selectedResource: Resource | null = null;
   resources: Resource[] = [];
   showForm = false;
   resourceForm: FormGroup;
-  availabilityForm: FormGroup; // New form group for availability
+  availabilityForm: FormGroup;
   providerId: number | null = null;
   editingResource: Resource | null = null;
-  availabilitySlots: AvailabilitySlot[] = []; // To store fetched availability slots
+  availabilitySlots: AvailabilitySlot[] = [];
+  
+  loading = false;
+  errorMessage = '';
+  successMessage = '';
 
   constructor(
     private fb: FormBuilder,
     private resourceService: ResourceService,
     private providerService: ProviderService,
+    private authService: AuthService,
     private availabilitySlotService: AvailabilitySlotService // Inject AvailabilitySlotService
   ) {
     this.resourceForm = this.fb.group({
@@ -69,6 +62,30 @@ export class ResourcesComponent implements OnInit {
     this.loadProviderProfile();
   }
 
+  deleteResource(resource: Resource) {
+    if (!resource.id) {
+      this.errorMessage = 'Resource ID not found.';
+      setTimeout(() => this.errorMessage = '', 3000);
+      return;
+    }
+    if (!confirm('Are you sure you want to delete this resource?')) return;
+    
+    console.log('[ResourcesComponent] Deleting resource:', resource.id);
+    this.resourceService.deleteResource(resource.id).subscribe({
+      next: () => {
+        console.log('[ResourcesComponent] Resource deleted successfully');
+        this.resources = this.resources.filter(r => r.id !== resource.id);
+        this.successMessage = 'Resource deleted successfully!';
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        console.error('[ResourcesComponent] Failed to delete resource:', err);
+        this.errorMessage = 'Failed to delete resource';
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
+  }
+
   openAvailability(resource: Resource) {
     this.selectedResource = resource;
     this.showAvailabilityModal = true;
@@ -82,13 +99,16 @@ export class ResourcesComponent implements OnInit {
   }
 
   loadAvailabilitySlots(resourceId: number) {
+    console.log('[ResourcesComponent] Loading availability slots for resource:', resourceId);
     this.availabilitySlotService.getAvailabilitySlotsForResource(resourceId).subscribe({
       next: (slots) => {
+        console.log('[ResourcesComponent] Availability slots loaded:', slots);
         this.availabilitySlots = slots;
       },
       error: (err) => {
-        console.error('Failed to load availability slots', err);
-        alert('Failed to load availability slots');
+        console.error('[ResourcesComponent] Failed to load availability slots:', err);
+        this.errorMessage = 'Failed to load availability slots';
+        setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
@@ -100,6 +120,8 @@ export class ResourcesComponent implements OnInit {
 
     const formValue = this.availabilityForm.value;
     const resourceId = this.selectedResource.id!;
+    
+    console.log('[ResourcesComponent] Creating availability slot for resource:', resourceId);
 
     this.availabilitySlotService.createAvailabilitySlot(
       resourceId,
@@ -109,12 +131,16 @@ export class ResourcesComponent implements OnInit {
       formValue.status
     ).subscribe({
       next: (newSlot) => {
+        console.log('[ResourcesComponent] Availability slot created:', newSlot);
         this.availabilitySlots.push(newSlot);
-        this.availabilityForm.reset({ status: 'available' }); // Reset form after successful addition
+        this.availabilityForm.reset({ status: 'available' });
+        this.successMessage = 'Availability slot added successfully!';
+        setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
-        console.error('Failed to add availability slot', err);
-        alert('Failed to add availability slot');
+        console.error('[ResourcesComponent] Failed to add availability slot:', err);
+        this.errorMessage = 'Failed to add availability slot';
+        setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
@@ -123,28 +149,63 @@ export class ResourcesComponent implements OnInit {
     if (!confirm('Are you sure you want to delete this availability slot?')) {
       return;
     }
+    console.log('[ResourcesComponent] Deleting availability slot:', slotId);
     this.availabilitySlotService.deleteAvailabilitySlot(this.selectedResource!.id!, slotId).subscribe({
       next: () => {
+        console.log('[ResourcesComponent] Availability slot deleted successfully');
         this.availabilitySlots = this.availabilitySlots.filter(s => s.id !== slotId);
+        this.successMessage = 'Availability slot deleted successfully!';
+        setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
-        console.error('Failed to delete availability slot', err);
-        alert('Failed to delete availability slot');
+        console.error('[ResourcesComponent] Failed to delete availability slot:', err);
+        this.errorMessage = 'Failed to delete availability slot';
+        setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
 
   loadProviderProfile() {
-    this.providerService.getProviderProfileForCurrentUser().subscribe((profile: any) => {
-      this.providerId = profile.id;
-      this.loadResources();
+    // Get provider ID from current authenticated user (needed for creating resources)
+    this.authService.getCurrentUser().subscribe({
+      next: (user: any) => {
+        console.log('[ResourcesComponent] Current user:', user);
+        if (user && user.id) {
+          this.providerId = user.id;
+          console.log('[ResourcesComponent] Provider ID:', this.providerId);
+        } else {
+          console.error('[ResourcesComponent] No authenticated provider found');
+          this.errorMessage = 'Failed to load provider information. Please log in again.';
+        }
+        // Load resources regardless (uses /me endpoint which doesn't need providerId)
+        this.loadResources();
+      },
+      error: (error) => {
+        console.error('[ResourcesComponent] Error getting current user:', error);
+        // Still try to load resources (might work if auth cookie is valid)
+        this.loadResources();
+      }
     });
   }
 
   loadResources() {
-    if (this.providerId === null) return;
-    this.resourceService.getResources(this.providerId).subscribe((res: Resource[]) => {
-      this.resources = res;
+    console.log('[ResourcesComponent] Loading resources for current provider');
+    this.loading = true;
+    this.errorMessage = '';
+    
+    // Use /me endpoint which gets resources for the authenticated provider
+    this.resourceService.getResourcesForCurrentProvider().subscribe({
+      next: (res: Resource[]) => {
+        console.log('[ResourcesComponent] Resources loaded:', res);
+        this.resources = res;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('[ResourcesComponent] Error loading resources:', error);
+        console.error('[ResourcesComponent] Error details:', error.error);
+        this.errorMessage = 'Failed to load resources. Please try again.';
+        this.loading = false;
+      }
     });
   }
 
@@ -190,12 +251,20 @@ export class ResourcesComponent implements OnInit {
         specialization: formValue.specialization || '',
         status: formValue.status || 'active'
       };
+      console.log('[ResourcesComponent] Updating resource:', updated.id);
       this.resourceService.updateResource(updated).subscribe({
         next: (res: Resource) => {
+          console.log('[ResourcesComponent] Resource updated successfully:', res);
           this.resources = this.resources.map(r => r.id === res.id ? res : r);
           this.editingResource = null;
+          this.successMessage = 'Resource updated successfully!';
+          setTimeout(() => this.successMessage = '', 3000);
         },
-        error: () => alert('Failed to update resource')
+        error: (err) => {
+          console.error('[ResourcesComponent] Failed to update resource:', err);
+          this.errorMessage = 'Failed to update resource';
+          setTimeout(() => this.errorMessage = '', 3000);
+        }
       });
     }
   }
@@ -211,7 +280,8 @@ export class ResourcesComponent implements OnInit {
 
   addResource() {
     if (this.providerId === null) {
-      alert('Provider ID not found. Please log in again.');
+      this.errorMessage = 'Provider ID not found. Please log in again.';
+      setTimeout(() => this.errorMessage = '', 3000);
       return;
     }
     const formValue = this.resourceForm.value;
@@ -228,13 +298,22 @@ export class ResourcesComponent implements OnInit {
       specialization: formValue.specialization || '',
       status: formValue.status || 'active'
     };
+    
+    console.log('[ResourcesComponent] Creating resource:', resource);
     this.resourceService.createResource(resource).subscribe({
       next: (created: Resource) => {
+        console.log('[ResourcesComponent] Resource created successfully:', created);
         this.resources.push(created);
         this.editingResource = null;
         this.showForm = false;
+        this.successMessage = 'Resource created successfully!';
+        setTimeout(() => this.successMessage = '', 3000);
       },
-      error: () => alert('Failed to create resource')
+      error: (err) => {
+        console.error('[ResourcesComponent] Failed to create resource:', err);
+        this.errorMessage = 'Failed to create resource';
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
     });
   }
 }

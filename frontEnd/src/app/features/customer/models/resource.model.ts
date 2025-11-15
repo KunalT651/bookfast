@@ -14,6 +14,7 @@ export interface Resource {
   rating?: number;
   averageRating?: number;
   serviceCategory?: string;
+  hasAvailableSlots?: boolean;
   reviews?: Review[];
   providerName?: string;
 }

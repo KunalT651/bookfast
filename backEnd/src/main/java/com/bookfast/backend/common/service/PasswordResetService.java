@@ -48,9 +48,11 @@ public class PasswordResetService {
     
     /**
      * Request password reset - creates token and sends email
+     * @param email User's email address
+     * @param customFrontendUrl Optional frontend URL from request (for mobile/local network access)
      */
     @Transactional
-    public void requestPasswordReset(String email) {
+    public void requestPasswordReset(String email, String customFrontendUrl) {
         // Find user by email
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
@@ -72,20 +74,35 @@ public class PasswordResetService {
         PasswordResetToken resetToken = new PasswordResetToken(token, user, expiryDate);
         tokenRepository.save(resetToken);
         
+        // Use custom frontend URL if provided (from request origin), otherwise use configured default
+        String urlToUse = (customFrontendUrl != null && !customFrontendUrl.isEmpty()) 
+            ? customFrontendUrl 
+            : frontendUrl;
+        
+        System.out.println("[PasswordReset] Using frontend URL: " + urlToUse + " (custom: " + customFrontendUrl + ", default: " + frontendUrl + ")");
+        
         // Send email with reset link
         try {
-            String resetLink = frontendUrl + "/reset-password?token=" + token;
+            String resetLink = urlToUse + "/reset-password?token=" + token;
             String emailContent = createPasswordResetEmail(user, resetLink);
             emailService.sendHtmlEmail(
                 user.getEmail(),
                 "BookFast - Password Reset Request",
                 emailContent
             );
-            System.out.println("[PasswordReset] Reset email sent to: " + user.getEmail());
+            System.out.println("[PasswordReset] Reset email sent to: " + user.getEmail() + " with link: " + resetLink);
         } catch (Exception e) {
             System.err.println("[PasswordReset] Failed to send reset email: " + e.getMessage());
             throw new RuntimeException("Failed to send reset email");
         }
+    }
+    
+    /**
+     * Request password reset - creates token and sends email (backward compatibility)
+     */
+    @Transactional
+    public void requestPasswordReset(String email) {
+        requestPasswordReset(email, null);
     }
     
     /**

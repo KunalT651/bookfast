@@ -25,6 +25,14 @@
         <option value="unavailable">Unavailable</option>
       </select>
     </label>
+    <label *ngIf="isUnavailableStatus">
+      Reason (optional):
+      <input 
+        type="text" 
+        formControlName="reason" 
+        placeholder="e.g., Vacation, Maintenance, Holiday, Personal time, etc."
+      />
+    </label>
     <div class="form-actions">
       <button type="submit">{{ selectedAvailabilitySlot ? 'Update Slot' : 'Add Slot' }}</button>
       <button type="button" (click)="clearForm()" *ngIf="selectedAvailabilitySlot">Cancel</button>
@@ -36,7 +44,7 @@
   <h4 style="margin-top:2rem;">Current Slots</h4>
   <ul *ngIf="availabilitySlots.length">
     <li *ngFor="let slot of availabilitySlots" (click)="selectAvailabilitySlot(slot)">
-      <span>{{ getSlotDay(slot.date) }} {{ slot.startTime }}-{{ slot.endTime }} ({{ slot.status }})</span>
+      <span>{{ getSlotDay(slot.date) }} {{ slot.startTime }}-{{ slot.endTime }} ({{ slot.status === 'unavailable' && slot.reason ? 'unavailable - ' + slot.reason : slot.status }})</span>
       <button (click)="deleteSlot(slot.id!); $event.stopPropagation()">Delete</button>
     </li>
   </ul>

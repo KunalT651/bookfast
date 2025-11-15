@@ -1,18 +1,25 @@
 <nav class="provider-navbar">
   <div class="navbar-left">
     <div class="profile-logo" *ngIf="profilePictureUrl">
-      <img [src]="profilePictureUrl.startsWith('http') ? profilePictureUrl : 'https://bookfast-backend.onrender.com' + profilePictureUrl" alt="Profile" class="profile-pic" />
+      <img [src]="getProfileImageUrl()" alt="Profile" class="profile-pic" />
     </div>
     <div class="profile-logo-placeholder" *ngIf="!profilePictureUrl">
       <span>👤</span>
     </div>
   </div>
   <div class="navbar-links">
-    <a routerLink="/provider/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-    <a routerLink="/provider/dashboard/resources" routerLinkActive="active">Manage Resources</a>
-    <a routerLink="/provider/dashboard/bookings" routerLinkActive="active">Manage Bookings</a>
-    <a routerLink="/provider/dashboard/reviews" routerLinkActive="active">Manage Reviews</a>
-    <a routerLink="/provider/dashboard/profile" routerLinkActive="active">Edit Profile</a>
+    <a routerLink="/provider/dashboard" 
+       [class.active]="isActiveRoute('/provider/dashboard')">Home</a>
+    <a routerLink="/provider/dashboard/bookings" 
+       [class.active]="isActiveRoute('/provider/dashboard/bookings')">Manage Bookings</a>
+    <a routerLink="/provider/dashboard/reviews" 
+       [class.active]="isActiveRoute('/provider/dashboard/reviews')">Manage Reviews</a>
+    <a routerLink="/provider/dashboard/analytics" 
+       [class.active]="isActiveRoute('/provider/dashboard/analytics')">Analytics</a>
+    <a routerLink="/provider/dashboard/earnings" 
+       [class.active]="isActiveRoute('/provider/dashboard/earnings')">Earnings</a>
+    <a routerLink="/provider/dashboard/profile" 
+       [class.active]="isActiveRoute('/provider/dashboard/profile')">Edit Profile</a>
   </div>
   <button class="logout-btn" (click)="onLogout()">Logout</button>
 </nav>

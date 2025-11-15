@@ -19,6 +19,10 @@ import { PermanentCleanupComponent } from './features/admin/components/permanent
 import { ResourcesComponent } from './features/provider/components/resources/resources.component';
 import { ProviderDashboardComponent } from './features/provider/components/dashboard/dashboard.component';
 import { ProviderProfileComponent } from './features/provider/components/profile/profile.component'; // Import the refactored component
+import { ProviderBookingsComponent } from './features/provider/components/provider-bookings/provider-bookings.component';
+import { ProviderReviewsComponent } from './features/provider/components/provider-reviews/provider-reviews.component';
+import { ProviderAnalyticsComponent } from './features/provider/components/analytics/analytics.component';
+import { ProviderEarningsComponent } from './features/provider/components/earnings/earnings.component';
 import { HomeComponent } from './features/customer/components/home/home.component';
 import { BookingComponent } from './features/customer/components/booking/booking.component';
 import { MyReviewsComponent } from './features/customer/components/my-reviews/my-reviews.component';
@@ -52,9 +56,13 @@ export const routes: Routes = [
     component: ProviderDashboardComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'resources', pathMatch: 'full' },
+      // No redirect - base route shows dashboard grid
       { path: 'resources', component: ResourcesComponent, canActivate: [authGuard] },
-      { path: 'profile', component: ProviderProfileComponent, canActivate: [authGuard] }, // Use the refactored component directly
+      { path: 'bookings', component: ProviderBookingsComponent, canActivate: [authGuard] },
+      { path: 'reviews', component: ProviderReviewsComponent, canActivate: [authGuard] },
+      { path: 'profile', component: ProviderProfileComponent, canActivate: [authGuard] },
+      { path: 'analytics', component: ProviderAnalyticsComponent, canActivate: [authGuard] },
+      { path: 'earnings', component: ProviderEarningsComponent, canActivate: [authGuard] },
       // ...other child routes
     ]
   },

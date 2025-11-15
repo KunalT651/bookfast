@@ -293,7 +293,15 @@ public class BookingService {
     }
 
     public List<Booking> getBookingsByCustomer(Long customerId) {
-        return repository.findByCustomerId(customerId);
+        List<Booking> bookings = repository.findByCustomerId(customerId);
+        System.out.println("[BookingService] Found " + bookings.size() + " bookings by customerId: " + customerId);
+        return bookings;
+    }
+    
+    public List<Booking> getBookingsByCustomerEmail(String customerEmail) {
+        List<Booking> bookings = repository.findByCustomerEmail(customerEmail);
+        System.out.println("[BookingService] Found " + bookings.size() + " bookings by customerEmail: " + customerEmail);
+        return bookings;
     }
 
     public Booking updateBooking(Long bookingId, Booking updatedBooking) {

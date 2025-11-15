@@ -10,19 +10,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.bookfast.backend.resource.model.Resource;
 import com.bookfast.backend.resource.service.ResourceService;
+import com.bookfast.backend.common.model.User;
+import com.bookfast.backend.common.repository.UserRepository;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/resources")
 public class ResourceController {
     private final ResourceService service;
+    private final UserRepository userRepository;
 
-    public ResourceController(ResourceService service) {
+    public ResourceController(ResourceService service, UserRepository userRepository) {
         this.service = service;
+        this.userRepository = userRepository;
     }
 
     @DeleteMapping("/{id}")
@@ -77,9 +84,23 @@ public class ResourceController {
     // Provider-facing endpoint: returns all resources for the current provider
     // (from authentication context)
     @GetMapping("/me")
-    public List<Resource> getResourcesForCurrentProvider(
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        Long providerId = service.getProviderIdFromAuthHeader(authHeader);
-        return service.getResourcesByProvider(providerId);
+    public List<Resource> getResourcesForCurrentProvider() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getName() != null) {
+                String username = authentication.getName(); // This is the email
+                User currentUser = userRepository.findByEmail(username).orElse(null);
+                if (currentUser != null) {
+                    System.out.println("[ResourceController] Getting resources for provider: " + currentUser.getId());
+                    return service.getResourcesByProvider(currentUser.getId());
+                }
+            }
+            System.out.println("[ResourceController] No authenticated provider found");
+            return new ArrayList<>();
+        } catch (Exception e) {
+            System.err.println("[ResourceController] Error getting provider resources: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 }

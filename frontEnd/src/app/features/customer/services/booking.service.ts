@@ -20,7 +20,16 @@ export class BookingService {
 			}
 
 		   getBookingsByCustomer(customerId: number): Observable<Booking[]> {
-			   return this.http.get<Booking[]>(`${this.apiUrl}/customer/${customerId}`, { withCredentials: true });
+			   const url = `${this.apiUrl}/customer/${customerId}`;
+			   console.log('[BookingService] Fetching bookings from:', url);
+			   console.log('[BookingService] Full API URL:', this.apiUrl);
+			   console.log('[BookingService] Customer ID:', customerId);
+			   return this.http.get<Booking[]>(url, { withCredentials: true }).pipe(
+				   tap({
+					   next: (data) => console.log('[BookingService] Bookings response received:', data?.length || 0, data),
+					   error: (err) => console.error('[BookingService] Error fetching bookings:', err)
+				   })
+			   );
 		   }
 
 		   deleteBooking(bookingId: number): Observable<any> {

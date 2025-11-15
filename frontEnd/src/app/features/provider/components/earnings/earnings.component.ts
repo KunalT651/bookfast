@@ -23,18 +23,26 @@ export class ProviderEarningsComponent implements OnInit {
   }
 
   loadEarnings() {
+    console.log('[ProviderEarningsComponent] Loading earnings for period:', this.selectedPeriod);
     this.loading = true;
     this.errorMessage = '';
 
     this.analyticsService.getEarnings(this.selectedPeriod).subscribe({
       next: (data: any) => {
+        console.log('[ProviderEarningsComponent] Earnings loaded successfully:', data);
         this.earnings = data;
         this.loading = false;
       },
       error: (error: any) => {
-        this.errorMessage = 'Failed to load earnings data.';
+        console.error('[ProviderEarningsComponent] Error loading earnings:', error);
+        if (error.error?.error) {
+          this.errorMessage = error.error.error;
+        } else if (error.error?.message) {
+          this.errorMessage = error.error.message;
+        } else {
+          this.errorMessage = 'Failed to load earnings data. Please try again.';
+        }
         this.loading = false;
-        console.error('Error loading earnings:', error);
       }
     });
   }

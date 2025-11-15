@@ -23,19 +23,26 @@ export class ProviderAnalyticsComponent implements OnInit {
   }
 
   loadAnalytics() {
+    console.log('[ProviderAnalyticsComponent] Loading analytics for period:', this.selectedPeriod);
     this.loading = true;
     this.errorMessage = '';
 
     this.analyticsService.getAnalytics(this.selectedPeriod).subscribe({
       next: (data: any) => {
+        console.log('[ProviderAnalyticsComponent] Analytics loaded successfully:', data);
         this.analytics = data;
         this.loading = false;
-        console.log('✅ Analytics loaded:', data);
       },
       error: (error: any) => {
-        this.errorMessage = 'Failed to load analytics. Please try again.';
+        console.error('[ProviderAnalyticsComponent] Error loading analytics:', error);
+        if (error.error?.error) {
+          this.errorMessage = error.error.error;
+        } else if (error.error?.message) {
+          this.errorMessage = error.error.message;
+        } else {
+          this.errorMessage = 'Failed to load analytics. Please try again.';
+        }
         this.loading = false;
-        console.error('Error loading analytics:', error);
       }
     });
   }

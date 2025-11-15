@@ -2,9 +2,12 @@
 package com.bookfast.backend.resource.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +31,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "resource_id")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"reviews", "availabilitySlots", "hibernateLazyInitializer", "handler"})
     private Resource resource;
 
     private LocalDateTime startTime;

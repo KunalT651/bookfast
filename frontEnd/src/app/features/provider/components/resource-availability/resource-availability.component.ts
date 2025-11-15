@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AvailabilitySlotService } from '../../services/availability-slot.service';
 import { AvailabilitySlot } from '../../models/availability-slot.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-resource-availability',
@@ -11,7 +12,7 @@ import { AvailabilitySlot } from '../../models/availability-slot.model';
   templateUrl: './resource-availability.component.html',
   styleUrls: []
 })
-export class ResourceAvailabilityComponent implements OnInit, OnChanges {
+export class ResourceAvailabilityComponent implements OnInit, OnChanges, OnDestroy {
   @Input() resourceId?: number;
   availabilitySlots: AvailabilitySlot[] = [];
   selectedAvailabilitySlot: AvailabilitySlot | null = null;
@@ -19,16 +20,27 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
   slotForm: FormGroup; 
   error = '';
   success = '';
+  private statusSubscription?: Subscription;
 
   constructor(
     private availabilitySlotService: AvailabilitySlotService,
-    private fb: FormBuilder 
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {
     this.slotForm = this.fb.group({
       date: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       status: ['available', Validators.required],
+      reason: ['']
+    });
+    
+    // Clear reason when status changes away from unavailable and trigger change detection
+    this.statusSubscription = this.slotForm.get('status')?.valueChanges.subscribe(status => {
+      if (status !== 'unavailable') {
+        this.slotForm.patchValue({ reason: '' }, { emitEvent: false });
+      }
+      this.cdr.markForCheck(); // Trigger change detection for *ngIf
     });
   }
 
@@ -61,19 +73,25 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
     return date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
   }
 
+  get isUnavailableStatus(): boolean {
+    return this.slotForm.get('status')?.value === 'unavailable';
+  }
+
+
   selectAvailabilitySlot(slot: AvailabilitySlot) {
     this.selectedAvailabilitySlot = slot;
     this.slotForm.patchValue({
       date: slot.date,
       startTime: slot.startTime,
       endTime: slot.endTime,
-      status: slot.status
+      status: slot.status,
+      reason: slot.reason || ''
     });
   }
 
   clearForm() {
     this.selectedAvailabilitySlot = null;
-    this.slotForm.reset({ status: 'available' });
+    this.slotForm.reset({ status: 'available', reason: '' });
     this.error = '';
     this.success = '';
   }
@@ -90,13 +108,15 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
 
     if (this.selectedAvailabilitySlot && this.selectedAvailabilitySlot.id) {
       // Update existing slot
+      const reason = formValue.status === 'unavailable' ? (formValue.reason || '') : undefined;
       this.availabilitySlotService.updateAvailabilitySlot(
         this.resourceId,
         this.selectedAvailabilitySlot.id,
         formValue.date,
         formValue.startTime,
         formValue.endTime,
-        formValue.status
+        formValue.status,
+        reason
       ).subscribe({
         next: () => {
           this.success = 'Slot updated successfully!';
@@ -110,12 +130,14 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
       });
     } else {
       // Add new slot
+      const reason = formValue.status === 'unavailable' ? (formValue.reason || '') : undefined;
       this.availabilitySlotService.createAvailabilitySlot(
         this.resourceId,
         formValue.date,
         formValue.startTime,
         formValue.endTime,
-        formValue.status
+        formValue.status,
+        reason
       ).subscribe({
         next: () => {
           this.success = 'Slot added successfully!';
@@ -150,5 +172,11 @@ export class ResourceAvailabilityComponent implements OnInit, OnChanges {
         console.error('Error deleting availability slot', err);
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.statusSubscription) {
+      this.statusSubscription.unsubscribe();
+    }
   }
 }

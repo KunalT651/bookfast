@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './shared/components/navbar.component';
-import { ProviderNavbarComponent } from './features/provider/components/provider-navbar/provider-navbar.component';
 import { AuthService } from './features/auth/services/auth.service';
 import { UserStateService } from './shared/services/user-state.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, ProviderNavbarComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

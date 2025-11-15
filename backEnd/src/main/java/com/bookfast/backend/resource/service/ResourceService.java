@@ -2,6 +2,8 @@ package com.bookfast.backend.resource.service;
 
 import com.bookfast.backend.resource.model.Resource;
 import com.bookfast.backend.resource.repository.ResourceRepository;
+import com.bookfast.backend.resource.repository.ReviewRepository;
+import com.bookfast.backend.resource.repository.AvailabilitySlotRepository;
 import com.bookfast.backend.common.model.User;
 import com.bookfast.backend.common.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,14 @@ public class ResourceService {
 
     private final ResourceRepository repository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
+    private final AvailabilitySlotRepository availabilitySlotRepository;
 
-    public ResourceService(ResourceRepository repository, UserRepository userRepository) {
+    public ResourceService(ResourceRepository repository, UserRepository userRepository, ReviewRepository reviewRepository, AvailabilitySlotRepository availabilitySlotRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.reviewRepository = reviewRepository;
+        this.availabilitySlotRepository = availabilitySlotRepository;
     }
 
     // Extract providerId from JWT (stub for demo)
@@ -41,11 +47,59 @@ public class ResourceService {
 
     public List<Resource> getResourcesBySpecializationAndStatus(String specialization, String status) {
         // You may need to add a custom query to ResourceRepository for this
-        return repository.findBySpecializationAndStatus(specialization, status);
+        List<Resource> resources = repository.findBySpecializationAndStatus(specialization, status);
+        // Populate serviceCategory, averageRating, and hasAvailableSlots for each resource
+        for (Resource resource : resources) {
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    resource.setServiceCategory(provider.get().getServiceCategory());
+                }
+            }
+            // Calculate and set average rating from reviews
+            List<com.bookfast.backend.resource.model.Review> reviews = reviewRepository.findByResource(resource);
+            if (!reviews.isEmpty()) {
+                double avgRating = reviews.stream()
+                    .mapToDouble(com.bookfast.backend.resource.model.Review::getRating)
+                    .average()
+                    .orElse(0.0);
+                resource.setRating(avgRating);
+            }
+            // Check if resource has any available slots
+            List<com.bookfast.backend.resource.model.AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
+            boolean hasAvailable = slots.stream()
+                .anyMatch(slot -> slot.getStatus() != null && slot.getStatus().equalsIgnoreCase("available"));
+            resource.setHasAvailableSlots(hasAvailable);
+        }
+        return resources;
     }
 
     public List<Resource> getResourcesByStatus(String status) {
-        return repository.findByStatus(status);
+        List<Resource> resources = repository.findByStatus(status);
+        // Populate serviceCategory, averageRating, and hasAvailableSlots for each resource
+        for (Resource resource : resources) {
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    resource.setServiceCategory(provider.get().getServiceCategory());
+                }
+            }
+            // Calculate and set average rating from reviews
+            List<com.bookfast.backend.resource.model.Review> reviews = reviewRepository.findByResource(resource);
+            if (!reviews.isEmpty()) {
+                double avgRating = reviews.stream()
+                    .mapToDouble(com.bookfast.backend.resource.model.Review::getRating)
+                    .average()
+                    .orElse(0.0);
+                resource.setRating(avgRating);
+            }
+            // Check if resource has any available slots
+            List<com.bookfast.backend.resource.model.AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
+            boolean hasAvailable = slots.stream()
+                .anyMatch(slot -> slot.getStatus() != null && slot.getStatus().equalsIgnoreCase("available"));
+            resource.setHasAvailableSlots(hasAvailable);
+        }
+        return resources;
     }
 
     public List<Resource> getAllResources() {
@@ -57,7 +111,7 @@ public class ResourceService {
     public List<Resource> getAllActiveResourcesForCustomers() {
         List<Resource> allResources = repository.findAll();
         // Filter to include only active resources or resources with null status (treat as active)
-        return allResources.stream()
+        List<Resource> filteredResources = allResources.stream()
             .filter(resource -> {
                 String status = resource.getStatus();
                 // Include if status is null, empty, "active", or "available"
@@ -67,18 +121,101 @@ public class ResourceService {
                        status.equalsIgnoreCase("available");
             })
             .collect(java.util.stream.Collectors.toList());
+        
+        // Populate serviceCategory, averageRating, and hasAvailableSlots for each resource
+        for (Resource resource : filteredResources) {
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    resource.setServiceCategory(provider.get().getServiceCategory());
+                }
+            }
+            // Calculate and set average rating from reviews
+            List<com.bookfast.backend.resource.model.Review> reviews = reviewRepository.findByResource(resource);
+            if (!reviews.isEmpty()) {
+                double avgRating = reviews.stream()
+                    .mapToDouble(com.bookfast.backend.resource.model.Review::getRating)
+                    .average()
+                    .orElse(0.0);
+                resource.setRating(avgRating);
+            }
+            // Check if resource has any available slots
+            List<com.bookfast.backend.resource.model.AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
+            boolean hasAvailable = slots.stream()
+                .anyMatch(slot -> slot.getStatus() != null && slot.getStatus().equalsIgnoreCase("available"));
+            resource.setHasAvailableSlots(hasAvailable);
+        }
+        
+        return filteredResources;
     }
 
     public Resource getResourceById(Long id) {
-        return repository.findById(id).orElse(null);
+        Resource resource = repository.findById(id).orElse(null);
+        if (resource != null) {
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    resource.setServiceCategory(provider.get().getServiceCategory());
+                }
+            }
+            // Calculate and set average rating from reviews
+            List<com.bookfast.backend.resource.model.Review> reviews = reviewRepository.findByResource(resource);
+            if (!reviews.isEmpty()) {
+                double avgRating = reviews.stream()
+                    .mapToDouble(com.bookfast.backend.resource.model.Review::getRating)
+                    .average()
+                    .orElse(0.0);
+                resource.setRating(avgRating);
+            }
+            // Check if resource has any available slots
+            List<com.bookfast.backend.resource.model.AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
+            boolean hasAvailable = slots.stream()
+                .anyMatch(slot -> slot.getStatus() != null && slot.getStatus().equalsIgnoreCase("available"));
+            resource.setHasAvailableSlots(hasAvailable);
+        }
+        return resource;
     }
 
     public List<Resource> getResourcesBySpecialization(String specialization) {
-        return repository.findBySpecialization(specialization);
+        List<Resource> resources = repository.findBySpecialization(specialization);
+        // Populate serviceCategory, averageRating, and hasAvailableSlots for each resource
+        for (Resource resource : resources) {
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    resource.setServiceCategory(provider.get().getServiceCategory());
+                }
+            }
+            // Calculate and set average rating from reviews
+            List<com.bookfast.backend.resource.model.Review> reviews = reviewRepository.findByResource(resource);
+            if (!reviews.isEmpty()) {
+                double avgRating = reviews.stream()
+                    .mapToDouble(com.bookfast.backend.resource.model.Review::getRating)
+                    .average()
+                    .orElse(0.0);
+                resource.setRating(avgRating);
+            }
+            // Check if resource has any available slots
+            List<com.bookfast.backend.resource.model.AvailabilitySlot> slots = availabilitySlotRepository.findByResourceId(resource.getId());
+            boolean hasAvailable = slots.stream()
+                .anyMatch(slot -> slot.getStatus() != null && slot.getStatus().equalsIgnoreCase("available"));
+            resource.setHasAvailableSlots(hasAvailable);
+        }
+        return resources;
     }
 
     public List<Resource> getResourcesByProvider(Long providerId) {
-        return repository.findByProviderId(providerId);
+        // Fetch resources
+        List<Resource> resources = repository.findByProviderId(providerId);
+        // Explicitly set relationships to null to prevent any lazy loading/proxy serialization issues
+        // Even though @JsonIgnore should prevent serialization, setting to null is extra safety
+        for (Resource resource : resources) {
+            // Set to null to completely avoid any lazy loading during JSON serialization
+            // The @JsonIgnore annotations should already prevent serialization, but this is extra safety
+            resource.setReviews(null);
+            resource.setAvailabilitySlots(null);
+        }
+        return resources;
     }
 
     public Resource createResource(Resource resource) {

@@ -29,7 +29,7 @@ public class AvailabilitySlotService {
         return availabilitySlotRepository.findByResourceIdAndDate(resourceId, date);
     }
 
-    public AvailabilitySlot createAvailabilitySlot(Long resourceId, LocalDate date, LocalTime startTime, LocalTime endTime, String status) {
+    public AvailabilitySlot createAvailabilitySlot(Long resourceId, LocalDate date, LocalTime startTime, LocalTime endTime, String status, String reason) {
         Resource resource = resourceRepository.findById(resourceId)
                                 .orElseThrow(() -> new RuntimeException("Resource not found"));
 
@@ -39,6 +39,7 @@ public class AvailabilitySlotService {
         slot.setStartTime(startTime);
         slot.setEndTime(endTime);
         slot.setStatus(status);
+        slot.setReason(reason != null && !reason.trim().isEmpty() ? reason : null);
         return availabilitySlotRepository.save(slot);
     }
 
@@ -46,13 +47,14 @@ public class AvailabilitySlotService {
         return availabilitySlotRepository.findById(id);
     }
 
-    public AvailabilitySlot updateAvailabilitySlot(Long id, LocalDate date, LocalTime startTime, LocalTime endTime, String status) {
+    public AvailabilitySlot updateAvailabilitySlot(Long id, LocalDate date, LocalTime startTime, LocalTime endTime, String status, String reason) {
         AvailabilitySlot slot = availabilitySlotRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Availability slot not found"));
         slot.setDate(date);
         slot.setStartTime(startTime);
         slot.setEndTime(endTime);
         slot.setStatus(status);
+        slot.setReason(reason != null && !reason.trim().isEmpty() ? reason : null);
         return availabilitySlotRepository.save(slot);
     }
 

@@ -35,6 +35,8 @@ export class BookingComponent implements OnInit, AfterViewInit {
   isPaying: boolean = false;
   paymentError: string = '';
 
+  customerId: number | null = null;
+
   constructor(
     private bookingService: BookingService,
     private route: ActivatedRoute,
@@ -46,9 +48,11 @@ export class BookingComponent implements OnInit, AfterViewInit {
     // Fetch user info for auto-population
     this.authService.getCurrentUser().subscribe((user: any) => {
       if (user) {
-        this.customerName = user.name || '';
+        this.customerId = user.id || null;
+        this.customerName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.name || '';
         this.customerEmail = user.email || '';
         this.customerPhone = user.phone || '';
+        console.log('[BookingComponent] Loaded user info:', { id: this.customerId, name: this.customerName, email: this.customerEmail });
       }
     });
     this.route.queryParams.subscribe((params: any) => {
@@ -158,6 +162,7 @@ async confirmBooking() {
     // Create booking data that matches backend expectations
     const bookingData: any = {
       resourceId: this.resourceId, // This will be handled by backend reflection
+      customerId: this.customerId, // Include customerId (backend will also set it from auth, but include as backup)
       slotId: this.slots && this.slots.length === 1 ? this.slots[0].id! : 3, // Use actual slot ID from database
       customerName: this.customerName,
       customerEmail: this.customerEmail,
@@ -170,6 +175,8 @@ async confirmBooking() {
       startTimeStr: this.slots && this.slots.length === 1 ? this.slots[0].startTime : '23:08', // Use actual time from slot
       endTimeStr: this.slots && this.slots.length === 1 ? this.slots[0].endTime : '00:09' // Use actual time from slot
     };
+    
+    console.log('[BookingComponent] Booking data with customerId:', bookingData);
     
     console.log('Sending booking data:', bookingData);
     console.log('Current slots:', this.slots);

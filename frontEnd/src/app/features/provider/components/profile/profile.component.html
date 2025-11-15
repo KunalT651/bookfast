@@ -1,6 +1,11 @@
 <div class="profile-container">
   <h2>Provider Profile</h2>
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+  
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="loading-spinner">Loading profile...</div>
+  </div>
+  
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" [class.loading]="loading">
     <div class="form-group">
       <label for="firstName">First Name:</label>
       <input id="firstName" type="text" formControlName="firstName">
@@ -30,10 +35,4 @@
 
   <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
   <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-
-  <h3 style="margin-top: 2rem;">Profile Picture</h3>
-  <img *ngIf="profilePictureUrl" [src]="profilePictureUrl" alt="Profile Picture" class="profile-pic" />
-  <input type="file" (change)="onFileSelected($event)" />
-  <div *ngIf="uploading">Uploading...</div>
-  <div *ngIf="uploadError" class="error-message">{{ uploadError }}</div>
 </div>

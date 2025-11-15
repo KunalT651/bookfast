@@ -39,8 +39,12 @@
             (ngModelChange)="applyFilters()" 
             class="filter-select">
             <option value="">All Categories</option>
-            <option *ngFor="let cat of serviceCategories" [value]="cat.name">{{ cat.name }}</option>
+            <option *ngFor="let cat of serviceCategories; trackBy: trackByCategoryId" [value]="cat?.name || cat">{{ cat?.name || cat }}</option>
           </select>
+          <!-- Debug info (remove after testing) -->
+          <small style="color: #666; font-size: 0.8em;" *ngIf="serviceCategories.length > 0">
+            {{ serviceCategories.length }} categories loaded
+          </small>
         </div>
 
         <!-- Specialization Filter -->

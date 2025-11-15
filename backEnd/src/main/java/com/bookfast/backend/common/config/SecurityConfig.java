@@ -58,6 +58,7 @@ public class SecurityConfig {
                                 "/api/bookings/**", // Allow all booking operations without CSRF
                                 "/api/resources/**", // Allow all resource operations without CSRF
                                 "/api/customers/**", // Allow customer operations without CSRF
+                                "/api/provider/**", // Allow provider operations without CSRF
                                 "/api/test/**",
                                 "/api/database/**",
                                 "/api/test-resource/**",
@@ -66,16 +67,19 @@ public class SecurityConfig {
                 )
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll() // Allow access to uploaded files
                         .requestMatchers(HttpMethod.GET, "/api/categories", "/api/resources/**").permitAll()
                         .requestMatchers("/api/auth/**", "/api/auth/logout", "/api/admin/create-admin", "/api/admin/check-admin-exists", "/api/test/**", "/api/database/**", "/api/test-resource/**", "/api/cleanup/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/bookings").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/provider/me").hasRole("PROVIDER") // Providers can get their own bookings
                         .requestMatchers(HttpMethod.GET, "/api/bookings/**").authenticated() // Authenticated users can view bookings
                         .requestMatchers("/api/admin/categories").hasRole("ADMIN") // Ensure admin categories are protected
                         .requestMatchers("/api/resources/**").hasRole("PROVIDER") // Providers manage their resources
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/provider/**").hasRole("PROVIDER")
                         .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
-                        .requestMatchers("/api/reviews/**").hasRole("CUSTOMER")
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/provider/me").hasRole("PROVIDER") // Providers can get their own reviews
+                        .requestMatchers("/api/reviews/**").hasRole("CUSTOMER") // Customers can manage reviews
                         .requestMatchers("/api/payments/create-intent").hasRole("CUSTOMER")
                         .requestMatchers("/api/payments/**").authenticated()
                         .anyRequest().authenticated())

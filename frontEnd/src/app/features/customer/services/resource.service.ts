@@ -40,4 +40,21 @@ export class ResourceService {
   getResource(resourceId: number): Observable<Resource> {
     return this.http.get<Resource>(`${this.apiUrl}/${resourceId}`, { withCredentials: true });
   }
+
+  getServiceCategories(): Observable<any[]> {
+    console.log('[ResourceService] Fetching categories from:', `${environment.apiUrl}/categories`);
+    return this.http.get<any[]>(`${environment.apiUrl}/categories`, { withCredentials: true }).pipe(
+      catchError((error: any) => {
+        console.error('[ResourceService] Error fetching categories:', error);
+        console.error('[ResourceService] Error details:', {
+          status: error?.status,
+          statusText: error?.statusText,
+          message: error?.message,
+          error: error?.error,
+          url: error?.url
+        });
+        return of([]);
+      })
+    );
+  }
 }

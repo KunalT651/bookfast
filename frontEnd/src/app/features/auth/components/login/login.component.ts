@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserStateService } from '@app/shared/services/user-state.service';
-import { ProviderService } from '../../../provider/services/provider.service';
-import { Router } from '@angular/router';
-import { ServiceCategoryService } from '../../../admin/services/service-category.service';
 
 @Component({
   selector: 'app-login',
@@ -19,34 +16,33 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   error = '';
   success = '';
-  serviceCategories: any[] = [];
-
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private providerService: ProviderService,
     private router: Router,
     private userState: UserStateService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      serviceCategory: ['', Validators.required]
+      password: ['', Validators.required]
     });
   }
 
   ngOnInit() {
-    this.authService.getServiceCategories().subscribe({
-      next: (cats: any) => this.serviceCategories = cats,
-      error: () => this.serviceCategories = []
-    });
+    // Component initialization - no service categories needed for login
   }
 
   onSubmit() {
     if (this.loginForm.invalid) return;
 
-    this.authService.login(this.loginForm.value).subscribe({
+    // Only send email and password to backend (backend doesn't expect serviceCategory)
+    const loginData = {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    };
+
+    this.authService.login(loginData).subscribe({
       next: (res: any) => {
         this.success = 'Login successful!';
         this.error = '';
@@ -54,6 +50,7 @@ export class LoginComponent implements OnInit {
         this.userState.setUser(res.user);
 
         if (res.user.role.name === 'PROVIDER') {
+          // Redirect to provider dashboard (homepage with grid)
           this.router.navigate(['/provider/dashboard']);
         } else if (res.user.role.name === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);

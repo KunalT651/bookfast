@@ -12,10 +12,12 @@ export class ProviderAnalyticsService {
   constructor(private http: HttpClient) {}
 
   getAnalytics(period: string = '30'): Observable<any> {
+    console.log('[ProviderAnalyticsService] Making GET request to:', `${this.apiUrl}/analytics?period=${period}`);
     return this.http.get<any>(`${this.apiUrl}/analytics?period=${period}`, { withCredentials: true });
   }
 
   getEarnings(period: string = '30'): Observable<any> {
+    console.log('[ProviderAnalyticsService] Making GET request to:', `${this.apiUrl}/earnings?period=${period}`);
     return this.http.get<any>(`${this.apiUrl}/earnings?period=${period}`, { withCredentials: true });
   }
 }

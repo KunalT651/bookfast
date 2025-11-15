@@ -41,8 +41,9 @@ public class AvailabilitySlotController {
             LocalTime startTime = LocalTime.parse(payload.get("startTime"));
             LocalTime endTime = LocalTime.parse(payload.get("endTime"));
             String status = payload.getOrDefault("status", "available");
+            String reason = payload.getOrDefault("reason", null);
 
-            AvailabilitySlot newSlot = availabilitySlotService.createAvailabilitySlot(resourceId, date, startTime, endTime, status);
+            AvailabilitySlot newSlot = availabilitySlotService.createAvailabilitySlot(resourceId, date, startTime, endTime, status, reason);
             return ResponseEntity.ok(newSlot);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null); // Handle error properly
@@ -58,8 +59,9 @@ public class AvailabilitySlotController {
             LocalTime startTime = LocalTime.parse(payload.get("startTime"));
             LocalTime endTime = LocalTime.parse(payload.get("endTime"));
             String status = payload.getOrDefault("status", "available");
+            String reason = payload.getOrDefault("reason", null);
 
-            AvailabilitySlot updatedSlot = availabilitySlotService.updateAvailabilitySlot(slotId, date, startTime, endTime, status);
+            AvailabilitySlot updatedSlot = availabilitySlotService.updateAvailabilitySlot(slotId, date, startTime, endTime, status, reason);
             return ResponseEntity.ok(updatedSlot);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null); // Handle error properly

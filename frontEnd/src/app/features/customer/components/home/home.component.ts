@@ -1,5 +1,5 @@
 // ...existing code...
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -47,7 +47,12 @@ export class HomeComponent implements OnInit {
   minRating: number | null = null;
   onlyAvailable: boolean = false;
 
-  constructor(private resourceService: ResourceService, private router: Router) {
+  constructor(
+    private resourceService: ResourceService, 
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
+  ) {
     // Listen for booking event from resource card
     window.addEventListener('book', (e: any) => {
       this.onBookResource(e.detail);
@@ -57,6 +62,16 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     console.log('[HomeComponent] ngOnInit - Loading resources...');
     console.log('[HomeComponent] Component initialized at:', new Date().toISOString());
+    
+    // Load service categories
+    try {
+      console.log('[HomeComponent] About to call loadServiceCategories()');
+      this.loadServiceCategories();
+    } catch (err: any) {
+      console.error('[HomeComponent] Error calling loadServiceCategories:', err);
+    }
+    
+    // Load resources
     try {
       this.resourceService.getResources().subscribe({
         next: (res: Resource[]) => {
@@ -93,6 +108,49 @@ export class HomeComponent implements OnInit {
       this.resources = [];
       this.filteredResources = [];
     }
+  }
+
+  loadServiceCategories() {
+    console.log('[HomeComponent] ===== loadServiceCategories() called =====');
+    console.log('[HomeComponent] Using ResourceService to fetch categories');
+    
+    this.resourceService.getServiceCategories().subscribe({
+      next: (categories) => {
+        console.log('[HomeComponent] ===== HTTP Response Received =====');
+        console.log('[HomeComponent] Received categories:', categories?.length || 0, categories);
+        console.log('[HomeComponent] Categories data structure:', JSON.stringify(categories, null, 2));
+        
+        // Ensure we're in Angular zone
+        this.ngZone.run(() => {
+          this.serviceCategories = Array.isArray(categories) ? categories : [];
+          
+          console.log('[HomeComponent] serviceCategories after assignment:', this.serviceCategories);
+          console.log('[HomeComponent] serviceCategories length:', this.serviceCategories.length);
+          console.log('[HomeComponent] First category:', this.serviceCategories[0]);
+          if (this.serviceCategories.length > 0) {
+            console.log('[HomeComponent] First category name:', this.serviceCategories[0]?.name);
+            console.log('[HomeComponent] First category id:', this.serviceCategories[0]?.id);
+          }
+          
+          if (this.serviceCategories.length === 0) {
+            console.warn('[HomeComponent] No categories received from API. The database may be empty or the endpoint returned an empty array.');
+          } else {
+            console.log('[HomeComponent] Successfully loaded', this.serviceCategories.length, 'categories:', this.serviceCategories);
+            // Force change detection
+            this.cdr.detectChanges();
+            console.log('[HomeComponent] Change detection triggered');
+          }
+        });
+      },
+      error: (error) => {
+        console.error('[HomeComponent] ===== HTTP Error =====');
+        console.error('[HomeComponent] Error loading categories:', error);
+        this.ngZone.run(() => {
+          this.serviceCategories = [];
+          this.cdr.detectChanges();
+        });
+      }
+    });
   }
 
   filterResources() {
@@ -163,6 +221,10 @@ export class HomeComponent implements OnInit {
     this.filteredResources = this.resources;
   }
 
+  trackByCategoryId(index: number, cat: any): any {
+    return cat?.id || cat?.name || index;
+  }
+
   toggleFilters() {
     this.showFilters = !this.showFilters;
   }
@@ -184,9 +246,21 @@ export class HomeComponent implements OnInit {
 
     // Category filter
     if (this.selectedCategory) {
-      filtered = filtered.filter(resource => 
-        resource.specialization?.toLowerCase() === this.selectedCategory.toLowerCase()
-      );
+      console.log('[HomeComponent] Filtering by category:', this.selectedCategory);
+      filtered = filtered.filter(resource => {
+        // Use serviceCategory from provider
+        const resourceCategory = resource.serviceCategory;
+        const matches = resourceCategory?.toLowerCase() === this.selectedCategory.toLowerCase();
+        if (!matches && resourceCategory) {
+          console.log('[HomeComponent] Resource category mismatch:', {
+            resourceName: resource.name,
+            resourceCategory: resourceCategory,
+            selectedCategory: this.selectedCategory
+          });
+        }
+        return matches;
+      });
+      console.log('[HomeComponent] After category filter:', filtered.length, 'resources');
     }
 
     // Specialization filter
@@ -211,13 +285,38 @@ export class HomeComponent implements OnInit {
 
     // Rating filter
     if (this.minRating !== null && this.minRating !== undefined) {
-      filtered = filtered.filter(resource => 
-        resource.rating !== null && resource.rating !== undefined && resource.rating >= this.minRating!
-      );
+      console.log('[HomeComponent] Filtering by minimum rating:', this.minRating);
+      filtered = filtered.filter(resource => {
+        // Use averageRating if available, otherwise fall back to rating
+        const resourceRating = resource.averageRating ?? resource.rating;
+        const matches = resourceRating !== null && resourceRating !== undefined && resourceRating >= this.minRating!;
+        if (!matches && resourceRating !== null && resourceRating !== undefined) {
+          console.log('[HomeComponent] Resource rating below threshold:', {
+            resourceName: resource.name,
+            resourceRating: resourceRating,
+            minRating: this.minRating
+          });
+        }
+        return matches;
+      });
+      console.log('[HomeComponent] After rating filter:', filtered.length, 'resources');
     }
 
-    // Availability filter (onlyAvailable would need to check actual availability slots)
-    // For now, we'll skip this as it requires additional API calls
+    // Availability filter - only show resources with available slots
+    if (this.onlyAvailable) {
+      console.log('[HomeComponent] Filtering by available slots only');
+      filtered = filtered.filter(resource => {
+        const hasSlots = resource.hasAvailableSlots === true;
+        if (!hasSlots) {
+          console.log('[HomeComponent] Resource has no available slots:', {
+            resourceName: resource.name,
+            hasAvailableSlots: resource.hasAvailableSlots
+          });
+        }
+        return hasSlots;
+      });
+      console.log('[HomeComponent] After availability filter:', filtered.length, 'resources');
+    }
 
     this.filteredResources = filtered;
   }

@@ -21,9 +21,28 @@ public class PasswordResetController {
      * Request password reset - sends email with reset link
      */
     @PostMapping("/password-reset/request")
-    public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetRequest request) {
+    public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetRequest request, 
+                                                   @RequestHeader(value = "Origin", required = false) String origin,
+                                                   @RequestHeader(value = "Referer", required = false) String referer) {
         try {
-            passwordResetService.requestPasswordReset(request.getEmail());
+            // Priority: 1) frontendUrl from request body, 2) Origin header, 3) Referer header, 4) default
+            String frontendUrl = request.getFrontendUrl();
+            
+            if (frontendUrl == null || frontendUrl.isEmpty()) {
+                if (origin != null && !origin.isEmpty()) {
+                    frontendUrl = origin;
+                } else if (referer != null && !referer.isEmpty()) {
+                    // Extract base URL from referer
+                    try {
+                        java.net.URL url = new java.net.URL(referer);
+                        frontendUrl = url.getProtocol() + "://" + url.getHost() + (url.getPort() != -1 ? ":" + url.getPort() : "");
+                    } catch (Exception e) {
+                        System.out.println("[PasswordResetController] Could not parse referer: " + referer);
+                    }
+                }
+            }
+            
+            passwordResetService.requestPasswordReset(request.getEmail(), frontendUrl);
             return ResponseEntity.ok(Map.of("message", "If the email exists, a reset link has been sent"));
         } catch (Exception e) {
             System.err.println("[PasswordResetController] Error: " + e.getMessage());
@@ -61,6 +80,7 @@ public class PasswordResetController {
     // DTOs
     public static class PasswordResetRequest {
         private String email;
+        private String frontendUrl;
 
         public String getEmail() {
             return email;
@@ -68,6 +88,14 @@ public class PasswordResetController {
 
         public void setEmail(String email) {
             this.email = email;
+        }
+
+        public String getFrontendUrl() {
+            return frontendUrl;
+        }
+
+        public void setFrontendUrl(String frontendUrl) {
+            this.frontendUrl = frontendUrl;
         }
     }
 
