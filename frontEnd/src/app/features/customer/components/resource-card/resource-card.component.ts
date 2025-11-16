@@ -50,7 +50,7 @@ export class ResourceCardComponent implements OnChanges {
     const needsProvider = !this.resource.providerName || this.resource.providerName.trim().length === 0;
     const needsCategory = !this.resource.serviceCategory || this.resource.serviceCategory.trim?.().length === 0;
     if ((needsProvider || needsCategory) && this.resource.providerId != null) {
-      this.publicProviderService.getPublicProvider(this.resource.providerId).subscribe(info => {
+      this.publicProviderService.getPublicProvider(this.resource.providerId, this.resource.email).subscribe(info => {
         if (needsProvider && info.providerName) {
           this.resource.providerName = info.providerName;
         }

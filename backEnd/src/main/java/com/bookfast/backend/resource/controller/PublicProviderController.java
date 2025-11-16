@@ -25,9 +25,13 @@ public class PublicProviderController {
     }
 
     @GetMapping("/{providerId}/public")
-    public Map<String, Object> getPublicProvider(@PathVariable Long providerId) {
+    public Map<String, Object> getPublicProvider(@PathVariable Long providerId,
+                                                 @RequestParam(value = "email", required = false) String email) {
         Map<String, Object> resp = new HashMap<>();
         Optional<User> opt = userRepository.findById(providerId);
+        if (opt.isEmpty() && email != null && !email.isBlank()) {
+            opt = userRepository.findByEmail(email);
+        }
         if (opt.isEmpty()) {
             resp.put("providerName", "");
             resp.put("serviceCategory", null);

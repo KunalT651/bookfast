@@ -15,9 +15,12 @@ export class PublicProviderService {
 
   constructor(private http: HttpClient) {}
 
-  getPublicProvider(providerId: number): Observable<PublicProviderInfo> {
+  getPublicProvider(providerId: number, email?: string | null): Observable<PublicProviderInfo> {
+    const url = email && email.trim().length > 0
+      ? `${this.apiUrl}/${providerId}/public?email=${encodeURIComponent(email.trim())}`
+      : `${this.apiUrl}/${providerId}/public`;
     return this.http
-      .get<PublicProviderInfo>(`${this.apiUrl}/${providerId}/public`, { withCredentials: true })
+      .get<PublicProviderInfo>(url, { withCredentials: true })
       .pipe(
         map((res: any) => ({
           providerName: res?.providerName ?? '',
