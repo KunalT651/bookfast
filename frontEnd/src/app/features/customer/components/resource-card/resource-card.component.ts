@@ -6,6 +6,7 @@ import { Resource } from '../../models/resource.model';
 import { Review } from '../../models/review.model';
 import { ReviewService } from '../../services/review.service';
 import { AuthService } from '../../../auth/services/auth.service';
+import { PublicProviderService } from '../../services/public-provider.service';
 
 @Component({
   selector: 'app-resource-card',
@@ -22,10 +23,15 @@ export class ResourceCardComponent implements OnChanges {
   showReviewsModal: boolean = false;
   newReview: Review = { customerName: '', rating: 0, comment: '', date: '', customerId: undefined };
 
-  constructor(private reviewService: ReviewService, private authService: AuthService) {}
+  constructor(
+    private reviewService: ReviewService,
+    private authService: AuthService,
+    private publicProviderService: PublicProviderService
+  ) {}
 
   ngOnInit() {
     this.loadAverageRating();
+    this.ensureProviderAndCategory();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -35,6 +41,23 @@ export class ResourceCardComponent implements OnChanges {
       const prov = this.resource?.providerName ?? (this.resource?.providerId != null ? `#${this.resource.providerId}` : '');
       // Lightweight debug to verify backend enrichment reached UI
       console.debug('[ResourceCard] provider:', prov, 'category:', this.resource?.serviceCategory);
+      this.ensureProviderAndCategory();
+    }
+  }
+
+  private ensureProviderAndCategory() {
+    if (!this.resource) return;
+    const needsProvider = !this.resource.providerName || this.resource.providerName.trim().length === 0;
+    const needsCategory = !this.resource.serviceCategory || this.resource.serviceCategory.trim?.().length === 0;
+    if ((needsProvider || needsCategory) && this.resource.providerId != null) {
+      this.publicProviderService.getPublicProvider(this.resource.providerId).subscribe(info => {
+        if (needsProvider && info.providerName) {
+          this.resource.providerName = info.providerName;
+        }
+        if (needsCategory && info.serviceCategory) {
+          this.resource.serviceCategory = info.serviceCategory;
+        }
+      });
     }
   }
 
