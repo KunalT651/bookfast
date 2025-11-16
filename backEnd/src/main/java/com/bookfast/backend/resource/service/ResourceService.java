@@ -53,7 +53,15 @@ public class ResourceService {
             if (resource.getProviderId() != null) {
                 java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
                 if (provider.isPresent()) {
-                    resource.setServiceCategory(provider.get().getServiceCategory());
+                    User p = provider.get();
+                    resource.setServiceCategory(p.getServiceCategory());
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+                        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
                 }
             }
             // Calculate and set average rating from reviews
@@ -81,7 +89,15 @@ public class ResourceService {
             if (resource.getProviderId() != null) {
                 java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
                 if (provider.isPresent()) {
-                    resource.setServiceCategory(provider.get().getServiceCategory());
+                    User p = provider.get();
+                    resource.setServiceCategory(p.getServiceCategory());
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+                        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
                 }
             }
             // Calculate and set average rating from reviews
@@ -127,7 +143,15 @@ public class ResourceService {
             if (resource.getProviderId() != null) {
                 java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
                 if (provider.isPresent()) {
-                    resource.setServiceCategory(provider.get().getServiceCategory());
+                    User p = provider.get();
+                    resource.setServiceCategory(p.getServiceCategory());
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
                 }
             }
             // Calculate and set average rating from reviews
@@ -155,7 +179,15 @@ public class ResourceService {
             if (resource.getProviderId() != null) {
                 java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
                 if (provider.isPresent()) {
-                    resource.setServiceCategory(provider.get().getServiceCategory());
+                    User p = provider.get();
+                    resource.setServiceCategory(p.getServiceCategory());
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+                        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
                 }
             }
             // Calculate and set average rating from reviews
@@ -210,6 +242,20 @@ public class ResourceService {
         // Explicitly set relationships to null to prevent any lazy loading/proxy serialization issues
         // Even though @JsonIgnore should prevent serialization, setting to null is extra safety
         for (Resource resource : resources) {
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    User p = provider.get();
+                    resource.setServiceCategory(p.getServiceCategory());
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+                        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
+                }
+            }
             // Set to null to completely avoid any lazy loading during JSON serialization
             // The @JsonIgnore annotations should already prevent serialization, but this is extra safety
             resource.setReviews(null);

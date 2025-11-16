@@ -60,6 +60,10 @@ public class Resource {
     @JsonProperty("hasAvailableSlots")
     private Boolean hasAvailableSlots;
 
+    // Transient field to expose provider's display name (not stored in database)
+    @Transient
+    @JsonProperty("providerName")
+    private String providerName;
     public List<AvailabilitySlot> getAvailabilitySlots() { return availabilitySlots; }
     public void setAvailabilitySlots(List<AvailabilitySlot> availabilitySlots) { this.availabilitySlots = availabilitySlots; }
 
@@ -68,6 +72,9 @@ public class Resource {
 
     public Boolean getHasAvailableSlots() { return hasAvailableSlots; }
     public void setHasAvailableSlots(Boolean hasAvailableSlots) { this.hasAvailableSlots = hasAvailableSlots; }
+
+    public String getProviderName() { return providerName; }
+    public void setProviderName(String providerName) { this.providerName = providerName; }
 
     // Getters and setters
     public Long getId() { return id; }
