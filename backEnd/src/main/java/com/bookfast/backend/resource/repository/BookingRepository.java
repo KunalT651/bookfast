@@ -43,10 +43,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countByDateAfter(@Param("date") java.time.LocalDateTime date);
     
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.date >= :startDate AND b.date < :endDate")
-    long countByDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    long countByDateBetween(@Param("startDate") java.time.LocalDateTime startDate, @Param("endDate") java.time.LocalDateTime endDate);
     
     @Query("SELECT COALESCE(SUM(b.finalAmount), 0) FROM Booking b WHERE b.date >= :date")
-    Double sumTotalAmountByDateAfter(@Param("date") LocalDate date);
+    Double sumTotalAmountByDateAfter(@Param("date") java.time.LocalDateTime date);
     
     // Find recent bookings for admin dashboard
     @Query("SELECT b FROM Booking b ORDER BY b.date DESC")
