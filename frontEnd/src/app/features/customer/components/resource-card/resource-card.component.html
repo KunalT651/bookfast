@@ -1,15 +1,38 @@
 <div class="resource-card">
-  <img *ngIf="resource.imageUrl" [src]="resource.imageUrl" alt="{{resource.name}}" />
-  <h3>{{ resource.name }}</h3>
-  <p>{{ resource.description }}</p>
-  <div><strong>Specialization:</strong> {{ resource.specialization }}</div>
-  <div><strong>Status:</strong> {{ resource.status }}</div>
-  <div><strong>Price:</strong> ${{ resource.price }}</div>
-  <div><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
-  <div><strong>Contact:</strong> {{ resource.phone }} | {{ resource.email }}</div>
-  <div class="tags">
+  <div class="image-wrap">
+    <img *ngIf="!!resource.imageUrl" [src]="resource.imageUrl" alt="{{ resource.name }}" class="resource-img" />
+    <span class="category-chip" *ngIf="resource?.serviceCategory">🏷️ {{ resource.serviceCategory }}</span>
+  </div>
+
+  <h3 class="title" [title]="resource.name">{{ resource.name }}</h3>
+  <div class="subline" *ngIf="resource?.providerId">
+    <span class="provider">👤 {{ resource.providerName || ('Provider #' + resource.providerId) }}</span>
+  </div>
+
+  <p class="description" *ngIf="resource?.description">{{ resource.description }}</p>
+
+  <div class="meta">
+    <div class="meta-item" *ngIf="resource?.specialization">
+      <strong>Specialization:</strong> {{ resource.specialization }}
+    </div>
+    <div class="meta-item" *ngIf="resource?.status">
+      <strong>Status:</strong> {{ resource.status }}
+    </div>
+    <div class="meta-item" *ngIf="resource?.price !== undefined">
+      <strong>Price:</strong> ${{ resource.price }}
+    </div>
+    <div class="meta-item" *ngIf="resource?.experienceYears">
+      <strong>Experience:</strong> {{ resource.experienceYears }} years
+    </div>
+    <div class="meta-item" *ngIf="resource?.phone || resource?.email">
+      <strong>Contact:</strong> {{ resource.phone }} <span *ngIf="resource?.phone && resource?.email"> | </span>{{ resource.email }}
+    </div>
+  </div>
+
+  <div class="tags" *ngIf="resource?.tags?.length">
     <span *ngFor="let tag of resource.tags" class="tag">{{ tag }}</span>
   </div>
+
   <div class="stars">
     <ng-container *ngFor="let star of [1,2,3,4,5]">
       <span [class.filled]="star <= averageRating">&#9733;</span>
