@@ -1,37 +1,156 @@
 .resource-card {
-  border: 1px solid #eee;
-  border-radius: 8px;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
   padding: 1rem;
-  width: 300px;
-  background: #fafbfc;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  margin-bottom: 1rem;
+  width: 320px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform .15s ease, box-shadow .15s ease;
 }
-.resource-card img {
+.resource-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(16,24,40,0.12);
+}
+.image-wrap {
+  position: relative;
+}
+.resource-img {
   width: 100%;
-  height: 120px;
+  height: 160px;
   object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
+  border-radius: 10px;
+  background: #f3f4f6;
+}
+.image-wrap .category-chip {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+}
+.image-placeholder {
+  height: 160px;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#f3f4f6,#e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.image-placeholder .emoji {
+  font-size: 32px;
+  opacity: .5;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  background: #eef6ff;
+  color: #0b5ed7;
+  border: 1px solid #cfe2ff;
+  border-radius: 999px;
+  font-size: .8rem;
+  padding: .25rem .6rem;
+  font-weight: 600;
 }
 .tags {
-  margin-bottom: 0.5rem;
+  margin-top: .25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
 }
 .tag {
-  background: #e3f2fd;
-  color: #1976d2;
-  border-radius: 4px;
-  padding: 2px 8px;
-  margin-right: 4px;
-  font-size: 0.85em;
+  background: #f1f5f9;
+  color: #334155;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: .8rem;
 }
-button {
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
+.card-title .title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.subline {
+  color: #475569;
+  font-size: .9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem .5rem;
+  align-items: center;
+}
+.description {
+  color: #475569;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+.info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
+  font-size: .9rem;
+  color: #334155;
+}
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-right: .6rem;
+  color: #475569;
+}
+.meta-icon { opacity: .8; }
+.stars { color: #eab308; }
+.star { opacity: .35; }
+.star.filled { opacity: 1; }
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.avg-rating {
+  font-weight: 600;
+  color: #111827;
+}
+.actions {
+  display: flex;
+  gap: .5rem;
+  margin-top: .25rem;
+}
+.btn {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: .55rem .9rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.btn.primary {
+  background: #0ea5e9;
+  color: #fff;
+  border-color: #0ea5e9;
+}
+.btn.primary:hover {
+  background: #0284c7;
+  border-color: #0284c7;
+  box-shadow: 0 6px 16px rgba(2,132,199,.25);
+}
+.btn.outline {
+  background: #fff;
+  color: #0ea5e9;
+  border-color: #bae6fd;
+}
+.btn.outline:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
 }
 
 /* Modal Backdrop and Modal Styles for Reviews */
@@ -85,14 +204,8 @@ button {
 
 /* Mobile Responsiveness */
 @media (max-width: 1024px) {
-  .resource-card {
-    width: 280px;
-    padding: 0.9rem;
-  }
-  
-  .resource-card img {
-    height: 110px;
-  }
+  .resource-card { width: 300px; padding: 0.9rem; }
+  .resource-img, .image-placeholder { height: 140px; }
 }
 
 @media (max-width: 768px) {
@@ -102,10 +215,7 @@ button {
     margin: 0 auto 1rem;
     padding: 0.8rem;
   }
-  
-  .resource-card img {
-    height: 100px;
-  }
+  .resource-img, .image-placeholder { height: 130px; }
   
   .tag {
     font-size: 0.8em;
@@ -162,10 +272,7 @@ button {
   .resource-card {
     padding: 0.6rem;
   }
-  
-  .resource-card img {
-    height: 80px;
-  }
+  .resource-img, .image-placeholder { height: 110px; }
   
   .tag {
     font-size: 0.7em;
