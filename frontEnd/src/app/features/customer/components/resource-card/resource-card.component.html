@@ -4,29 +4,25 @@
     <span class="category-chip" *ngIf="resource?.serviceCategory">🏷️ {{ resource.serviceCategory }}</span>
   </div>
 
-  <h3 class="title" [title]="resource.name">{{ resource.name }}</h3>
-  <div class="subline" *ngIf="resource?.providerId">
-    <span class="provider">👤 {{ resource.providerName || ('Provider #' + resource.providerId) }}</span>
+  <!-- Name -->
+  <div class="meta-item"><strong>Name:</strong> {{ resource.name }}</div>
+  <!-- Provider -->
+  <div class="meta-item" *ngIf="providerDisplayName">
+    <strong>Provider:</strong> {{ providerDisplayName }}
+  </div>
+  <!-- Category -->
+  <div class="meta-item">
+    <strong>Category:</strong> {{ resource?.serviceCategory || '—' }}
   </div>
 
   <p class="description" *ngIf="resource?.description">{{ resource.description }}</p>
 
   <div class="meta">
-    <div class="meta-item" *ngIf="resource?.specialization">
-      <strong>Specialization:</strong> {{ resource.specialization }}
-    </div>
-    <div class="meta-item" *ngIf="resource?.status">
-      <strong>Status:</strong> {{ resource.status }}
-    </div>
-    <div class="meta-item" *ngIf="resource?.price !== undefined">
-      <strong>Price:</strong> ${{ resource.price }}
-    </div>
-    <div class="meta-item" *ngIf="resource?.experienceYears">
-      <strong>Experience:</strong> {{ resource.experienceYears }} years
-    </div>
-    <div class="meta-item" *ngIf="resource?.phone || resource?.email">
-      <strong>Contact:</strong> {{ resource.phone }} <span *ngIf="resource?.phone && resource?.email"> | </span>{{ resource.email }}
-    </div>
+    <div class="meta-item" *ngIf="resource?.specialization"><strong>Specialization:</strong> {{ resource.specialization }}</div>
+    <div class="meta-item" *ngIf="resource?.status"><strong>Status:</strong> {{ resource.status }}</div>
+    <div class="meta-item" *ngIf="resource?.price !== undefined"><strong>Price:</strong> ${{ resource.price }}</div>
+    <div class="meta-item" *ngIf="resource?.experienceYears"><strong>Experience:</strong> {{ resource.experienceYears }} years</div>
+    <div class="meta-item" *ngIf="resource?.phone || resource?.email"><strong>Contact:</strong> {{ resource.phone }}<span *ngIf="resource?.phone && resource?.email"> | </span>{{ resource.email }}</div>
   </div>
 
   <div class="tags" *ngIf="resource?.tags?.length">
@@ -34,6 +30,7 @@
   </div>
 
   <div class="stars">
+    <span class="meta-item"><strong>Reviews:</strong></span>
     <ng-container *ngFor="let star of [1,2,3,4,5]">
       <span [class.filled]="star <= averageRating">&#9733;</span>
       <span [class.empty]="star > averageRating">&#9734;</span>

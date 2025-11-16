@@ -1,5 +1,5 @@
 // ...existing code...
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Resource } from '../../models/resource.model';
@@ -14,7 +14,7 @@ import { AuthService } from '../../../auth/services/auth.service';
   templateUrl: './resource-card.component.html',
   styleUrls: ['./resource-card.component.css']
 })
-export class ResourceCardComponent {
+export class ResourceCardComponent implements OnChanges {
   // ...existing code...
   @Input() resource!: Resource;
   averageRating: number = 0;
@@ -26,6 +26,23 @@ export class ResourceCardComponent {
 
   ngOnInit() {
     this.loadAverageRating();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['resource']?.currentValue) {
+      // Re-evaluate rating and log provider/category for diagnostics when input updates
+      this.loadAverageRating();
+      const prov = this.resource?.providerName ?? (this.resource?.providerId != null ? `#${this.resource.providerId}` : '');
+      // Lightweight debug to verify backend enrichment reached UI
+      console.debug('[ResourceCard] provider:', prov, 'category:', this.resource?.serviceCategory);
+    }
+  }
+
+  get providerDisplayName(): string {
+    if (!this.resource) return '';
+    const n = (this.resource.providerName || '').trim();
+    if (n.length > 0) return n;
+    return this.resource.providerId != null ? `Provider #${this.resource.providerId}` : '';
   }
 
   submitReview() {
