@@ -5,6 +5,8 @@ import com.bookfast.backend.resource.repository.ResourceRepository;
 import com.bookfast.backend.resource.repository.ReviewRepository;
 import com.bookfast.backend.resource.repository.AvailabilitySlotRepository;
 import com.bookfast.backend.common.model.User;
+import com.bookfast.backend.admin.repository.ServiceCategoryRepository;
+import com.bookfast.backend.admin.model.ServiceCategory;
 import com.bookfast.backend.common.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
@@ -19,12 +21,18 @@ public class ResourceService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final AvailabilitySlotRepository availabilitySlotRepository;
+    private final ServiceCategoryRepository serviceCategoryRepository;
 
-    public ResourceService(ResourceRepository repository, UserRepository userRepository, ReviewRepository reviewRepository, AvailabilitySlotRepository availabilitySlotRepository) {
+    public ResourceService(ResourceRepository repository,
+                           UserRepository userRepository,
+                           ReviewRepository reviewRepository,
+                           AvailabilitySlotRepository availabilitySlotRepository,
+                           ServiceCategoryRepository serviceCategoryRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
         this.availabilitySlotRepository = availabilitySlotRepository;
+        this.serviceCategoryRepository = serviceCategoryRepository;
     }
 
     // Extract providerId from JWT (stub for demo)
@@ -144,10 +152,10 @@ public class ResourceService {
                 java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
                 if (provider.isPresent()) {
                     User p = provider.get();
-                    resource.setServiceCategory(p.getServiceCategory());
+                    resource.setServiceCategory(resolveCategoryName(p.getServiceCategory()));
                     String displayName = (
                         (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
-        (p.getLastName() != null && !p.getLastName().isBlank())
+                        (p.getLastName() != null && !p.getLastName().isBlank())
                     )
                         ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
                         : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
@@ -215,7 +223,43 @@ public class ResourceService {
             if (resource.getProviderId() != null) {
                 java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
                 if (provider.isPresent()) {
-                    resource.setServiceCategory(provider.get().getServiceCategory());
+                    User p = provider.get();
+                    resource.setServiceCategory(resolveCategoryName(p.getServiceCategory()));
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+                        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
+                }
+            }
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    User p = provider.get();
+                    resource.setServiceCategory(resolveCategoryName(p.getServiceCategory()));
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+                        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
+                }
+            }
+            if (resource.getProviderId() != null) {
+                java.util.Optional<User> provider = userRepository.findById(resource.getProviderId());
+                if (provider.isPresent()) {
+                    User p = provider.get();
+                    resource.setServiceCategory(resolveCategoryName(p.getServiceCategory()));
+                    String displayName = (
+                        (p.getFirstName() != null && !p.getFirstName().isBlank()) ||
+                        (p.getLastName() != null && !p.getLastName().isBlank())
+                    )
+                        ? ( (p.getFirstName() != null ? p.getFirstName() : "") + " " + (p.getLastName() != null ? p.getLastName() : "") ).trim()
+                        : (p.getOrganizationName() != null && !p.getOrganizationName().isBlank() ? p.getOrganizationName() : p.getEmail());
+                    resource.setProviderName(displayName);
                 }
             }
             // Calculate and set average rating from reviews
@@ -266,5 +310,25 @@ public class ResourceService {
 
     public Resource createResource(Resource resource) {
         return repository.save(resource);
+    }
+
+    /**
+     * Resolve a user.stored serviceCategory value into a display name.
+     * If the stored value is a numeric id, look up the ServiceCategory table.
+     * Otherwise, treat it as an already-resolved name.
+     */
+    private String resolveCategoryName(String stored) {
+        if (stored == null || stored.isBlank()) return null;
+        boolean numeric = stored.chars().allMatch(Character::isDigit);
+        if (!numeric) {
+            return stored;
+        }
+        try {
+            Long id = Long.valueOf(stored);
+            java.util.Optional<ServiceCategory> sc = serviceCategoryRepository.findById(id);
+            return sc.map(ServiceCategory::getName).orElse(stored);
+        } catch (NumberFormatException ex) {
+            return stored;
+        }
     }
 }
