@@ -22,6 +22,7 @@ public class AdminUserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EmailService emailService;
+    private final com.bookfast.backend.common.repository.PasswordResetTokenRepository passwordResetTokenRepository;
     
     @Value("${app.frontend.url:http://localhost:4200}")
     private String frontendUrl;
@@ -29,10 +30,12 @@ public class AdminUserService {
     private static final String PASSWORD_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
     private static final int PASSWORD_LENGTH = 12;
 
-    public AdminUserService(UserRepository userRepository, RoleRepository roleRepository, EmailService emailService) {
+    public AdminUserService(UserRepository userRepository, RoleRepository roleRepository, EmailService emailService,
+                            com.bookfast.backend.common.repository.PasswordResetTokenRepository passwordResetTokenRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.emailService = emailService;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
     
     /**
@@ -174,11 +177,16 @@ public class AdminUserService {
 
     @Transactional
     public boolean deleteUser(Long id) {
-        if (userRepository.existsById(id)) {
+        return userRepository.findById(id).map(user -> {
+            // Clean up dependent rows that reference this user to prevent FK violations
+            try {
+                passwordResetTokenRepository.deleteByUser(user);
+            } catch (Exception ignored) {
+                // If no tokens exist, proceed with deletion
+            }
             userRepository.deleteById(id);
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     public List<User> getUsersByRole(String role) {
