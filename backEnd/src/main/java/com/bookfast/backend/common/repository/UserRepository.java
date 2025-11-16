@@ -42,9 +42,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // Count users created after a certain date
     @Query("SELECT COUNT(u) FROM User u WHERE u.createdDate > :date")
-    long countByCreatedDateAfter(@Param("date") LocalDateTime date);
+    long countByCreatedDateAfter(@Param("date") LocalDate date);
 
     // Count users by role created after a certain date
     @Query("SELECT COUNT(u) FROM User u WHERE LOWER(u.role.name) = LOWER(:roleName) AND u.createdDate > :date")
-    long countByRoleNameIgnoreCaseAndCreatedDateAfter(@Param("roleName") String roleName, @Param("date") LocalDateTime date);
+    long countByRoleNameIgnoreCaseAndCreatedDateAfter(@Param("roleName") String roleName, @Param("date") LocalDate date);
 }

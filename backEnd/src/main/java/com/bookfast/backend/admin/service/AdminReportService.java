@@ -41,8 +41,8 @@ public class AdminReportService {
         long totalPayments = paymentRepository.count();
         
         // Get period-specific counts
-        long newUsers = userRepository.countByCreatedDateAfter(startDate);
-        long newProviders = userRepository.countByRoleNameIgnoreCaseAndCreatedDateAfter("PROVIDER", startDate);
+        long newUsers = userRepository.countByCreatedDateAfter(startDate.toLocalDate());
+        long newProviders = userRepository.countByRoleNameIgnoreCaseAndCreatedDateAfter("PROVIDER", startDate.toLocalDate());
         long newBookings = bookingRepository.countByDateAfter(startDate);
         
         // Calculate revenue (simplified)
@@ -86,7 +86,7 @@ public class AdminReportService {
         Map<String, Object> reports = new HashMap<>();
         reports.put("totalUsers", userRepository.count());
         reports.put("newUsers", userRepository.countByCreatedDateAfter(
-            LocalDateTime.now().minus(Integer.parseInt(period), ChronoUnit.DAYS)));
+            LocalDateTime.now().minus(Integer.parseInt(period), ChronoUnit.DAYS).toLocalDate()));
         reports.put("userGrowthData", generateMockChartData(Integer.parseInt(period)));
         return reports;
     }
