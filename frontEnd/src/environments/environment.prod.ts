@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://bookfast-backend.onrender.com/api'
+  apiUrl: 'https://bookfast-backend.onrender.com/api' // Production backend API URL
 };
 

@@ -14,4 +14,4 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([AuthInterceptor]) // <-- Register the interceptor here
     )
   ]
-};
+}; // Production deployment configuration

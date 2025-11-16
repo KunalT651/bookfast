@@ -57,6 +57,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       // No redirect - base route shows dashboard grid
+      // Production: Provider dashboard shows grid on base route
       { path: 'resources', component: ResourcesComponent, canActivate: [authGuard] },
       { path: 'bookings', component: ProviderBookingsComponent, canActivate: [authGuard] },
       { path: 'reviews', component: ProviderReviewsComponent, canActivate: [authGuard] },
